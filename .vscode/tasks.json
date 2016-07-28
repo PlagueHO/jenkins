@@ -1,0 +1,15 @@
+{
+    "version": "0.1.0",
+    "command": "C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "powershell",
+            "args": [
+                "-command","${workspaceRoot}\\tests\\Invoke-Tests.ps1"
+            ],
+            "isBuildCommand": true
+        }
+    ]
+}
