@@ -63,6 +63,7 @@ FunctionsToExport = @(
     'Get-JenkinsObject'
     'Get-JenkinsJob'
     'Test-JenkinsJob'
+    'Export-JenkinsJob'
     'Get-JenkinsView'
     'Test-JenkinsView'
 )

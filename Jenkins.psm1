@@ -141,10 +141,13 @@ function Get-JenkinsTreeRequest()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Type
+    The type of endpoint to invoke the command on. Can be set to: Rest,Command.
 .PARAMETER Api
-    The API to use. Can be XML, JSON or Python. Defaults to JSON.
+    The API to use. Only used if type is 'rest'. Can be XML, JSON or Python. Defaults to JSON.
 .PARAMETER Command
-    This is the command and any other URI parameters that need to be passed to the API.
+    This is the command and any other URI parameters that need to be passed to the API. Should always be set if the
+    Type is set to Command.
 .EXAMPLE
     Invoke-JenkinsCommand `
         -Uri 'https://jenkins.contoso.com' `
@@ -164,6 +167,14 @@ function Get-JenkinsTreeRequest()
         -Uri 'https://jenkins.contoso.com'
     Returns the list of jobs in the root of the https://jenkins.contoso.com using no credentials for
     authorization.
+.EXAMPLE
+    Invoke-JenkinsCommand `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Type 'Command' `
+        -Command 'job/Build My App/config.xml'
+    Returns the job config XML for the 'Build My App' job in https://jenkins.contoso.com using credentials provided
+    by the user.
 .OUTPUTS
     The result of the Api as a string.
 #>
@@ -189,10 +200,16 @@ function Invoke-JenkinsCommand()
         [parameter(
             Position=3,
             Mandatory=$false)]
-        [String] $Api = 'json',
+        [ValidateSet('rest','command')]
+        [String] $Type = 'rest',
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [String] $Api = 'json',
+
+        [parameter(
+            Position=5,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $Command
@@ -213,24 +230,47 @@ function Invoke-JenkinsCommand()
         $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
     } # if
 
-    $FullUri = "$Uri/api/$Api"
-    if ($PSBoundParameters.ContainsKey('Command')) {
-        $FullUri = $FullUri + '/' + $Command
-    } # if
+    switch ($Type) {
+        'rest' {
+            $FullUri = "$Uri/api/$Api"
+            if ($PSBoundParameters.ContainsKey('Command')) {
+                $FullUri = $FullUri + '/' + $Command
+            } # if
 
-    try {
-        Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
-            $FullUri)
+            try {
+                Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
+                    $FullUri)
 
-        $Result = Invoke-RestMethod `
-            -Uri $FullUri `
-            -Headers $Headers `
-            -Method Post
-    }
-    catch {
-        # Todo: Improve error handling.
-        Throw $_
-    }
+                $Result = Invoke-RestMethod `
+                    -Uri $FullUri `
+                    -Headers $Headers `
+                    -Method Post
+            }
+            catch {
+                # Todo: Improve error handling.
+                Throw $_
+            } # catch
+        } # 'rest'
+        'command' {
+            $FullUri = $Uri
+            if ($PSBoundParameters.ContainsKey('Command')) {
+                $FullUri = $FullUri + '/' + $Command
+            } # if
+
+            try {
+                Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
+                    $FullUri)
+
+                $Result = Invoke-WebRequest `
+                    -Uri $FullUri `
+                    -Headers $Headers
+            }
+            catch {
+                # Todo: Improve error handling.
+                Throw $_
+            } # catch
+        } # 'rest'
+    } # swtich
 
     Return $Result
 } # Invoke-JenkinsCommand
@@ -527,6 +567,88 @@ function Test-JenkinsJob()
     $null = $PSBoundParameters.Remove( 'Name' )
     return ((@(Get-JenkinsObject @PSBoundParameters | Where-Object -Property Name -eq $Name)).Count -gt 0)
 } # Test-JenkinsJob
+
+
+<#
+.SYNOPSIS
+    Exports a Jenkins Job.
+.DESCRIPTION
+    Exports the config.xml of a Jenkins job if it exists on the Jenkins Master server. If a folder is specified it will
+    find the job in the specified folder.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to execute the command on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Folder
+    The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
+.PARAMETER Name
+    The name of the job to export.
+.EXAMPLE
+    Export-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
+    the user.
+.EXAMPLE
+    Export-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc' `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
+.OUTPUTS
+    An string containing the Jenkins Job config XML.
+#>
+function Export-JenkinsJob()
+{
+    [CmdLetBinding()]
+    [OutputType([String])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = $Folder -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job"
+        } # foreach
+        $Command += "/$Name/config.xml"
+    } else {
+        $Command = "job/$Name/config.xml"
+    } # if
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Folder')
+    $null = $PSBoundParameters.Add('Command',$Command)
+    return (Invoke-JenkinsCommand @PSBoundParameters)
+} # Export-JenkinsJob
 
 
 <#
