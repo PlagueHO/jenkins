@@ -62,7 +62,9 @@ FunctionsToExport = @(
     'Invoke-JenkinsCommand'
     'Get-JenkinsObject'
     'Get-JenkinsJob'
+    'Test-JenkinsJob'
     'Get-JenkinsView'
+    'Test-JenkinsView'
 )
 
 # Cmdlets to export from this module

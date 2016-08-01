@@ -15,6 +15,9 @@ Install-Module -Name Jenkins
 Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell\Modules folder.
 ```
 
+# Future features
+ - Add support for specifying views inside folders to Get-JenkinsView and Test-JenkinsView cmdlets.
+
 # Known Issues
  - Prevent Cross Site Request Forgery security option in Jenkins is not yet supported.
 This feature will be added in a future release.
