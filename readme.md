@@ -37,7 +37,9 @@ It is strongly recommended that you use the API Token for the account as the pas
   - Invoke-JenkinsCommand
   - Get-JenkinsObject
   - Get-JenkinsJob
+  - Test-JenkinsJob
   - Get-JenkinsView
+  - Test-JenkinsView
 
 # Links
 * [IAG NZ Web Site](http://www.iag.co.nz)
