@@ -4,11 +4,12 @@
 version: 1.0.0.{build}
 environment:
   PowerShellGalleryApiKey:
-    secure: 3fXfDuds8yhTa7WTOLIEhytrpsej9kcP+4rPrgLaFVmIhimmc+FgUVxkR4u468LH
+    secure: 4yBrDsAXA/kPCLVlA1LMSRc0CFrTOAbWeeasTsO5gYv6tMuI/k9MHjxYiD9F3Ekg
 install:
   - ps: |
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Install-Module -Name Pester -Repository PSGallery -Force
+        Install-Module -Name PSScriptAnalyzer -Repository PSGallery -Force
         # Update AppVeyor Build Version by pulling from Manifest
         $ManifestPath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Jenkins.psd1'
         $ManifestContent = Get-Content -Path $ManifestPath -Raw
@@ -24,9 +25,13 @@ install:
         # update AppVeyor build
         Update-AppveyorBuild -Version $version
         # Set version number
-        $ManifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', ('${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER)
+        $newVersion = '${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
+        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
         Set-Content -Path $ManifestPath -Value $ManifestContent
-        Install-WindowsFeature -Name hyper-v-powershell
+        $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
+        $readmeContent = Get-Content -Path $readmePath -Raw
+        $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
+        Set-Content -Path $readmePath -Value $readmeContent
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
@@ -40,9 +45,11 @@ build: false
 test_script:
     - ps: |
           $testResultsFile = ".\TestsResults.xml"
-          $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru -ExcludeTag Incomplete
+          $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru
           (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
-          Get-ChildItem "$ENV:APPVEYOR_BUILD_FOLDER\Jenkins\Artifacts\*.*" | Foreach-Object { Push-AppveyorArtifact $_ }
+          if (Test-Path -Path $ENV:APPVEYOR_BUILD_FOLDER\Jenkins\Artifacts) {
+              Get-ChildItem "$ENV:APPVEYOR_BUILD_FOLDER\Jenkins\Artifacts\*.*" | Foreach-Object { Push-AppveyorArtifact $_ }
+          }
           if ($res.FailedCount -gt 0) {
               throw "$($res.FailedCount) tests failed."
           }
@@ -91,7 +98,7 @@ deploy_script:
             Write-Host "Publishing Module to PowerShell Gallery"
             Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
             Get-PackageProvider -Name NuGet -ForceBootstrap
-            Publish-Module -Name 'Jenkins' -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
+            # Publish-Module -Name 'Jenkins' -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
         }
         # Remove Staging Folder
         $null = Remove-Item -Path $StagingFolder -Recurse -Force
