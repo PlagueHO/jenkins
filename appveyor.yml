@@ -4,7 +4,7 @@
 version: 1.0.0.{build}
 environment:
   PowerShellGalleryApiKey:
-    secure: 3fXfDuds8yhTa7WTOLIEhytrpsej9kcP+4rPrgLaFVmIhimmc+FgUVxkR4u468LH
+    secure: 4yBrDsAXA/kPCLVlA1LMSRc0CFrTOAbWeeasTsO5gYv6tMuI/k9MHjxYiD9F3Ekg
 install:
   - ps: |
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
@@ -25,8 +25,13 @@ install:
         # update AppVeyor build
         Update-AppveyorBuild -Version $version
         # Set version number
-        $ManifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', ('${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER)
+        $newVersion = '${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
+        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
         Set-Content -Path $ManifestPath -Value $ManifestContent
+        $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
+        $readmeContent = Get-Content -Path $readmePath -Raw
+        $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
+        Set-Content -Path $readmeContent -Value $readmeContent
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
