@@ -38,12 +38,14 @@ It is strongly recommended that you use the API Token for the account as the pas
   - Get-JenkinsObject
   - Get-JenkinsJob
   - Test-JenkinsJob
+  - New-JenkinsJob
+  - Remove-JenkinsJob
   - Get-JenkinsJobDefinition
   - Set-JenkinsJobDefinition
   - Get-JenkinsView
   - Test-JenkinsView
-  - Get-JenkinsFolder
-  - New-JenkinsFolder
+  - Get-JenkinsJobFolder
+  - Test-JenkinsJobFolder
 
 # Links
 * [IAG NZ Web Site](http://www.iag.co.nz)

@@ -63,12 +63,14 @@ FunctionsToExport = @(
     'Get-JenkinsObject'
     'Get-JenkinsJob'
     'Test-JenkinsJob'
+    'New-JenkinsJob'
+    'Remove-JenkinsJob'
     'Get-JenkinsJobDefinition'
     'Set-JenkinsJobDefinition'
     'Get-JenkinsView'
     'Test-JenkinsView'
-    'Get-JenkinsFolder'
-    'New-JenkinsFolder'
+    'Get-JenkinsJobFolder'
+    'Test-JenkinsJobFolder'
 )
 
 # Cmdlets to export from this module
