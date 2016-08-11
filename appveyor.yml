@@ -113,5 +113,6 @@ deploy_script:
             & git @('add','.')
             & git @('commit','-m',"Releasing $NewVersion")
             & git @('tag',$NewVersion)
+            & git @('status')
             & git @('push')
         }
