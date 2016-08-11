@@ -61,16 +61,16 @@ PowerShellVersion = '4.0'
 FunctionsToExport = @(
     'Invoke-JenkinsCommand'
     'Get-JenkinsObject'
+    'Get-JenkinsJobList'
     'Get-JenkinsJob'
+    'Set-JenkinsJob'
     'Test-JenkinsJob'
     'New-JenkinsJob'
     'Remove-JenkinsJob'
-    'Get-JenkinsJobDefinition'
-    'Set-JenkinsJobDefinition'
-    'Get-JenkinsView'
+    'Get-JenkinsViewList'
     'Test-JenkinsView'
-    'Get-JenkinsJobFolder'
-    'Test-JenkinsJobFolder'
+    'Get-JenkinsFolderList'
+    'Test-JenkinsFolder'
 )
 
 # Cmdlets to export from this module

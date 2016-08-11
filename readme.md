@@ -15,13 +15,28 @@ Install-Module -Name Jenkins
 Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell\Modules folder.
 ```
 
+# Cmdlets
+ - Invoke-JenkinsCommand: Execute a Jenkins command or request via the Jenkins Rest API.
+ - Get-JenkinsObject: Get a list of objects in a Jenkins master server.
+ - Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
+ - Get-JenkinsJob: Get a Jenkins Job Definition.
+ - Set-JenkinsJob: Set a Jenkins Job definition.
+ - Test-JenkinsJob: Determines if a Jenkins Job exists.
+ - New-JenkinsJob: Create a new Jenkins Job.
+ - Remove-JenkinsJob: Remove an existing Jenkins Job.
+ - Get-JenkinsViewList: Get a list of views in a Jenkins master server.
+ - Test-JenkinsView: Determines if a Jenkins View exists.
+ - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
+ - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
+
 # Future features
- - Add support for specifying views inside folders to Get-JenkinsView and Test-JenkinsView cmdlets.
+ - Add support for servers with Cross Site Request Forgery security optional enabled.
 
 # Known Issues
  - Prevent Cross Site Request Forgery security option in Jenkins is not yet supported.
 This feature will be added in a future release.
 If you recieve errors regarding crumbs then your Jenkins Server has CSRF enabled and it will need to be disabled in the "Configure Global Security" section in Jenkins.
+ - Remove-JenkinsJob: An IE window pops up after deleting the job for some reason requesting authentication.
 
 # Recommendations
  - If your Jenkins Server has security enabled then you should ensure that you are only connecting to it via HTTPS.
@@ -36,16 +51,16 @@ It is strongly recommended that you use the API Token for the account as the pas
 * Initial Release containing:
   - Invoke-JenkinsCommand
   - Get-JenkinsObject
+  - Get-JenkinsJobList
   - Get-JenkinsJob
+  - Set-JenkinsJob
   - Test-JenkinsJob
   - New-JenkinsJob
   - Remove-JenkinsJob
-  - Get-JenkinsJobDefinition
-  - Set-JenkinsJobDefinition
-  - Get-JenkinsView
+  - Get-JenkinsViewList
   - Test-JenkinsView
-  - Get-JenkinsJobFolder
-  - Test-JenkinsJobFolder
+  - Get-JenkinsFolderList
+  - Test-JenkinsFolder
 
 # Links
 * [IAG NZ Web Site](http://www.iag.co.nz)

@@ -43,7 +43,7 @@ Import-LocalizedData `
 #>
 function New-Exception
 {
-    [CmdLetBinding(SupportShouldProcess=$true)]
+    [CmdLetBinding()]
     param
     (
         [Parameter(Mandatory)]
@@ -438,6 +438,7 @@ function Get-JenkinsObject()
             } # foreach
         } # foreach
     }
+
     if ($IncludeClass) {
         $Objects = $Objects | Where-Object -Property _class -In $IncludeClass
     } # if
@@ -454,6 +455,7 @@ function Get-JenkinsObject()
 .DESCRIPTION
     Returns the list of jobs registered on a Jenkins Master server in either the root folder or a specified
     subfolder. The list of jobs returned can be filtered by setting the IncludeClass or ExcludeClass parameters.
+    By default any folders will be filtered from this list.
 .PARAMETER Uri
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
@@ -465,23 +467,22 @@ function Get-JenkinsObject()
 .PARAMETER ExcludeClass
     This allows the class of objects that are returned to exclude these types.
 .EXAMPLE
-    $Jobs = Get-JenkinsJob `
+    $Jobs = Get-JenkinsJobList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -ExcludeClass 'com.cloudbees.hudson.plugins.folder.Folder' `
         -Verbose
     Returns the list of jobs on https://jenkins.contoso.com using the credentials provided by the user.
 .EXAMPLE
-    $Jobs = Get-JenkinsJob `
+    $Jobs = Get-JenkinsJobList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'Misc' `
-        -ExcludeClass 'com.cloudbees.hudson.plugins.folder.Folder' `
         -Verbose
     Returns the list of jobs in the 'Misc' folder on https://jenkins.contoso.com using the credentials provided
     by the user.
 .EXAMPLE
-    $Folders = Get-JenkinsJob `
+    $Folders = Get-JenkinsJobList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'Misc' `
@@ -492,7 +493,7 @@ function Get-JenkinsObject()
 .OUTPUTS
     An array of Jenkins Job objects.
 #>
-function Get-JenkinsJob()
+function Get-JenkinsJobList()
 {
     [CmdLetBinding()]
     [OutputType([Object[]])]
@@ -531,9 +532,203 @@ function Get-JenkinsJob()
 
     $null = $PSBoundParameters.Add( 'Type', 'jobs')
     $null = $PSBoundParameters.Add( 'Attribute', @( 'name','buildable','url','color' ) )
+    # If a class was not explicitly excluded or included then excluded then
+    # set the function to excluded folders.
+    if (-not $PSBoundParameters.ContainsKey('ExcludeClass') `
+        -and -not $PSBoundParameters.ContainsKey('IncludeClass')) {
+        $PSBoundParameters.Add('ExcludeClass',@('com.cloudbees.hudson.plugins.folder.Folder'))
+    } # if
     return Get-JenkinsObject `
         @PSBoundParameters
+} # Get-JenkinsJobList
+
+
+<#
+.SYNOPSIS
+    Get a Jenkins Job Definition.
+.DESCRIPTION
+    Gets the config.xml of a Jenkins job if it exists on the Jenkins Master server.
+    If the job does not exist an error will occur.
+    If a folder is specified it will find the job in the specified folder.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to get the Job definition from.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Folder
+    The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
+.PARAMETER Name
+    The name of the job definition to get.
+.EXAMPLE
+    Get-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
+    the user.
+.EXAMPLE
+    Get-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc' `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
+.OUTPUTS
+    A string containing the Jenkins Job config XML.
+#>
+function Get-JenkinsJob()
+{
+    [CmdLetBinding()]
+    [OutputType([String])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = $Folder -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job"
+        } # foreach
+        $Command += "/$Name/config.xml"
+    } else {
+        $Command = "job/$Name/config.xml"
+    } # if
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Folder')
+    $null = $PSBoundParameters.Add('Command',$Command)
+    return (Invoke-JenkinsCommand @PSBoundParameters).Content
 } # Get-JenkinsJob
+
+
+<#
+.SYNOPSIS
+    Set a Jenkins Job definition.
+.DESCRIPTION
+    Sets a Jenkins Job config.xml on a Jenkins Master server.
+    If a folder is specified it will update the job in the specified folder.
+    If the job does not exist an error will occur.
+    If the job already exists the definition will be overwritten.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to set the Job definition on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Folder
+    The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
+    If the folder does not exist then an error will occur.
+.PARAMETER Name
+    The name of the job to set the definition on.
+.PARAMETER XML
+    The config XML of the job to import.
+.EXAMPLE
+    Set-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -XML $MyAppBuildConfig `
+        -Verbose
+    Sets the job definition of the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
+    the user.
+.EXAMPLE
+    Set-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc' `
+        -Name 'My App Build' `
+        -XML $MyAppBuildConfig `
+        -Verbose
+    Sets the job definition of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
+.OUTPUTS
+    None.
+#>
+function Set-JenkinsJob()
+{
+    [CmdLetBinding(SupportsShouldProcess=$true)]
+    [OutputType([String])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name,
+
+        [parameter(
+            Position=5,
+            Mandatory=$true,
+            ValueFromPipeline=$True)]
+        [ValidateNotNullOrEmpty()]
+        [String] $XML
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = $Folder -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job"
+        } # foreach
+        $Command += "/$Name/config.xml"
+    } else {
+        $Command = "job/$Name/config.xml"
+    } # if
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Folder')
+    $null = $PSBoundParameters.Remove('XML')
+    $null = $PSBoundParameters.Remove('Confirm')
+    $null = $PSBoundParameters.Add('Command',$Command)
+    $null = $PSBoundParameters.Add('Method','post')
+    $null = $PSBoundParameters.Add('ContentType','application/xml')
+    $null = $PSBoundParameters.Add('Body',$XML)
+    if ($PSCmdlet.ShouldProcess(`
+        $URI,`
+        $($LocalizedData.SetJobDefinitionMessage -f $Name))) {
+        $null = Invoke-JenkinsCommand @PSBoundParameters
+    } # if
+} # Set-JenkinsJob
 
 
 <#
@@ -610,95 +805,11 @@ function Test-JenkinsJob()
 
 <#
 .SYNOPSIS
-    Get a Jenkins Job Definition.
+    Create a new Jenkins Job.
 .DESCRIPTION
-    Gets the config.xml of a Jenkins job if it exists on the Jenkins Master server.
-    If the job does not exist an error will occur.
-    If a folder is specified it will find the job in the specified folder.
-.PARAMETER Uri
-    Contains the Uri to the Jenkins Master server to get the Job definition from.
-.PARAMETER Credential
-    Contains the credentials to use to authenticate with the Jenkins Master server.
-.PARAMETER Folder
-    The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
-.PARAMETER Name
-    The name of the job definition to get.
-.EXAMPLE
-    Get-JenkinsJobDefinition `
-        -Uri 'https://jenkins.contoso.com' `
-        -Credential (Get-Credential) `
-        -Name 'My App Build' `
-        -Verbose
-    Returns the XML config of the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
-    the user.
-.EXAMPLE
-    Get-JenkinsJobDefinition `
-        -Uri 'https://jenkins.contoso.com' `
-        -Credential (Get-Credential) `
-        -Folder 'Misc' `
-        -Name 'My App Build' `
-        -Verbose
-    Returns the XML config of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
-    credentials provided by the user.
-.OUTPUTS
-    A string containing the Jenkins Job config XML.
-#>
-function Get-JenkinsJobDefinition()
-{
-    [CmdLetBinding()]
-    [OutputType([String])]
-    Param
-    (
-        [parameter(
-            Position=1,
-            Mandatory=$true)]
-        [String] $Uri,
-
-        [parameter(
-            Position=2,
-            Mandatory=$false)]
-        [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.CredentialAttribute()] $Credential,
-
-        [parameter(
-            Position=3,
-            Mandatory=$false)]
-        [ValidateNotNullOrEmpty()]
-        [String] $Folder,
-
-        [parameter(
-            Position=4,
-            Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [String] $Name
-    )
-    $null = $PSBoundParameters.Add('Type','Command')
-    if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
-        $Command = 'job/'
-        foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
-        } # foreach
-        $Command += "/$Name/config.xml"
-    } else {
-        $Command = "job/$Name/config.xml"
-    } # if
-    $null = $PSBoundParameters.Remove('Name')
-    $null = $PSBoundParameters.Remove('Folder')
-    $null = $PSBoundParameters.Add('Command',$Command)
-    return (Invoke-JenkinsCommand @PSBoundParameters).Content
-} # Get-JenkinsJobDefinition
-
-
-<#
-.SYNOPSIS
-    Set a Jenkins Job definition.
-.DESCRIPTION
-    Sets a Jenkins Job config.xml on a Jenkins Master server.
-    If a folder is specified it will update the job in the specified folder.
-    If the job does not exist an error will occur.
-    If the job already exists the definition will be overwritten.
+    Creates a new Jenkins Job using the provided XML.
+    If a folder is specified it will create the job in the specified folder.
+    If the job already exists an error will occur.
 .PARAMETER Uri
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
@@ -711,7 +822,7 @@ function Get-JenkinsJobDefinition()
 .PARAMETER XML
     The config XML of the job to import.
 .EXAMPLE
-    Set-JenkinsJobDefinition `
+    New-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Name 'My App Build' `
@@ -720,7 +831,7 @@ function Get-JenkinsJobDefinition()
     Sets the job definition of the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
     the user.
 .EXAMPLE
-    Set-JenkinsJobDefinition `
+    New-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'Misc' `
@@ -732,7 +843,7 @@ function Get-JenkinsJobDefinition()
 .OUTPUTS
     None.
 #>
-function Set-JenkinsJobDefinition()
+function New-JenkinsJob()
 {
     [CmdLetBinding(SupportsShouldProcess=$true)]
     [OutputType([String])]
@@ -764,21 +875,20 @@ function Set-JenkinsJobDefinition()
 
         [parameter(
             Position=5,
-            Mandatory=$true)]
+            Mandatory=$true,
+            ValueFromPipeline=$True)]
         [ValidateNotNullOrEmpty()]
         [String] $XML
     )
     $null = $PSBoundParameters.Add('Type','Command')
+    $Command = ''
     if ($PSBoundParameters.ContainsKey('Folder')) {
         $Folders = $Folder -split '/'
-        $Command = 'job/'
         foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
+            $Command += "job/$Folder"
         } # foreach
-        $Command += "/$Name/config.xml"
-    } else {
-        $Command = "job/$Name/config.xml"
     } # if
+    $Command += "createItem?name=$Name"
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('XML')
@@ -789,10 +899,104 @@ function Set-JenkinsJobDefinition()
     $null = $PSBoundParameters.Add('Body',$XML)
     if ($PSCmdlet.ShouldProcess(`
         $URI,`
-        $($LocalizedData.SetJobDefinitionMessage -f $Name))) {
+        $($LocalizedData.NewJobMessage -f $Name))) {
         $null = Invoke-JenkinsCommand @PSBoundParameters
     } # if
-} # Set-JenkinsJobDefinition
+} # New-JenkinsJob
+
+
+<#
+.SYNOPSIS
+    Remove an existing Jenkins Job.
+.DESCRIPTION
+    Deletes an existing Jenkins Job in the specified Jenkins Master server.
+    If a folder is specified it will remove the job in the specified folder.
+    If the job does not exist an error will occur.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to set the Job definition on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Folder
+    The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
+    If the folder does not exist then an error will occur.
+.PARAMETER Name
+    The name of the job to set the definition on.
+.EXAMPLE
+    Remove-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Verbose
+    Remove the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
+    the user.
+.EXAMPLE
+    Remove-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc' `
+        -Name 'My App Build' `
+        -Verbose
+    Remove the 'My App Build' job from the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
+.OUTPUTS
+    None.
+#>
+function Remove-JenkinsJob()
+{
+    [CmdLetBinding(SupportsShouldProcess=$true,
+        ConfirmImpact="High")]
+    [OutputType([String])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name,
+
+        [Switch] $Force
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = $Folder -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job"
+        } # foreach
+        $Command += "/$Name/doDelete"
+    } else {
+        $Command = "job/$Name/doDelete"
+    } # if
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Folder')
+    $null = $PSBoundParameters.Remove('Confirm')
+    $null = $PSBoundParameters.Remove('Force')
+    $null = $PSBoundParameters.Add('Command',$Command)
+    $null = $PSBoundParameters.Add('Method','post')
+    if ($Force -or $PSCmdlet.ShouldProcess(`
+        $URI,`
+        $($LocalizedData.RemoveJobMessage -f $Name))) {
+        $null = Invoke-JenkinsCommand @PSBoundParameters
+    } # if
+} # Remove-JenkinsJob
 
 
 <#
@@ -920,9 +1124,9 @@ function Test-JenkinsView()
 
 <#
 .SYNOPSIS
-    Get a list of job folders in a Jenkins master server.
+    Get a list of folders in a Jenkins master server.
 .DESCRIPTION
-    Returns the list of job folders registered on a Jenkins Master server in either the root folder or a specified
+    Returns the list of folders registered on a Jenkins Master server in either the root folder or a specified
     subfolder.
     This requires the Jobs Plugin to be installed on Jenkins.
 .PARAMETER Uri
@@ -930,15 +1134,15 @@ function Test-JenkinsView()
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
 .PARAMETER Folder
-    The optional job folder to retrieve the jobs from. This requires the Jobs Plugin to be installed on Jenkins.
+    The optional job folder to retrieve the folders from.
 .EXAMPLE
-    $Folders = Get-JenkinsJobFolder `
+    $Folders = Get-JenkinsFolderList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Verbose
     Returns the list of job folders on https://jenkins.contoso.com using the credentials provided by the user.
 .EXAMPLE
-    $Folders = Get-JenkinsJobFolder `
+    $Folders = Get-JenkinsFolderList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'My Builds' `
@@ -946,9 +1150,9 @@ function Test-JenkinsView()
     Returns the list of job folders in the 'Misc' folder on https://jenkins.contoso.com using the credentials provided
     by the user.
 .OUTPUTS
-    An array of Jenkins Job Folder objects.
+    An array of Jenkins Folder objects.
 #>
-function Get-JenkinsJobFolder()
+function Get-JenkinsFolderList()
 {
     [CmdLetBinding()]
     [OutputType([Object[]])]
@@ -978,14 +1182,14 @@ function Get-JenkinsJobFolder()
     $null = $PSBoundParameters.Add( 'IncludeClass', 'com.cloudbees.hudson.plugins.folder.Folder')
     return Get-JenkinsObject `
         @PSBoundParameters
-} # Get-JenkinsJobFolder
+} # Get-JenkinsFolderList
 
 
 <#
 .SYNOPSIS
-    Determines if a Jenkins Job Folder exists.
+    Determines if a Jenkins Folder exists.
 .DESCRIPTION
-    Returns true if a Job Folder exists in the specified Jenkins Master server with a matching Name.
+    Returns true if a Folder exists in the specified Jenkins Master server with a matching Name.
     This requires the Jobs Plugin to be installed on Jenkins.
     It will search inside a specific folder if one is passed.
 .PARAMETER Uri
@@ -993,30 +1197,30 @@ function Get-JenkinsJobFolder()
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
 .PARAMETER Folder
-    The optional job folder to look for the job folder in.
+    The optional folder to look for the folder in.
 .PARAMETER Name
-    The name of the job folder to check for.
+    The name of the folder to check for.
 .EXAMPLE
-    Test-JenkinsJobFolder `
+    Test-JenkinsFolder `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Name 'My Builds' `
         -Verbose
-    Returns true if the 'My Builds' job folder is found on https://jenkins.contoso.com using the
+    Returns true if the 'My Builds' folder is found on https://jenkins.contoso.com using the
     credentials provided by the user.
 .EXAMPLE
-    Test-JenkinsJobFolder `
+    Test-JenkinsFolder `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'Misc' `
         -Name 'My Builds' `
         -Verbose
-    Returns true if the 'My Builds' job folder is found in the 'Misc' folder on https://jenkins.contoso.com using the
+    Returns true if the 'My Builds' folder is found in the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
 .OUTPUTS
-    A boolean indicating if the job was found or not.
+    A boolean indicating if the was found or not.
 #>
-function Test-JenkinsJobFolder()
+function Test-JenkinsFolder()
 {
     [CmdLetBinding()]
     [OutputType([Boolean])]
@@ -1052,4 +1256,4 @@ function Test-JenkinsJobFolder()
     $null = $PSBoundParameters.Add( 'IncludeClass', 'com.cloudbees.hudson.plugins.folder.Folder')
     $null = $PSBoundParameters.Remove( 'Name' )
     return ((@(Get-JenkinsObject @PSBoundParameters | Where-Object -Property Name -eq $Name)).Count -gt 0)
-} # Test-JenkinsJobFolder
+} # Test-JenkinsFolder
