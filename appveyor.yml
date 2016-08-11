@@ -31,7 +31,7 @@ install:
         $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
         $readmeContent = Get-Content -Path $readmePath -Raw
         $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
-        Set-Content -Path $readmeContent -Value $readmeContent
+        Set-Content -Path $readmePath -Value $readmeContent
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
