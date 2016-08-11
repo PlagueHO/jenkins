@@ -25,9 +25,9 @@ install:
         # update AppVeyor build
         Update-AppveyorBuild -Version $version
         # Set version number
-        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', "${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
+        $newVersion = ("$($Matches.Value).{0}" -f $env:APPVEYOR_BUILD_NUMBER)
+        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
         Set-Content -Path $ManifestPath -Value $ManifestContent
-        $newVersion = '${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
         $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
         $readmeContent = Get-Content -Path $readmePath -Raw
         $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
