@@ -93,7 +93,6 @@ deploy_script:
             Push-AppveyorArtifact $_
             Remove-Item -Path $_ -Force
         }
-        Remove-Item -Path $_ -Force
         # If this is a build of the Master branch and not a PR push
         # then publish the Module to the PowerShell Gallery.
         if ((! $ENV:APPVEYOR_PULL_REQUEST_NUMBER) `
