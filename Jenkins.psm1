@@ -43,7 +43,7 @@ Import-LocalizedData `
 #>
 function New-Exception
 {
-    [CmdLetBinding()]
+    [CmdLetBinding(SupportShouldProcess=$true)]
     param
     (
         [Parameter(Mandatory)]
@@ -64,16 +64,18 @@ function New-Exception
     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-    if ($Terminate)
-    {
-        # This is a terminating exception.
-        throw $errorRecord
-    }
-    else
-    {
-        # Note: Although this method is called ThrowTerminatingError, it doesn't terminate.
-        $PSCmdlet.ThrowTerminatingError($errorRecord)
-    }
+    if ($true -or $()) {
+        if ($Terminate)
+        {
+            # This is a terminating exception.
+            throw $errorRecord
+        }
+        else
+        {
+            # Note: Although this method is called ThrowTerminatingError, it doesn't terminate.
+            $PSCmdlet.ThrowTerminatingError($errorRecord)
+        }
+    } # if
 } # function New-Exception
 
 
@@ -732,7 +734,7 @@ function Get-JenkinsJobDefinition()
 #>
 function Set-JenkinsJobDefinition()
 {
-    [CmdLetBinding()]
+    [CmdLetBinding(SupportsShouldProcess=$true)]
     [OutputType([String])]
     Param
     (
@@ -780,11 +782,16 @@ function Set-JenkinsJobDefinition()
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('XML')
+    $null = $PSBoundParameters.Remove('Confirm')
     $null = $PSBoundParameters.Add('Command',$Command)
     $null = $PSBoundParameters.Add('Method','post')
     $null = $PSBoundParameters.Add('ContentType','application/xml')
     $null = $PSBoundParameters.Add('Body',$XML)
-    return (Invoke-JenkinsCommand @PSBoundParameters)
+    if ($PSCmdlet.ShouldProcess(`
+        $URI,`
+        $($LocalizedData.SetJobDefinitionMessage -f $Name))) {
+        $null = Invoke-JenkinsCommand @PSBoundParameters
+    } # if
 } # Set-JenkinsJobDefinition
 
 
