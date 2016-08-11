@@ -4,7 +4,7 @@
 version: 1.0.0.{build}
 environment:
   PowerShellGalleryApiKey:
-    secure: 4yBrDsAXA/kPCLVlA1LMSRc0CFrTOAbWeeasTsO5gYv6tMuI/k9MHjxYiD9F3Ekg
+    secure: 3fXfDuds8yhTa7WTOLIEhytrpsej9kcP+4rPrgLaFVmIhimmc+FgUVxkR4u468LH
   GitHubPushFromPlagueHO:
     secure: T1YH80PnRtYOlW3XM6rYkavs91a+Dr37V9ln0OX1UrVYUoNHaJq0paGswPEWKraL
 install:
@@ -107,6 +107,7 @@ deploy_script:
             Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubPushFromPlagueHO):x-oauth-basic@github.com`n"
             & git @('config','--global','user.email','plagueho@gmail.com')
             & git @('config','--global','user.name','Daniel Scott-Raynsford')
+            Set-Location -Path $buildFolder
             & git @('add','.')
             & git @('commit','-m',"Releasing $NewVersion")
             & git @('tag',$NewVersion)
