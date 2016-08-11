@@ -25,9 +25,9 @@ install:
         # update AppVeyor build
         Update-AppveyorBuild -Version $version
         # Set version number
-        $newVersion = '${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
-        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
+        $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', "${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
         Set-Content -Path $ManifestPath -Value $ManifestContent
+        $newVersion = "${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER
         $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
         $readmeContent = Get-Content -Path $readmePath -Raw
         $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
@@ -57,7 +57,6 @@ test_script:
 #      deployment configuration   #
 #---------------------------------#
 
-# scripts to run before deployment
 deploy_script:
   - ps: |
         # Creating project artifact
