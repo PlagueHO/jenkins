@@ -5,6 +5,8 @@ version: 1.0.0.{build}
 environment:
   PowerShellGalleryApiKey:
     secure: 4yBrDsAXA/kPCLVlA1LMSRc0CFrTOAbWeeasTsO5gYv6tMuI/k9MHjxYiD9F3Ekg
+  GitHubPushFromPlagueHO:
+    secure: T1YH80PnRtYOlW3XM6rYkavs91a+Dr37V9ln0OX1UrVYUoNHaJq0paGswPEWKraL
 install:
   - ps: |
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
@@ -98,6 +100,15 @@ deploy_script:
             Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
             Get-PackageProvider -Name NuGet -ForceBootstrap
             # Publish-Module -Name 'Jenkins' -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
+            # Remove Staging Folder
+            $null = Remove-Item -Path $StagingFolder -Recurse -Force
+            # Push the updated release to GitHub
+            & git @('config','--global','credential.helper','store')
+            Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubPushFromPlagueHO):x-oauth-basic@github.com`n"
+            & git @('config','--global','user.email','plagueho@gmail.com')
+            & git @('config','--global','user.name','Daniel Scott-Raynsford')
+            & git @('add','.')
+            & git @('commit','-m',"Releasing $NewVersion")
+            & git @('tag',$NewVersion)
+            & git @('push')
         }
-        # Remove Staging Folder
-        $null = Remove-Item -Path $StagingFolder -Recurse -Force
