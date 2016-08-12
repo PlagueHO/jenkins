@@ -216,7 +216,7 @@ function Invoke-JenkinsCommand()
 
         [parameter(
             Position=5,
-            Mandatory=$false)]
+            Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Command,
 
@@ -224,7 +224,7 @@ function Invoke-JenkinsCommand()
             Position=6,
             Mandatory=$false)]
         [ValidateSet('default','delete','get','head','merge','options','patch','post','put','trace')]
-        [String] $Method = 'default',
+        [String] $Method,
 
         [parameter(
             Position=7,
@@ -271,6 +271,7 @@ function Invoke-JenkinsCommand()
             } # if
 
             $null = $PSBoundParameters.remove('Command')
+            $null = $PSBoundParameters.remove('Api')
 
             try {
                 Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
@@ -294,6 +295,7 @@ function Invoke-JenkinsCommand()
             } # if
 
             $null = $PSBoundParameters.remove('Command')
+            $null = $PSBoundParameters.remove('Api')
 
             try {
                 Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
