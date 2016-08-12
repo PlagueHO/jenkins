@@ -48,34 +48,285 @@ try
         }
     }
 
-    InModuleScope $($Global:Module) {
     <#
     .SYNOPSIS
     Helper function that just creates an exception record for testing.
     #>
-        function GetException
-        {
-            [CmdLetBinding()]
-            param
-            (
-                [Parameter(Mandatory)]
-                [String] $errorId,
+    function Get-ExceptionRecord
+    {
+        [CmdLetBinding()]
+        param
+        (
+            [Parameter(Mandatory)]
+            [String] $errorId,
 
-                [Parameter(Mandatory)]
-                [System.Management.Automation.ErrorCategory] $errorCategory,
+            [Parameter(Mandatory)]
+            [System.Management.Automation.ErrorCategory] $errorCategory,
 
-                [Parameter(Mandatory)]
-                [String] $errorMessage,
+            [Parameter(Mandatory)]
+            [String] $errorMessage,
 
-                [Switch]
-                $terminate
-            )
+            [Switch]
+            $terminate
+        )
 
-            $exception = New-Object -TypeName System.Exception `
-                -ArgumentList $errorMessage
-            $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
-                -ArgumentList $exception, $errorId, $errorCategory, $null
-            return $errorRecord
+        $exception = New-Object -TypeName System.Exception `
+            -ArgumentList $errorMessage
+        $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
+            -ArgumentList $exception, $errorId, $errorCategory, $null
+        return $errorRecord
+    } # function
+
+    $testURI        = 'https://jenkins.contoso.com'
+    $testUsername   = 'DummyUser'
+    $testPassword   = 'DummyPassword'
+    $testCredential = New-Object -TypeName System.Management.Automation.PSCredential `
+        -ArgumentList $testUsername, ( ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
+    $testCommand    = 'CommandTest'
+    $Bytes = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+    $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
+    $testAuthHeader = "Basic $Base64Bytes"
+
+    InModuleScope 'Jenkins' {
+        Describe 'Get-JenkinsTreeRequest' {
+            Context 'default depth, default type, default attribute' {
+                It "should return '?tree=jobs[name,buildable,url,color]'" {
+                    Get-JenkinsTreeRequest |
+                        Should Be '?tree=jobs[name,buildable,url,color]'
+                }
+            }
+            Context 'depth 2, default type, default attribute' {
+                It "should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" {
+                    Get-JenkinsTreeRequest -Depth 2 |
+                        Should Be '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'
+                }
+            }
+            Context 'depth 2, type views, default attribute' {
+                It "should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" {
+                    Get-JenkinsTreeRequest -Depth 2 -Type 'Views' |
+                        Should Be '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'
+                }
+            }
+            Context 'depth 3, type views, attribute name,url' {
+                It "should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" {
+                    Get-JenkinsTreeRequest -Depth 3 -Type 'Views' -Attribute @('name','url') |
+                        Should Be '?tree=Views[name,url,Views[name,url,Views[name,url]]]'
+                }
+            }
+        }
+    }
+
+    Describe 'Invoke-JenkinsCommand' {
+        $InvokeJenkinsCommandSplat = @{
+            Uri        = $testURI
+            Credential = $testCredential
+            Command    = $testCommand
+        }
+
+        Context 'default type, default api, credentials passed' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/json/$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/api/json/$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'default type, default api, no credentials passed' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/json/$testCommand" -and `
+                    $Headers.Count -eq 0
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.Remove('Credential')
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                    $Uri -eq "$testURI/api/json/$testCommand" -and `
+                    $Headers.Count -eq 0
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'default type, xml api, credentials passed' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.api = 'xml'
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'default type, xml api, credentials passed, header passed' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Headers.Count -eq 2 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader -and `
+                    $Headers['Test'] -eq 'test'
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.api = 'xml'
+            $Splat.headers = @{ test = 'test' }
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                        $Headers.Count -eq 2 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader -and `
+                        $Headers['Test'] -eq 'test'
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'default type, xml api, credentials passed, header passed, get method' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Headers.Count -eq 2 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader -and `
+                    $Headers['Test'] -eq 'test' -and `
+                    $Method -eq 'get'
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.api = 'xml'
+            $Splat.headers = @{ test = 'test' }
+            $Splat.method = 'get'
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                        $Headers.Count -eq 2 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader -and `
+                        $Headers['Test'] -eq 'test' -and
+                        $Method -eq 'get'
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'default type, xml api, credentials passed, body passed' {
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
+
+            Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader -and `
+                    $Body -eq 'body'
+                } `
+                -MockWith { 'Invoke-RestMethod Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.api = 'xml'
+            $Splat.body = 'body'
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-RestMethod Result'" {
+                $Result | Should Be 'Invoke-RestMethod Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader -and `
+                        $Body -eq 'body'
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'command type, default api, credentials passed' {
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
+
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader
+                } `
+                -MockWith { 'Invoke-WebRequest Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.Type = 'command'
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-WebRequest Result'" {
+                $Result | Should Be 'Invoke-WebRequest Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader
+                    } `
+                    -Exactly 1
+            }
         }
     }
 }

@@ -96,7 +96,8 @@ deploy_script:
         # If this is a build of the Master branch and not a PR push
         # then publish the Module to the PowerShell Gallery.
         if ((! $ENV:APPVEYOR_PULL_REQUEST_NUMBER) `
-            -and ($ENV:APPVEYOR_REPO_BRANCH -eq 'master'))
+            -and ($ENV:APPVEYOR_REPO_BRANCH -eq 'master') `
+            -and ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -notlike '!Deployed*'))
         {
             Write-Host "Publishing Module to PowerShell Gallery"
             Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
@@ -111,8 +112,8 @@ deploy_script:
             & git @('config','--global','user.name','Daniel Scott-Raynsford')
             Set-Location -Path $buildFolder
             & git @('add','.')
-            & git @('commit','-m',"Releasing $NewVersion")
+            & git @('commit','-m',"!Deployed $NewVersion")
             & git @('tag',$NewVersion)
             & git @('status')
-            & git @('push')
+            & git @('push','origin','HEAD:master')
         }
