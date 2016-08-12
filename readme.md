@@ -49,7 +49,7 @@ It is strongly recommended that you use the API Token for the account as the pas
 
 # Versions
 
-### 1.0.0.0
+### Unreleased
 * Initial Release containing:
   - Invoke-JenkinsCommand
   - Get-JenkinsObject
