@@ -97,7 +97,7 @@ deploy_script:
         # then publish the Module to the PowerShell Gallery.
         if ((! $ENV:APPVEYOR_PULL_REQUEST_NUMBER) `
             -and ($ENV:APPVEYOR_REPO_BRANCH -eq 'master') `
-            -and ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -not -like '!Deployed*'))
+            -and ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -notlike '!Deployed*'))
         {
             Write-Host "Publishing Module to PowerShell Gallery"
             Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
