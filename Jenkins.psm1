@@ -439,7 +439,7 @@ function Get-JenkinsObject()
                 } # if
             } # foreach
         } # foreach
-    }
+    } # if
 
     if ($IncludeClass) {
         $Objects = $Objects | Where-Object -Property _class -In $IncludeClass

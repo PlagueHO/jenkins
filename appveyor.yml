@@ -12,6 +12,7 @@ install:
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Install-Module -Name Pester -Repository PSGallery -Force
         Install-Module -Name PSScriptAnalyzer -Repository PSGallery -Force
+
         # Update AppVeyor Build Version by pulling from Manifest
         $ManifestPath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Jenkins.psd1'
         $ManifestContent = Get-Content -Path $ManifestPath -Raw
@@ -22,14 +23,27 @@ install:
         {
             $version = $Matches[0].Value
         }
-        # new version
-        $version = "$version.$env:APPVEYOR_BUILD_NUMBER"
+
+        # Determine the new version number
+        $versionArray = $version -split '\.'
+        $newVersion = ''
+        Foreach ($ver in (0..2)) {
+            $sem = $versionArray[$ver]
+            if ([String]::IsNullOrEmpty($sem)) {
+                $sem = '0'
+            }
+            $newVersion += "$sem."
+        }
+        $newVersion += $env:APPVEYOR_BUILD_NUMBER
+
         # update AppVeyor build
-        Update-AppveyorBuild -Version $version
-        # Set version number
-        $newVersion = ("$($Matches.Value).{0}" -f $env:APPVEYOR_BUILD_NUMBER)
+        Update-AppveyorBuild -Version $newVersion
+
+        # Set the new version number in the Module Manifest
         $manifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
         Set-Content -Path $ManifestPath -Value $ManifestContent
+
+        # Set the new version number in the Readme.md
         $readmePath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath 'Readme.md'
         $readmeContent = Get-Content -Path $readmePath -Raw
         $readmeContent = $readmeContent -replace '### Unreleased', "### $newVersion"
