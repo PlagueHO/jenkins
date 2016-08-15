@@ -95,6 +95,7 @@ deploy_script:
         $zipFilePath = Join-Path -Path $buildFolder -ChildPath "${env:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
         $null = Add-Type -assemblyname System.IO.Compression.FileSystem
         [System.IO.Compression.ZipFile]::CreateFromDirectory($StagingFolder, $zipFilePath)
+        $null = Remove-Item -Path $StagingFolder -Recurse -Force
 
         # Create Publish Script Artifact
         $PublishScriptName = $env:APPVEYOR_PROJECT_NAME + "." + $env:APPVEYOR_BUILD_VERSION + "_publish.ps1"
@@ -111,34 +112,45 @@ deploy_script:
             Remove-Item -Path $_ -Force
         }
 
-        # If this is a build of the Master branch and not a PR push
-        # then publish the Module to the PowerShell Gallery.
-        if ((! $ENV:APPVEYOR_PULL_REQUEST_NUMBER) `
-            -and ($ENV:APPVEYOR_REPO_BRANCH -eq 'master') `
-            -and ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -notlike '!Deployed*'))
-        {
-            Write-Host "Publishing Module to PowerShell Gallery"
-            Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
-            Get-PackageProvider -Name NuGet -ForceBootstrap
-            Publish-Module -Name 'Jenkins' -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
+        # Deployment management
+        if ($ENV:APPVEYOR_REPO_BRANCH -eq 'master') {
+            if ($ENV:APPVEYOR_PULL_REQUEST_NUMBER) {
+                # This is a PR so do nothing
+            } elseif ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -like '* Deploy!') {
+                # This was a deploy commit so no need to do anything
+            } else {
+                # This is not a PR so deploy
+                Write-Host "Beginning deploy process"
 
-            # Remove Staging Folder
-            $null = Remove-Item -Path $StagingFolder -Recurse -Force
+                # Pull the master branch, update the readme.md and manifest
+                Set-Location -Path $ENV:APPVEYOR_BUILD_FOLDER
+                & git @('config','--global','credential.helper','store')
+                Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubPushFromPlagueHO):x-oauth-basic@github.com`n"
+                & git @('config','--global','user.email','plagueho@gmail.com')
+                & git @('config','--global','user.name','Daniel Scott-Raynsford')
 
-            # Push the updated release to the master branch
-            & git @('config','--global','credential.helper','store')
-            Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubPushFromPlagueHO):x-oauth-basic@github.com`n"
-            & git @('config','--global','user.email','plagueho@gmail.com')
-            & git @('config','--global','user.name','Daniel Scott-Raynsford')
-            Set-Location -Path $buildFolder
-            & git @('add','.')
-            & git @('commit','-m',"!Deployed $NewVersion")
-            & git @('tag',$NewVersion)
-            & git @('status')
-            & git @('push','origin','HEAD:master')
+                & git @('checkout','-f','master')
+                Set-Content -Path $ManifestPath -Value $ManifestContent
+                Set-Content -Path $readmePath -Value $readmeContent
 
-            # Merge the changes to the Dev branch as well
-            & git @('checkout','dev')
-            & git @('merge','master')
-            & git @('push')
+                # Update the master branch
+                Write-Host "Pushing deployment changes to Master"
+                & git @('add','.')
+                & git @('commit','-m',"$NewVersion Deploy!")
+                & git @('tag','-a',$NewVersion)
+                & git @('status')
+                & git @('push','origin','master')
+
+                # Merge the changes to the Dev branch as well
+                Write-Host "Pushing deployment changes to Dev"
+                & git @('checkout','-f','dev')
+                & git @('merge','master')
+                & git @('push','origin','dev')
+
+                # This is a commit to Master
+                Write-Host "Publishing Module to PowerShell Gallery"
+                Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
+                Get-PackageProvider -Name NuGet -ForceBootstrap
+                Publish-Module -Name 'Jenkins' -RequiredVersion $newVersion -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
+            }
         }
