@@ -113,8 +113,8 @@ try
                         Should Be '?tree=Views[name,url,Views[name,url,Views[name,url]]]'
                 }
             }
-        }
-    }
+        } # Describe
+    } # InModuleScope
 
     Describe 'Invoke-JenkinsCommand' {
         $InvokeJenkinsCommandSplat = @{
@@ -148,7 +148,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'default type, default api, no credentials passed' {
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -175,7 +175,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'default type, xml api, credentials passed' {
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -203,7 +203,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'default type, xml api, credentials passed, header passed' {
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -234,7 +234,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'default type, xml api, credentials passed, header passed, get method' {
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -268,7 +268,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'default type, xml api, credentials passed, body passed' {
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -299,7 +299,7 @@ try
                     } `
                     -Exactly 1
             }
-        }
+        } # Context
 
         Context 'command type, default api, credentials passed' {
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -327,8 +327,47 @@ try
                     } `
                     -Exactly 1
             }
+        } # Context
+    } # Describe 'Invoke-JenkinsCommand'
+
+    Describe 'Get-JenkinsObject' {
+        $GetJenkinsObjectSplat = @{
+            Uri        = $testURI
+            Credential = $testCredential
+            Type       = 'jobs'
+            Attribute = @('name')
         }
-    }
+
+        Context 'jobs type, attribute name, no folder, credentials passed' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq '?tree=jobs[name]'
+                } `
+                -MockWith { @{
+                            jobs = @(
+                                @{ name = 'test1' },
+                                @{ name = 'test2' }
+                            )
+                        }
+                    }
+            $Splat = $GetJenkinsObjectSplat.Clone()
+            $Result = Get-JenkinsObject @Splat
+            It "should return expected objects" {
+                $Result.Count | Should Be 2
+                $Result[0].Name | Should Be 'test1'
+                $Result[1].Name | Should Be 'test2'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq '?tree=jobs[name]'
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+    } # Describe 'Get-JenkinsObject'
 }
 catch
 {
