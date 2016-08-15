@@ -46,8 +46,95 @@ If you recieve errors regarding crumbs then your Jenkins Server has CSRF enabled
 It is strongly recommended that you use the API Token for the account as the password rather than the Jenkins account, even if you have implemented HTTPS.
 
 # Examples
+## Get a list of jobs from a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$Jobs = Get-JenkinsJobList `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential)
+```
+
+## Get a list of jobs from the 'Misc' folder a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$Jobs = Get-JenkinsJobList `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Folder 'Misc'
+```
+
+## Get a list of 'Freestyle' jobs from a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$Jobs = Get-JenkinsJobList `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -IncludeClass 'hudson.model.FreeStyleProject'
+```
+
+## Get a list of job folders from a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$Folders = Get-JenkinsFolderList `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential)
+```
+
+## Get the job definition for 'My App Build' from a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$MyAppBuildConfig = Get-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build'
+```
+
+## Update the job definition for 'My App Build' on a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+Set-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build' `
+    -XML $MyAppBuildConfig
+```
+
+## Test if a job exists on a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+if (Test-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build') {
+    # ... Jenkins Job was found
+}
+```
+
+## Create a new job called 'My App Build' on a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+New-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build' `
+    -XML $MyAppBuildConfig
+```
+
+## Remove a job called 'My App Build' from a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+Remove-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build'
+```
+
+For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+* Added Examples to Readme.md
 
 ### 1.0.0.46
 * Appveyor build improvements

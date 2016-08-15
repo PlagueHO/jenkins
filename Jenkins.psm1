@@ -472,7 +472,6 @@ function Get-JenkinsObject()
     $Jobs = Get-JenkinsJobList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
-        -ExcludeClass 'com.cloudbees.hudson.plugins.folder.Folder' `
         -Verbose
     Returns the list of jobs on https://jenkins.contoso.com using the credentials provided by the user.
 .EXAMPLE
@@ -488,10 +487,10 @@ function Get-JenkinsObject()
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Folder 'Misc' `
-        -IncludeClass 'com.cloudbees.hudson.plugins.folder.Folder' `
+        -IncludeClass 'hudson.model.FreeStyleProject' `
         -Verbose
-    Returns the list of folders in the 'Misc' folder on https://jenkins.contoso.com using the credentials
-    provided by the user.
+    Returns the list of freestyle Jenknins jobs in the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
 .OUTPUTS
     An array of Jenkins Job objects.
 #>
