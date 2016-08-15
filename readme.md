@@ -49,7 +49,11 @@ It is strongly recommended that you use the API Token for the account as the pas
 
 # Versions
 
-### 1.0.0.36.38
+### Unreleased
+* Appveyor build improvements
+* Additional unit tests added
+
+### 1.0.0.36
 * Initial Release containing:
   - Invoke-JenkinsCommand
   - Get-JenkinsObject
