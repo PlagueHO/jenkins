@@ -137,7 +137,7 @@ deploy_script:
                 Write-Host "Pushing deployment changes to Master"
                 & git @('add','.')
                 & git @('commit','-m',"$NewVersion Deploy!")
-                & git @('tag','-a',$NewVersion)
+                & git @('tag','-a',$newVersion,'-m',$newVersion)
                 & git @('status')
                 & git @('push','origin','master')
 
