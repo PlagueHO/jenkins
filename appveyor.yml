@@ -84,11 +84,6 @@ deploy_script:
         $VersionFolder = Join-Path -Path $ModuleFolder -ChildPath $ENV:APPVEYOR_BUILD_VERSION
         $null = New-Item -Path $VersionFolder -Type directory
 
-        # Copy the module to the PSModulePath
-        $PSModulePath = ($ENV:PSModulePath -split ';')[0]
-        Write-Host "Copying Module to $PSModulePath"
-        Copy-Item -Path $ModuleFolder -Destination $PSModulePath -Recurse
-
         # Populate Version Folder
         $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'Jenkins.psd1') -Destination $VersionFolder
         $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'Jenkins.psm1') -Destination $VersionFolder
@@ -96,10 +91,17 @@ deploy_script:
         $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'README.md') -Destination $VersionFolder
         $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'en-us') -Destination $VersionFolder -Recurse
 
+        # Copy the module to the PSModulePath
+        $PSModulePath = ($ENV:PSModulePath -split ';')[0]
+        Write-Host "Copying Module to $PSModulePath"
+        Copy-Item -Path $ModuleFolder -Destination $PSModulePath -Recurse
+
         # Create zip artifact
         $zipFilePath = Join-Path -Path $buildFolder -ChildPath "${env:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
         $null = Add-Type -assemblyname System.IO.Compression.FileSystem
         [System.IO.Compression.ZipFile]::CreateFromDirectory($StagingFolder, $zipFilePath)
+
+        # Remove the Staging folder
         $null = Remove-Item -Path $StagingFolder -Recurse -Force
 
         # Create Publish Script Artifact
