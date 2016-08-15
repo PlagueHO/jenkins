@@ -49,7 +49,7 @@ It is strongly recommended that you use the API Token for the account as the pas
 
 # Versions
 
-### Unreleased
+### 1.0.0.46
 * Appveyor build improvements
 * Additional unit tests added
 
