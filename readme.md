@@ -26,6 +26,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Test-JenkinsJob: Determines if a Jenkins Job exists.
  - New-JenkinsJob: Create a new Jenkins Job.
  - Remove-JenkinsJob: Remove an existing Jenkins Job.
+ - Invoke-JenkinsJob: Run a Jenkins Job.
  - Get-JenkinsViewList: Get a list of views in a Jenkins master server.
  - Test-JenkinsView: Determines if a Jenkins View exists.
  - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.

@@ -67,6 +67,7 @@ FunctionsToExport = @(
     'Test-JenkinsJob'
     'New-JenkinsJob'
     'Remove-JenkinsJob'
+    'Invoke-JenkinsJob'
     'Get-JenkinsViewList'
     'Test-JenkinsView'
     'Get-JenkinsFolderList'
