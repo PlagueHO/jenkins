@@ -95,6 +95,7 @@ deploy_script:
         $zipFilePath = Join-Path -Path $buildFolder -ChildPath "${env:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
         $null = Add-Type -assemblyname System.IO.Compression.FileSystem
         [System.IO.Compression.ZipFile]::CreateFromDirectory($StagingFolder, $zipFilePath)
+        $null = Remove-Item -Path $StagingFolder -Recurse -Force
 
         # Create Publish Script Artifact
         $PublishScriptName = $env:APPVEYOR_PROJECT_NAME + "." + $env:APPVEYOR_BUILD_VERSION + "_publish.ps1"
@@ -111,17 +112,15 @@ deploy_script:
             Remove-Item -Path $_ -Force
         }
 
-        # Remove Staging Folder
-        $null = Remove-Item -Path $StagingFolder -Recurse -Force
-
         # Deployment management
         if ($ENV:APPVEYOR_REPO_BRANCH -eq 'master') {
             if ($ENV:APPVEYOR_PULL_REQUEST_NUMBER) {
                 # This is a PR so do nothing
-            } elseif ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -like "* Deploy!") {
+            } elseif ($ENV:APPVEYOR_REPO_COMMIT_MESSAGE -like '* Deploy!') {
                 # This was a deploy commit so no need to do anything
             } else {
                 # This is not a PR so deploy
+                Write-Host "Beginning deploy process"
 
                 # Pull the master branch, update the readme.md and manifest
                 Set-Location -Path $ENV:APPVEYOR_BUILD_FOLDER
