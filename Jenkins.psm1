@@ -206,7 +206,7 @@ function Invoke-JenkinsCommand()
         [parameter(
             Position=3,
             Mandatory=$false)]
-        [ValidateSet('rest','command')]
+        [ValidateSet('rest','command','restcommand')]
         [String] $Type = 'rest',
 
         [parameter(
@@ -241,7 +241,7 @@ function Invoke-JenkinsCommand()
             Position=9,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Body
+        $Body
     )
 
     if ($PSBoundParameters.ContainsKey('Credential')) {
@@ -269,6 +269,27 @@ function Invoke-JenkinsCommand()
             if ($PSBoundParameters.ContainsKey('Command')) {
                 $FullUri = $FullUri + '/' + $Command
             } # if
+
+            $null = $PSBoundParameters.remove('Command')
+            $null = $PSBoundParameters.remove('Api')
+
+            try {
+                Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
+                    $FullUri)
+
+                $Result = Invoke-RestMethod `
+                    -Uri $FullUri `
+                    -Headers $Headers `
+                    @PSBoundParameters `
+                    -ErrorAction Stop
+            }
+            catch {
+                # Todo: Improve error handling.
+                Throw $_
+            } # catch
+        } # 'rest'
+        'restcommand' {
+            $FullUri = "$Uri/$Command"
 
             $null = $PSBoundParameters.remove('Command')
             $null = $PSBoundParameters.remove('Api')
@@ -491,6 +512,14 @@ function Get-JenkinsObject()
         -Verbose
     Returns the list of freestyle Jenknins jobs in the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
+.EXAMPLE
+    $Folders = Get-JenkinsJobList `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc\Builds' `
+        -Verbose
+    Returns the list of jobs in the 'Builds' folder within the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
 .OUTPUTS
     An array of Jenkins Job objects.
 #>
@@ -576,6 +605,15 @@ function Get-JenkinsJobList()
         -Verbose
     Returns the XML config of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
+.EXAMPLE
+    Get-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc/Build' `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job in the 'Build' folder in the 'Misc' folder on
+    https://jenkins.contoso.com using the credentials provided by the user.
 .OUTPUTS
     A string containing the Jenkins Job config XML.
 #>
@@ -946,7 +984,6 @@ function Remove-JenkinsJob()
 {
     [CmdLetBinding(SupportsShouldProcess=$true,
         ConfirmImpact="High")]
-    [OutputType([String])]
     Param
     (
         [parameter(
@@ -998,6 +1035,119 @@ function Remove-JenkinsJob()
         $null = Invoke-JenkinsCommand @PSBoundParameters
     } # if
 } # Remove-JenkinsJob
+
+
+<#
+.SYNOPSIS
+    Invoke an existing Jenkins Job.
+.DESCRIPTION
+    Runs an existing Jenkins Job.
+    If a folder is specified it will run the job in the specified folder.
+    If the job does not exist an error will occur.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to set the Job definition on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Folder
+    The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
+    If the folder does not exist then an error will occur.
+.PARAMETER Name
+    The name of the job to set the definition on.
+.PARAMETER Parameters
+    This is a hash table containg the job parameters for a parameterized job. The parameter names
+    are case sensitive. If the job is a parameterized then this parameter must be passed even if it
+    is empty.
+.EXAMPLE
+    Invoke-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Verbose
+    Invoke the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by
+    the user.
+.EXAMPLE
+    Invoke-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc' `
+        -Name 'My App Build' `
+        -Verbose
+    Invoke the 'My App Build' job from the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
+.EXAMPLE
+    Invoke-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Parameters @{ verbosity = 'full'; buildtitle = 'test build' } `
+        -Verbose
+    Invoke the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by the
+    user and passing the build parameters verbosity and buildtitle.
+.OUTPUTS
+    None.
+#>
+function Invoke-JenkinsJob()
+{
+    [CmdLetBinding()]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name,
+
+        [parameter(
+            Position=5,
+            Mandatory=$false)]
+        [Hashtable] $Parameters
+    )
+    $null = $PSBoundParameters.Add('Type','RestCommand')
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = $Folder -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job"
+        } # foreach
+        $Command += "/$Name/build"
+    } else {
+        $Command = "job/$Name/build"
+    } # if
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Folder')
+    $null = $PSBoundParameters.Remove('Confirm')
+    $null = $PSBoundParameters.Remove('Parameters')
+    $null = $PSBoundParameters.Add('Command',$Command)
+    $null = $PSBoundParameters.Add('Method','post')
+    if ($Parameters) {
+        $postValues = @()
+        foreach ($key in $Parameters.Keys) {
+            $postValues += @( @{ name = $key; value = $Parameters[$key] } )
+        } # foreach
+        $postObject = @{ parameter = $postValues }
+        $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
+        $null = $PSBoundParameters.Add('Body',$body)
+    }
+    $Result = Invoke-JenkinsCommand @PSBoundParameters
+} # Invoke-JenkinsJob
 
 
 <#
