@@ -241,7 +241,7 @@ function Invoke-JenkinsCommand()
             Position=9,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Body
+        $Body
     )
 
     if ($PSBoundParameters.ContainsKey('Credential')) {
@@ -512,6 +512,14 @@ function Get-JenkinsObject()
         -Verbose
     Returns the list of freestyle Jenknins jobs in the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
+.EXAMPLE
+    $Folders = Get-JenkinsJobList `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc\Builds' `
+        -Verbose
+    Returns the list of jobs in the 'Builds' folder within the 'Misc' folder on https://jenkins.contoso.com using the
+    credentials provided by the user.
 .OUTPUTS
     An array of Jenkins Job objects.
 #>
@@ -597,6 +605,15 @@ function Get-JenkinsJobList()
         -Verbose
     Returns the XML config of the 'My App Build' job in the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
+.EXAMPLE
+    Get-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Folder 'Misc/Build' `
+        -Name 'My App Build' `
+        -Verbose
+    Returns the XML config of the 'My App Build' job in the 'Build' folder in the 'Misc' folder on
+    https://jenkins.contoso.com using the credentials provided by the user.
 .OUTPUTS
     A string containing the Jenkins Job config XML.
 #>
@@ -1037,7 +1054,9 @@ function Remove-JenkinsJob()
 .PARAMETER Name
     The name of the job to set the definition on.
 .PARAMETER Parameters
-    The build parameters for a parameterized build.
+    This is a hash table containg the job parameters for a parameterized job. The parameter names
+    are case sensitive. If the job is a parameterized then this parameter must be passed even if it
+    is empty.
 .EXAMPLE
     Invoke-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
@@ -1055,6 +1074,15 @@ function Remove-JenkinsJob()
         -Verbose
     Invoke the 'My App Build' job from the 'Misc' folder on https://jenkins.contoso.com using the
     credentials provided by the user.
+.EXAMPLE
+    Invoke-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -Parameters @{ verbosity = 'full'; buildtitle = 'test build' } `
+        -Verbose
+    Invoke the 'My App Build' job on https://jenkins.contoso.com using the credentials provided by the
+    user and passing the build parameters verbosity and buildtitle.
 .OUTPUTS
     None.
 #>
@@ -1090,10 +1118,9 @@ function Invoke-JenkinsJob()
         [parameter(
             Position=5,
             Mandatory=$false)]
-        [ValidateNotNullOrEmpty()]
         [Hashtable] $Parameters
     )
-    $null = $PSBoundParameters.Add('Type','Command')
+    $null = $PSBoundParameters.Add('Type','RestCommand')
     if ($PSBoundParameters.ContainsKey('Folder')) {
         $Folders = $Folder -split '/'
         $Command = 'job/'
@@ -1111,12 +1138,15 @@ function Invoke-JenkinsJob()
     $null = $PSBoundParameters.Add('Command',$Command)
     $null = $PSBoundParameters.Add('Method','post')
     if ($Parameters) {
-        $postObject = @{ parameter = $Parameters }
-        $postString = @{ json = (ConvertTo-JSON -InputObject $postObject) }
-        $null = $PSBoundParameters.Add('Body',$postString)
-        $null = $PSBoundParameters.Add('ContentType','application/json')
+        $postValues = @()
+        foreach ($key in $Parameters.Keys) {
+            $postValues += @( @{ name = $key; value = $Parameters[$key] } )
+        } # foreach
+        $postObject = @{ parameter = $postValues }
+        $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
+        $null = $PSBoundParameters.Add('Body',$body)
     }
-    Invoke-JenkinsCommand @PSBoundParameters
+    $Result = Invoke-JenkinsCommand @PSBoundParameters
 } # Invoke-JenkinsJob
 
 

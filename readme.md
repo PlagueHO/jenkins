@@ -26,7 +26,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Test-JenkinsJob: Determines if a Jenkins Job exists.
  - New-JenkinsJob: Create a new Jenkins Job.
  - Remove-JenkinsJob: Remove an existing Jenkins Job.
- - Invoke-JenkinsJob: Run a Jenkins Job.
+ - Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins Job.
  - Get-JenkinsViewList: Get a list of views in a Jenkins master server.
  - Test-JenkinsView: Determines if a Jenkins View exists.
  - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
@@ -130,9 +130,31 @@ Remove-JenkinsJob `
     -Name 'My App Build'
 ```
 
+## Invoke a job called 'My App Build' on a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+Invoke-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build'
+```
+
+## Invoke a parameterized job called 'My App Build' on a Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+Invoke-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build' `
+    -Parameters @{ verbosity = 'full'; buildtitle = 'test build' }
+```
+
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+* Added Invoke-JenkinsJob cmdlet
 
 ### 1.0.0.70
 * Added Examples to Readme.md
