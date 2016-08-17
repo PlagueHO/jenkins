@@ -152,6 +152,10 @@ Invoke-JenkinsJob `
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+* Update AppVeyor deployment process to tag releases
+
 ### 1.0.0.88
 * Added New-JenkinsFolder cmdlet
 
