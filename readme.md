@@ -152,6 +152,8 @@ Invoke-JenkinsJob `
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+### Unreleased
+* Added New-JenkinsFolder cmdlet
 
 ### 1.0.0.82
 * Added Invoke-JenkinsJob cmdlet
