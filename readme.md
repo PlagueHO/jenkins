@@ -153,7 +153,7 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
-### Unreleased
+### 1.0.0.94
 * Update AppVeyor deployment process to tag releases
 
 ### 1.0.0.88
@@ -188,6 +188,7 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
 
 
 
