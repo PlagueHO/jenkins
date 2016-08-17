@@ -71,6 +71,7 @@ FunctionsToExport = @(
     'Get-JenkinsViewList'
     'Test-JenkinsView'
     'Get-JenkinsFolderList'
+    'New-JenkinsFolder'
     'Test-JenkinsFolder'
 )
 
