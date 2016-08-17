@@ -144,9 +144,13 @@ deploy_script:
                 Write-Host "Pushing deployment changes to Master"
                 & git @('add','.')
                 & git @('commit','-m',"$NewVersion Deploy!")
-                & git @('tag','-a',$newVersion,'-m',$newVersion)
                 & git @('status')
                 & git @('push','origin','master')
+
+                # Create the version tag and push it
+                Write-Host "Pushing $newVersion tag to Master"
+                & git @('tag','-a',$newVersion,'-m',$newVersion)
+                & git @('push','origin',$newVersion)
 
                 # Merge the changes to the Dev branch as well
                 Write-Host "Pushing deployment changes to Dev"
