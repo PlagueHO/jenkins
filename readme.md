@@ -153,7 +153,7 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
-### Unreleased
+### 1.0.0.101
 * Fix bug when pulling Jenkins items from more than 1 folder deep
 * Added support for folder to be specified with / or \
 
@@ -192,6 +192,7 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
 
 
 
