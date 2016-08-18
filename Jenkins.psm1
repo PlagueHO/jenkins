@@ -649,12 +649,12 @@ function Get-JenkinsJob()
     )
     $null = $PSBoundParameters.Add('Type','Command')
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         $Command = 'job/'
         foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
+            $Command += "$Folder/job/"
         } # foreach
-        $Command += "/$Name/config.xml"
+        $Command += "$Name/config.xml"
     } else {
         $Command = "job/$Name/config.xml"
     } # if
@@ -745,12 +745,12 @@ function Set-JenkinsJob()
     )
     $null = $PSBoundParameters.Add('Type','Command')
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         $Command = 'job/'
         foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
+            $Command += "$Folder/job/"
         } # foreach
-        $Command += "/$Name/config.xml"
+        $Command += "$Name/config.xml"
     } else {
         $Command = "job/$Name/config.xml"
     } # if
@@ -922,9 +922,9 @@ function New-JenkinsJob()
     $null = $PSBoundParameters.Add('Type','Command')
     $Command = ''
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         foreach ($Folder in $Folders) {
-            $Command += "job/$Folder"
+            $Command += "job/$Folder/"
         } # foreach
     } # if
     $Command += "createItem?name=$Name"
@@ -1014,12 +1014,12 @@ function Remove-JenkinsJob()
     )
     $null = $PSBoundParameters.Add('Type','Command')
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         $Command = 'job/'
         foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
+            $Command += "$Folder/job/"
         } # foreach
-        $Command += "/$Name/doDelete"
+        $Command += "$Name/doDelete"
     } else {
         $Command = "job/$Name/doDelete"
     } # if
@@ -1122,12 +1122,12 @@ function Invoke-JenkinsJob()
     )
     $null = $PSBoundParameters.Add('Type','RestCommand')
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         $Command = 'job/'
         foreach ($Folder in $Folders) {
-            $Command += "$Folder/job"
+            $Command += "$Folder/job/"
         } # foreach
-        $Command += "/$Name/build"
+        $Command += "$Name/build"
     } else {
         $Command = "job/$Name/build"
     } # if
@@ -1439,9 +1439,9 @@ function New-JenkinsFolder()
     $null = $PSBoundParameters.Remove('XML')
     $Command = ''
     if ($PSBoundParameters.ContainsKey('Folder')) {
-        $Folders = $Folder -split '/'
+        $Folders = ($Folder -split '\\') -split '/'
         foreach ($Folder in $Folders) {
-            $Command += "job/$Folder"
+            $Command += "job/$Folder/"
         } # foreach
     } # if
     $Command += "createItem?name=$Name"
