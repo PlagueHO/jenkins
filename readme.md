@@ -153,6 +153,10 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
+### Unreleased
+* Fix bug when pulling Jenkins items from more than 1 folder deep
+* Added support for folder to be specified with / or \
+
 ### 1.0.0.94
 * Update AppVeyor deployment process to tag releases
 
