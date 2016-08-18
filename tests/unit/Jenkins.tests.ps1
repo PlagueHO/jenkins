@@ -86,6 +86,7 @@ try
     $Bytes = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
     $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
     $testAuthHeader = "Basic $Base64Bytes"
+    $testJobName    = 'TestJob'
 
     InModuleScope 'Jenkins' {
         Describe 'Get-JenkinsTreeRequest' {
@@ -368,6 +369,128 @@ try
             }
         } # Context
     } # Describe 'Get-JenkinsObject'
+
+    Describe 'Get-JenkinsJob' {
+        $GetJenkinsJobSplat = @{
+            Uri        = $testURI
+            Credential = $testCredential
+            Name       = $testJobName
+        }
+
+        Context 'Name is set, no folder is passed' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq "job/$testJobName/config.xml"
+                } `
+                -MockWith { @{ Content = 'JobXML'} }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Result = Get-JenkinsJob @Splat
+            It "should return expected XML" {
+                $Result | Should Be 'JobXML'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq "job/$testJobName/config.xml"
+                    } `
+                    -Exactly 1
+            }
+        }
+
+        Context 'Name is set, single folder is passed' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq "job/test/job/$testJobName/config.xml"
+                } `
+                -MockWith { @{ Content = 'JobXML'} }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test'
+            $Result = Get-JenkinsJob @Splat
+            It "should return expected XML" {
+                $Result | Should Be 'JobXML'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq "job/test/job/$testJobName/config.xml"
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+
+        Context 'Name is set, two folders are passed separated by \' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
+                } `
+                -MockWith { @{ Content = 'JobXML'} }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test1\test2'
+            $Result = Get-JenkinsJob @Splat
+            It "should return expected XML" {
+                $Result | Should Be 'JobXML'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+
+        Context 'Name is set, two folders are passed separated by /' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
+                } `
+                -MockWith { @{ Content = 'JobXML'} }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test1/test2'
+            $Result = Get-JenkinsJob @Splat
+            It "should return expected XML" {
+                $Result | Should Be 'JobXML'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+
+        Context 'Name is set, two folders are passed separated by \ and /' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/config.xml"
+                } `
+                -MockWith { @{ Content = 'JobXML'} }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test1\test2/test3'
+            $Result = Get-JenkinsJob @Splat
+            It "should return expected XML" {
+                $Result | Should Be 'JobXML'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/config.xml"
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+    } # Describe 'Get-JenkinsJob'
 }
 catch
 {
