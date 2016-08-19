@@ -1532,3 +1532,225 @@ function Test-JenkinsFolder()
     $null = $PSBoundParameters.Remove( 'Name' )
     return ((@(Get-JenkinsObject @PSBoundParameters | Where-Object -Property Name -eq $Name)).Count -gt 0)
 } # Test-JenkinsFolder
+
+
+<#
+.SYNOPSIS
+    This function creates or updates a local plugin cache.
+.DESCRIPTION
+    The purpose of this function is to make a local copy of the standard
+    Jenkins plugins found on Update-Center.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Update Center JSON file.
+
+    This defaults to http://updates.jenkins-ci.org/update-center.json and
+    should usually not need to be changed.
+.PARAMETER Path
+    The path to the folder that contains or will contain the plugin cache.
+.PARAMETER Include
+    The optional list of plugins to include in the cache. Wildcards supported.
+.PARAMETER Include
+    The optional list of plugins to exclude from the cache. Wildcards supported.
+.EXAMPLE
+.OUTPUTS
+    A list of plugin files that are in the Plugin cache.
+#>
+function Update-JenkinsPluginCache()
+{
+    [CmdLetBinding()]
+    [OutputType([Boolean])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$false)]
+        [String] $Uri = 'http://updates.jenkins-ci.org/update-center.json',
+
+        [parameter(
+            Position=2,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [String] $Path,
+
+        [parameter(
+            Position=3,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $CacheUri,
+
+        [parameter(
+            Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String[]] $Include,
+
+        [parameter(
+            Position=5,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String[]] $Exclude
+    )
+
+    if ($CacheUri.EndsWith('/')) {
+        $CacheUri = $CacheUri.Substring(0,$CacheUri.Length - 1)
+    } # if
+
+    # Download the Remote Update Center JSON
+    Write-Verbose -Message $($LocalizedData.DownloadingRemotePluginListMessage -f
+        $Uri)
+
+    $RemotePluginJSON = Invoke-WebRequest `
+        -Uri $Uri `
+        -UseBasicParsing
+    $Result = $RemotePluginJSON.Content -match 'updateCenter.post\(\n\r?(.*)\n\r?\);'
+
+    if (-not $Result) {
+        $ExceptionParameters = @{
+            errorId = 'PluginListBadFormatError'
+            errorCategory = 'InvalidArgument'
+            errorMessage = $($LocalizedData.PluginListBadFormatError -f `
+                'remote',$Uri)
+        }
+        New-Exception @ExceptionParameters
+    }
+    $RemoteJSON = ConvertFrom-Json -InputObject $Matches[1]
+
+    # Generate an array of the Remote plugins and versions
+    Write-Verbose -Message $($LocalizedData.ProcessingRemotePluginListMessage -f
+        $Uri)
+
+    $RemotePlugins = [System.Collections.ArrayList] @()
+    $RemotePluginList = ($RemoteJSON.Plugins |
+        Get-Member -MemberType NoteProperty).Name
+    foreach ($plugin in $RemotePluginList) {
+        if ($Include) {
+            $AddIt = $false
+            # Includes only the entries that match the $Include array
+            foreach ($item in $Include) {
+                if ($plugin -like $item) { $AddIt = $true }
+            }
+        } elseif ($Exclude) {
+            # Excludes the entries that match the $Exclude array
+            $AddIt = $true
+            foreach ($item in $Exclude) {
+                if ($plugin -notlike $item) { $AddIt = $false }
+            }
+        } # if
+        if ($AddIt) {
+            $null = $RemotePlugins.Add( $RemoteJSON.Plugins.$plugin )
+        }
+    } # foreach
+
+    $LocalPluginJSONPath = Join-Path -Path $Path -ChildPath 'update-center.json'
+    if (Test-Path -Path $LocalPluginJSONPath) {
+        $LocalPluginJSON = Get-Content -Path $LocalPluginJSONPath -Raw
+        $Result = $LocalPluginJSON.Content -match 'updateCenter.post\(\n\r?(.*)\n\r?\);'
+
+        if (-not $Result) {
+            $ExceptionParameters = @{
+                errorId = 'PluginListBadFormatError'
+                errorCategory = 'InvalidArgument'
+                errorMessage = $($LocalizedData.PluginListBadFormatError -f `
+                    'local',$LocalPluginJSONPath)
+            }
+            New-Exception @ExceptionParameters
+        }
+        $LocalJSON = ConvertFrom-Json -InputObject $Matches[1]
+
+        # Generate an array of the Remote plugins and versions
+        Write-Verbose -Message $($LocalizedData.ProcessingLocalPluginListMessage -f
+            $LocalPluginJSONPath)
+
+        $LocalPlugins = [System.Collections.ArrayList] @()
+        $LocalPluginList = ($LocalJSON.Plugins |
+            Get-Member -MemberType NoteProperty).Name
+
+        foreach ($plugin in $LocalPluginList) {
+            if ($Include) {
+                $AddIt = $false
+                # Includes only the entries that match the $Include array
+                foreach ($item in $Include) {
+                    if ($plugin -like $item) { $AddIt = $true }
+                }
+            } elseif ($Exclude) {
+                # Excludes the entries that match the $Exclude array
+                $AddIt = $true
+                foreach ($item in $Exclude) {
+                    if ($plugin -notlike $item) { $AddIt = $false }
+                }
+            } # if
+            if ($AddIt) {
+                $null = $LocalPlugins.Add( $LocalJSON.Plugins.$plugin )
+            }
+        } # foreach
+    } else {
+        $LocalPlugins = [System.Collections.ArrayList] @()
+    } # if
+
+    # Now perform the comparison between the plugins that exist and the ones
+    # that need to be downloaded and download any missing ones.
+    foreach ($remotePlugin in $RemotePlugins) {
+        $PluginFilename = Split-Path -Path $remotePlugin.url -Leaf
+
+        # Lookup the plugin in the local plugin list
+        $FoundPlugin = $false
+        foreach ($localPlugin in $LocalPlugins) {
+            if (($localPlugin.name -eq $remotePlugin.name) -and `
+                ($localPlugin.version -eq $remotePlugin.version)) {
+                $FoundPlugin = $true
+                break
+            } # if
+        } # foreach
+
+        if (Test-Path -Path $PluginFilename) {
+            # The plugin file already exists so remove it
+            $null = Remove-Item -Path $PluginFilename -Force
+        } # if
+
+        if (-not $FoundPlugin) {
+            # Download the plugin
+            $PluginFilePath = Join-Path -Path $Path -ChildPath $PluginFilename
+
+            Write-Verbose -Message $($LocalizedData.DownloadingPluginMessage -f
+                $remotePlugin.Name,$remotePlugin.url,$PluginFilename)
+
+            Invoke-WebRequest `
+                -Uri $remotePlugin.url `
+                -UseBasicParsing `
+                -OutFile $PluginFilePath
+        } # if
+
+        # Add the plugin to the local plugins list
+        $remotePlugin.Uri = "$CacheUri/$($remotePlugin.PluginFilename)"
+        $null = $LocalPlugins.Add( $remotePlugin )
+
+        # Report that the file was downloaded
+        Get-ChildItem -Path $PluginFilePath
+    } # foreach
+
+    # Generate new Local Plugin JSON object
+    $NewPlugins = New-Object PSCustomObject
+    foreach ($plugin in $LocalPlugins) {
+        Add-Member -Type NoteProperty -Name $plugin.name -Value $plugin
+    } # foreach
+    $RemoteJSON.plugins = $NewPlugins
+
+    # Convert the JSON object into JSON
+    $NewJSON = ConvertTo-JSON -InputObject $RemoteJSON
+
+    # Create the new Local Plugin JSON file content
+    $LocalPluginJSON = @"
+updateCenter.post(
+    $NewJSON
+);
+"@
+
+    # Write out the new Local Plugin JSON file
+    if (Test-Path -Path $LocalPluginJSONPath) {
+        $null = Remove-Item -Path $LocalPluginJSONPath -Force
+    } # if
+    Set-Content -Path $LocalPluginJSONPath -Value $LocalPluginJSON
+
+    Return $LocalPluginJSON
+} # Update-JenkinsPluginCache

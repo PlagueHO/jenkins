@@ -153,6 +153,9 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
+### Unreleased
+* Added Update-JenkinsPluginCache cmdlet to create a local Plugin Cache
+
 ### 1.0.0.101
 * Fix bug when pulling Jenkins items from more than 1 folder deep
 * Added support for folder to be specified with / or \
