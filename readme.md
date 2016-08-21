@@ -6,7 +6,7 @@ PowerShell module for interacting with a CloudBees Jenkins server using the [Jen
 # Installation
 > If Windows Management Framework 5.0 or above is installed or the PowerShell Package management module is available:
 
-The easiest way to download and install the LabBuilder module is using PowerShell Get to download it from the PowerShell Gallery:
+The easiest way to download and install the Jenkins module is using PowerShell Get to download it from the PowerShell Gallery:
 ```powershell
 Install-Module -Name Jenkins
 ```
@@ -162,6 +162,9 @@ $Plugins = Get-JenkinsPluginsList `
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+Fixed readme
 
 ### 1.0.0.115
 * Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
