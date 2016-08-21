@@ -10,7 +10,7 @@ ModuleVersion = '1.0.0.101'
 GUID = 'd4de78f0-e143-4e58-8fb2-a543eacc1682'
 
 # Author of this module
-Author = 'Daniel Scott-Raynsford'
+Author = 'Daniel Scott-Raynsford, Liam Binns-Conroy'
 
 # Company or vendor of this module
 CompanyName = 'IAG NZ Ltd.'
@@ -60,6 +60,7 @@ PowerShellVersion = '4.0'
 # Functions to export from this module
 FunctionsToExport = @(
     'Invoke-JenkinsCommand'
+    'Get-JenkinsPluginsList'
     'Get-JenkinsObject'
     'Get-JenkinsJobList'
     'Get-JenkinsJob'
