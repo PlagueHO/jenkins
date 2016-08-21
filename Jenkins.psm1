@@ -1536,7 +1536,7 @@ function Test-JenkinsFolder()
 
 <#
 .SYNOPSIS
-    This function creates or updates a local Jenkins cache.
+    This function creates or updates a local Jenkins Update cache.
 .DESCRIPTION
     The purpose of this function is to make a local copy of the standard
     Jenkins plugins found on Update-Center. It can also cache the Jenkins WAR file.
@@ -1558,8 +1558,12 @@ function Test-JenkinsFolder()
     The path to the folder that the Jenkins Update Cache will be stored in.
 .PARAMETER Include
     The optional list of plugins to include in the cache. Wildcards supported.
+    If neither Include or Exclude are specified then no plugins will be cached.
+    This allows just caching of the Jenkins core file.
 .PARAMETER Include
     The optional list of plugins to exclude from the cache. Wildcards supported.
+    If neither Include or Exclude are specified then no plugins will be cached.
+    This allows just caching of the Jenkins core file.
 .PARAMETER UpdateCore
     Setting this switch will cause the Jenkins WAR core to be cached.
     If this switch is not specified and this is a new cache then the core will
@@ -1568,6 +1572,7 @@ function Test-JenkinsFolder()
     Initialize-JenkinsUpdateCache `
         -Path d:\JenkinsCache `
         -CacheUri 'http:\\jenkinscache.contoso.com\cache'
+        -Include '*' `
         -UpdateCore
     Add or update all plugins and the Jenkins Core in the Jenkins Cache folder in
     d:\JenkinsCache.
