@@ -163,7 +163,7 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
-### Unreleased
+### 1.0.0.115
 * Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
 
 ### 1.0.0.108
@@ -208,6 +208,7 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
 
 
 
