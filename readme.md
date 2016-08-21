@@ -32,6 +32,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
  - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
  - Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
+ - Get-JenkinsPluginsList: Retreives a list of installed plugins
 
 # Future features
  - Add support for servers with Cross Site Request Forgery security optional enabled.
@@ -150,9 +151,20 @@ Invoke-JenkinsJob `
     -Parameters @{ verbosity = 'full'; buildtitle = 'test build' }
 ```
 
+## Get a list of installed plugins installed on a Jenkins Server
+```powershell
+$Plugins = Get-JenkinsPluginsList `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Verbose
+```
+
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+* Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
 
 ### 1.0.0.108
 * Added Initialize-JenkinsUpdateCache cmdlet to create or update a local Jenkins Update Cache
