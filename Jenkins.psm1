@@ -206,7 +206,7 @@ function Invoke-JenkinsCommand()
         [parameter(
             Position=3,
             Mandatory=$false)]
-        [ValidateSet('rest','command','restcommand')]
+        [ValidateSet('rest','command','restcommand','pluginmanager')]
         [String] $Type = 'rest',
 
         [parameter(
@@ -333,9 +333,98 @@ function Invoke-JenkinsCommand()
                 Throw $_
             } # catch
         } # 'rest'
+        'pluginmanager' {
+            $FullUri = $Uri
+            if ($PSBoundParameters.ContainsKey('Command')) {
+                $FullUri = "$FullUri/pluginManager/api/$api/?$Command"
+            } # if (condition) {
+
+            $null = $PSBoundParameters.remove('Command')
+            $null = $PSBoundParameters.remove('Api')
+
+            try {
+                Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
+                    $FullUri)
+
+                $Result = Invoke-WebRequest `
+                    -Uri $FullUri `
+                    -Headers $Headers `
+                    @PSBoundParameters `
+                    -ErrorAction Stop
+            }
+            catch {
+                # Todo: Improve error handling.
+                Throw $_
+            } # catch
+        }
     } # swtich
     Return $Result
 } # Invoke-JenkinsCommand
+
+<#
+.SYNOPSIS
+    Get a list of installed plugins in a Jenkins master server.
+.DESCRIPTION
+    Returns the list of installed plugins from a jenkins server, the list containing the name and version of each plugin.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to execute the command on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Api
+    The API to use. Can be XML, JSON or Python. Defaults to JSON.
+.PARAMETER Depth
+    The depth of the tree to return (must be at least 1). Defaults to 1.
+.EXAMPLE
+    $Plugins = Get-JenkinsPluginsList `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Verbose
+    Returns the list of installed plugins on https://jenkins.contoso.com using the credentials provided by the user.
+
+.OUTPUTS
+    An array of Jenkins objects.
+#>
+function Get-JenkinsPluginsList()
+{
+    [CmdLetBinding()]
+    [OutputType([Object[]])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [String] $Api = 'json',
+
+        [parameter(
+            Position=4,
+            Mandatory=$false)]
+        [String] $Depth = '1'
+    )
+    $Splat = @{
+        Uri        = $Uri
+        Credential = $Credential
+        Type       = 'pluginmanager'
+        Api        = $Api
+        Command    = "depth=$Depth"
+    }
+    $Result = Invoke-JenkinsCommand @Splat
+    $Objects = ConvertFrom-Json -InputObject $Result.Content
+
+    # Returns the list of plugins, selecting just the name and version.
+    Return ($Objects.plugins | Select-Object shortName,version)
+} # Get-JenkinsPluginsList
 
 
 <#
