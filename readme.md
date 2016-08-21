@@ -31,6 +31,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Test-JenkinsView: Determines if a Jenkins View exists.
  - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
  - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
+ - Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
 
 # Future features
  - Add support for servers with Cross Site Request Forgery security optional enabled.
@@ -152,6 +153,9 @@ Invoke-JenkinsJob `
 For further examples, please see module help for individual cmdlets.
 
 # Versions
+
+### Unreleased
+* Added Initialize-JenkinsUpdateCache cmdlet to create or update a local Jenkins Update Cache
 
 ### 1.0.0.101
 * Fix bug when pulling Jenkins items from more than 1 folder deep

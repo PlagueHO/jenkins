@@ -73,6 +73,7 @@ FunctionsToExport = @(
     'Get-JenkinsFolderList'
     'New-JenkinsFolder'
     'Test-JenkinsFolder'
+    'Initialize-JenkinsUpdateCache'
 )
 
 # Cmdlets to export from this module
