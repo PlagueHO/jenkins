@@ -329,6 +329,65 @@ try
                     -Exactly 1
             }
         } # Context
+
+        Context 'pluginmanager type, default api, credentials passed' {
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
+
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader
+                } `
+                -MockWith { 'Invoke-WebRequest Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.Type = 'pluginmanager'
+
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-WebRequest Result'" {
+                $Result | Should Be 'Invoke-WebRequest Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+
+        Context 'pluginmanager type, xml api, credentials passed' {
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
+
+            Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
+                    $Headers.Count -eq 1 -and `
+                    $Headers['Authorization'] -eq $testAuthHeader
+                } `
+                -MockWith { 'Invoke-WebRequest Result' }
+            $Splat = $InvokeJenkinsCommandSplat.Clone()
+            $Splat.Type = 'pluginmanager'
+            $Splat.api = 'xml'
+
+            $Result = Invoke-JenkinsCommand @Splat
+            It "should return 'Invoke-WebRequest Result'" {
+                $Result | Should Be 'Invoke-WebRequest Result'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
+                        $Headers.Count -eq 1 -and `
+                        $Headers['Authorization'] -eq $testAuthHeader
+                    } `
+                    -Exactly 1
+            }
+        } # Context
     } # Describe 'Invoke-JenkinsCommand'
 
     Describe 'Get-JenkinsObject' {
