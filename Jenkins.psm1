@@ -426,6 +426,58 @@ function Get-JenkinsPluginsList()
     Return ($Objects.plugins | Select-Object shortName,version)
 } # Get-JenkinsPluginsList
 
+<#
+.SYNOPSIS
+    Triggers a reload on a jenkins server
+.DESCRIPTION
+    Triggers a reload on a jenkins server, e.g. if the job configs are altered on disk.
+.PARAMETER Uri
+    The uri of the Jenkins server to trigger the reload on.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.EXAMPLE
+   Invoke-JenkinsJobReload `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Verbose
+    Triggers a reload of the jenkins server 'https://jenkins.contoso.com'
+#>
+function Invoke-JenkinsJobReload {
+    [CmdLetBinding()]
+    param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential
+    )
+
+    # Jenkins Credentials were passed so create the Authorization Header
+    $Username = $Credential.Username
+
+    # Decrypt the secure string password
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
+    $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+
+    $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
+    $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
+
+    $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
+
+    # Do NOT change this to HTTP - password would be sent unencryted.
+    # Instead, ensure all Jenkins servers are using HTTPS.
+    $null = Invoke-WebRequest `
+        -Uri "$Uri/reload" `
+        -Headers $Headers `
+        -Method Post
+}
 
 <#
 .SYNOPSIS

@@ -33,6 +33,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
  - Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
  - Get-JenkinsPluginsList: Retreives a list of installed plugins
+ - Invoke-JenkinsJobReload: Reloads a job config on a given url
 
 # Future features
  - Add support for servers with Cross Site Request Forgery security optional enabled.
@@ -159,12 +160,22 @@ $Plugins = Get-JenkinsPluginsList `
         -Verbose
 ```
 
+## Reload a job
+```powershell
+Invoke-JenkinsJobReload `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Verbose
+    Triggers a reload of the jenkins server 'https://jenkins.contoso.com'
+```
+
 For further examples, please see module help for individual cmdlets.
 
 # Versions
 
 ### Unreleased
-Fixed readme
+* Fixed readme
+* Added the Invoke-JenkinsJobReload cmdlet
 
 ### 1.0.0.115
 * Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
