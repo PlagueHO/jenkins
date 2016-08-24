@@ -75,6 +75,7 @@ FunctionsToExport = @(
     'New-JenkinsFolder'
     'Test-JenkinsFolder'
     'Initialize-JenkinsUpdateCache'
+    'Invoke-JenkinsJobReload'
 )
 
 # Cmdlets to export from this module
