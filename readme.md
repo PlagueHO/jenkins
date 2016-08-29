@@ -176,6 +176,10 @@ For further examples, please see module help for individual cmdlets.
 ### Unreleased
 * Updated Invoke-JenkinsJobReload to use the -UseBasicParsing switch
 
+### 1.0.0.124
+* Fixed readme
+* Added the Invoke-JenkinsJobReload cmdlet
+
 ### 1.0.0.115
 * Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
 
@@ -221,6 +225,7 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
 
 
 
