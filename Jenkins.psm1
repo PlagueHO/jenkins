@@ -476,7 +476,8 @@ function Invoke-JenkinsJobReload {
     $null = Invoke-WebRequest `
         -Uri "$Uri/reload" `
         -Headers $Headers `
-        -Method Post
+        -Method Post `
+        -UseBasicParsing
 }
 
 <#

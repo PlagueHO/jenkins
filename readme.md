@@ -173,6 +173,9 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
+### Unreleased
+* Updated Invoke-JenkinsJobReload to use the -UseBasicParsing switch
+
 ### 1.0.0.124
 * Fixed readme
 * Added the Invoke-JenkinsJobReload cmdlet
