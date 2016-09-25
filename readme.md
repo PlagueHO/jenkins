@@ -195,7 +195,7 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
-### Unreleased
+### 1.0.0.140
 * Fix error in New-JenkinsFolder.
 * Added Cross Site Request Forgery Support.
 
@@ -251,3 +251,4 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
