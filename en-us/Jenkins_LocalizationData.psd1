@@ -1,5 +1,8 @@
 # culture="en-US"
 ConvertFrom-StringData -StringData @'
+    GetCrumbMessage = Get a Crumb from '{0}'.
+    CrumbResponseFormatError = The crumb response '{0}' was invalid.
+    UsingCrumbMessage = Using Crumb '{0}'.
     InvokingRestApiCommandMessage = Invoking Rest Api Command '{0}'.
     InvokingCommandMessage = Invoking Command '{0}'.
     InvokeRestApiCommandError = Rest Api Command '{0}' returned '{1}'.
