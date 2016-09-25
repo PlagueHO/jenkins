@@ -18,6 +18,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
 ```
 
 # Cmdlets
+ - Get-JenkinsCrumb: Gets a Jenkins Crumb.
  - Invoke-JenkinsCommand: Execute a Jenkins command or request via the Jenkins Rest API.
  - Get-JenkinsObject: Get a list of objects in a Jenkins master server.
  - Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
@@ -32,17 +33,30 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
  - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
  - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
  - Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
- - Get-JenkinsPluginsList: Retreives a list of installed plugins
- - Invoke-JenkinsJobReload: Reloads a job config on a given url
+ - Get-JenkinsPluginsList: Retreives a list of installed plugins.
+ - Invoke-JenkinsJobReload: Reloads a job config on a given URL.
 
-# Future features
- - Add support for servers with Cross Site Request Forgery security optional enabled.
+# Cross Site Request Forgery (CSRF) Support
+If a Jenkins Server has the CSRF setting enabled, then a "Crumb" will first need to be obtained and passed to each subsequent call to Jenkins in the Crumb parameter.
+If you receive errors regarding crumbs then your Jenkins Server has CSRF enabled and you will to ensure you are passing a valid "Crumb" obtained by calling the ```Get-JenkinsCrumb``` cmdlet.
+
+To work with a Jenkins Master that has CSRF enabled:
+```powershell
+$Crumb = Get-JenkinsCrumb `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential $Credential
+
+New-JenkinsFolder `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential $Credential `
+    -Crumb $Crumb `
+    -Name 'Management' `
+    -Verbose
+```
 
 # Known Issues
- - Prevent Cross Site Request Forgery security option in Jenkins is not yet supported.
-This feature will be added in a future release.
-If you recieve errors regarding crumbs then your Jenkins Server has CSRF enabled and it will need to be disabled in the "Configure Global Security" section in Jenkins.
  - Remove-JenkinsJob: An IE window pops up after deleting the job for some reason requesting authentication.
+ - Initialize-JenkinsUpdateCache: Does not correctly set the signature information in the update-center.json file that is created.
 
 # Recommendations
  - If your Jenkins Server has security enabled then you should ensure that you are only connecting to it via HTTPS.
@@ -50,6 +64,14 @@ If you recieve errors regarding crumbs then your Jenkins Server has CSRF enabled
 It is strongly recommended that you use the API Token for the account as the password rather than the Jenkins account, even if you have implemented HTTPS.
 
 # Examples
+## Get a Crumb from a CSRF enabled Jenkins Server
+```powershell
+Import-Module -Name Jenkins
+$Crumb = Get-JenkinsCrumb `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential $Credential
+```
+
 ## Get a list of jobs from a Jenkins Server
 ```powershell
 Import-Module -Name Jenkins
@@ -173,6 +195,10 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
+### Unreleased
+* Fix error in New-JenkinsFolder.
+* Added Cross Site Request Forgery Support.
+
 ### 1.0.0.133
 * Updated Invoke-JenkinsJobReload to use the -UseBasicParsing switch
 
@@ -225,18 +251,3 @@ For further examples, please see module help for individual cmdlets.
 * [IAG NZ Web Site](http://www.iag.co.nz)
 * [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 * [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

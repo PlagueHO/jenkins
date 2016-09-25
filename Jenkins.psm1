@@ -136,6 +136,95 @@ function Get-JenkinsTreeRequest()
 
 <#
 .SYNOPSIS
+    Gets a Jenkins Crumb.
+.DESCRIPTION
+    This cmdlet is used to obtain a crumb that must be passed to all other commands
+    to a Jenkins Server if CSRF is enabled in Global Settings of the server.
+    The crumb must be added to the header of any commands or requests sent to this
+    master.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server to obtain the crumb from.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.EXAMPLE
+    Get-JenkinsCrumb `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential)
+    Returns a Jenkins Crumb.
+.OUTPUTS
+    The crumb string.
+#>
+function Get-JenkinsCrumb()
+{
+    [CmdLetBinding()]
+    [OutputType([String])]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential
+    )
+
+    if ($PSBoundParameters.ContainsKey('Credential')) {
+        # Jenkins Credentials were passed so create the Authorization Header
+        $Username = $Credential.Username
+
+        # Decrypt the secure string password
+        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
+        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+
+        $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
+        $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
+
+        $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
+    } # if
+
+    $null = $PSBoundParameters.remove('Uri')
+    $null = $PSBoundParameters.remove('Credential')
+    $FullUri = '{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $Uri
+
+    try {
+        Write-Verbose -Message $($LocalizedData.GetCrumbMessage -f
+            $FullUri)
+
+        $Result = Invoke-WebRequest `
+            -Uri $FullUri `
+            -Headers $Headers `
+            -ErrorAction Stop
+    }
+    catch {
+        # Todo: Improve error handling.
+        Throw $_
+    } # catch
+
+    $Regex = '^Jenkins-Crumb:([A-Z0-9]*)'
+    $Matches = @([regex]::matches($Result.Content, $Regex, 'IgnoreCase'))
+    if (-not $Matches.Groups) {
+        $ExceptionParameters = @{
+            errorId = 'CrumbResponseFormatError'
+            errorCategory = 'InvalidArgument'
+            errorMessage = $($LocalizedData.CrumbResponseFormatError -f `
+                $Result.Content)
+        }
+        New-Exception @ExceptionParameters
+    } # if
+    $Crumb = $Matches.Groups[1].Value
+
+    Return $Crumb
+} # Get-JenkinsCrumb
+
+
+<#
+.SYNOPSIS
     Execute a Jenkins command or request via the Jenkins Rest API.
 .DESCRIPTION
     This cmdlet is used to issue a command or request to a Jenkins Master via the Rest API.
@@ -143,6 +232,8 @@ function Get-JenkinsTreeRequest()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Type
     The type of endpoint to invoke the command on. Can be set to: Rest,Command.
 .PARAMETER Api
@@ -158,6 +249,7 @@ function Get-JenkinsTreeRequest()
     Invoke-JenkinsCommand `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
+        -Crumb $Crumb `
         -Api 'json' `
         -Command 'job/MuleTest/build'
     Triggers the MuleTest job on https://jenkins.contoso.com to run using the credentials provided by the user.
@@ -206,39 +298,45 @@ function Invoke-JenkinsCommand()
         [parameter(
             Position=3,
             Mandatory=$false)]
-        [ValidateSet('rest','command','restcommand','pluginmanager')]
-        [String] $Type = 'rest',
+        [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
 
         [parameter(
             Position=4,
             Mandatory=$false)]
-        [String] $Api = 'json',
+        [ValidateSet('rest','command','restcommand','pluginmanager')]
+        [String] $Type = 'rest',
 
         [parameter(
             Position=5,
+            Mandatory=$false)]
+        [String] $Api = 'json',
+
+        [parameter(
+            Position=6,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Command,
 
         [parameter(
-            Position=6,
+            Position=7,
             Mandatory=$false)]
         [ValidateSet('default','delete','get','head','merge','options','patch','post','put','trace')]
         [String] $Method,
 
         [parameter(
-            Position=7,
+            Position=8,
             Mandatory=$false)]
         [System.Collections.Hashtable] $Headers = @{},
 
         [parameter(
-            Position=8,
+            Position=9,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $ContentType,
 
         [parameter(
-            Position=9,
+            Position=10,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         $Body
@@ -258,8 +356,18 @@ function Invoke-JenkinsCommand()
         $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
     } # if
 
+    if ($PSBoundParameters.ContainsKey('Crumb')) {
+        Write-Verbose -Message $($LocalizedData.UsingCrumbMessage -f
+            $Crumb)
+
+        # Support both Jenkins and Cloudbees Jenkins Enterprise
+        $Headers += @{ "Jenkins-Crumb" = $Crumb }
+        $Headers += @{ ".crumb" = $Crumb }
+    } # if
+
     $null = $PSBoundParameters.remove('Uri')
     $null = $PSBoundParameters.remove('Credential')
+    $null = $PSBoundParameters.remove('Crumb')
     $null = $PSBoundParameters.remove('Type')
     $null = $PSBoundParameters.remove('Headers')
 
@@ -361,6 +469,7 @@ function Invoke-JenkinsCommand()
     Return $Result
 } # Invoke-JenkinsCommand
 
+
 <#
 .SYNOPSIS
     Get a list of installed plugins in a Jenkins master server.
@@ -370,6 +479,8 @@ function Invoke-JenkinsCommand()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Api
     The API to use. Can be XML, JSON or Python. Defaults to JSON.
 .PARAMETER Depth
@@ -405,26 +516,33 @@ function Get-JenkinsPluginsList()
         [parameter(
             Position=3,
             Mandatory=$false)]
-        [String] $Api = 'json',
+        [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
 
         [parameter(
             Position=4,
             Mandatory=$false)]
+        [String] $Api = 'json',
+
+        [parameter(
+            Position=5,
+            Mandatory=$false)]
         [String] $Depth = '1'
     )
-    $Splat = @{
-        Uri        = $Uri
-        Credential = $Credential
-        Type       = 'pluginmanager'
-        Api        = $Api
-        Command    = "depth=$Depth"
-    }
-    $Result = Invoke-JenkinsCommand @Splat
+
+    # Add/Remove PSBoundParameters so they can be splatted
+    $null = $PSBoundParameters.Add('Type','pluginmanager')
+    $null = $PSBoundParameters.Add('Command',"depth=$Depth")
+    $null = $PSBoundParameters.Remove('Depth')
+
+    # Invoke the Command to Get the Plugin List
+    $Result = Invoke-JenkinsCommand @PSBoundParameters
     $Objects = ConvertFrom-Json -InputObject $Result.Content
 
     # Returns the list of plugins, selecting just the name and version.
     Return ($Objects.plugins | Select-Object shortName,version)
 } # Get-JenkinsPluginsList
+
 
 <#
 .SYNOPSIS
@@ -435,6 +553,8 @@ function Get-JenkinsPluginsList()
     The uri of the Jenkins server to trigger the reload on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .EXAMPLE
    Invoke-JenkinsJobReload `
         -Uri 'https://jenkins.contoso.com' `
@@ -456,20 +576,35 @@ function Invoke-JenkinsJobReload {
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
-        [System.Management.Automation.CredentialAttribute()] $Credential
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Crumb
     )
 
-    # Jenkins Credentials were passed so create the Authorization Header
-    $Username = $Credential.Username
+    if ($PSBoundParameters.ContainsKey('Credential')) {
+        # Jenkins Credentials were passed so create the Authorization Header
+        $Username = $Credential.Username
 
-    # Decrypt the secure string password
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-    $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+        # Decrypt the secure string password
+        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
+        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
-    $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
-    $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
+        $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
+        $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
 
-    $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
+        $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
+    } # if
+
+    if ($PSBoundParameters.ContainsKey('Crumb')) {
+        Write-Verbose -Message $($LocalizedData.UsingCrumbMessage -f
+            $Crumb)
+
+        $Headers += @{ ".crumb" = $Crumb }
+    } # if
 
     # Do NOT change this to HTTP - password would be sent unencryted.
     # Instead, ensure all Jenkins servers are using HTTPS.
@@ -478,7 +613,8 @@ function Invoke-JenkinsJobReload {
         -Headers $Headers `
         -Method Post `
         -UseBasicParsing
-}
+} # function Invoke-JenkinsJobReload
+
 
 <#
 .SYNOPSIS
@@ -489,6 +625,8 @@ function Invoke-JenkinsJobReload {
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Type
     The type of object to return. Defaults to jobs.
 .PARAMETER Attribute
@@ -541,30 +679,36 @@ function Get-JenkinsObject()
 
         [parameter(
             Position=3,
-            Mandatory=$true)]
+            Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Type,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Attribute,
+        [String] $Type,
 
         [parameter(
             Position=5,
-            Mandatory=$false)]
+            Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String[]] $Attribute,
 
         [parameter(
             Position=6,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $IncludeClass,
+        [String] $Folder,
 
         [parameter(
             Position=7,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String[]] $IncludeClass,
+
+        [parameter(
+            Position=8,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String[]] $ExcludeClass
@@ -625,6 +769,8 @@ function Get-JenkinsObject()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder to retrieve the jobs from. This requires the Jobs Plugin to be installed on Jenkins.
 .PARAMETER IncludeClass
@@ -687,16 +833,22 @@ function Get-JenkinsJobList()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $IncludeClass,
+        [String] $Folder,
 
         [parameter(
             Position=5,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String[]] $IncludeClass,
+
+        [parameter(
+            Position=6,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String[]] $ExcludeClass
@@ -726,6 +878,8 @@ function Get-JenkinsJobList()
     Contains the Uri to the Jenkins Master server to get the Job definition from.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
 .PARAMETER Name
@@ -781,10 +935,16 @@ function Get-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name
@@ -819,6 +979,8 @@ function Get-JenkinsJob()
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
@@ -870,16 +1032,22 @@ function Set-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name,
 
         [parameter(
-            Position=5,
+            Position=6,
             Mandatory=$true,
             ValueFromPipeline=$True)]
         [ValidateNotNullOrEmpty()]
@@ -922,6 +1090,8 @@ function Set-JenkinsJob()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
 .PARAMETER Name
@@ -968,10 +1138,16 @@ function Test-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $Name
@@ -995,6 +1171,8 @@ function Test-JenkinsJob()
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
@@ -1046,16 +1224,22 @@ function New-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name,
 
         [parameter(
-            Position=5,
+            Position=6,
             Mandatory=$true,
             ValueFromPipeline=$True)]
         [ValidateNotNullOrEmpty()]
@@ -1097,6 +1281,8 @@ function New-JenkinsJob()
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
@@ -1144,10 +1330,16 @@ function Remove-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name,
@@ -1190,6 +1382,8 @@ function Remove-JenkinsJob()
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
@@ -1249,16 +1443,22 @@ function Invoke-JenkinsJob()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name,
 
         [parameter(
-            Position=5,
+            Position=6,
             Mandatory=$false)]
         [Hashtable] $Parameters
     )
@@ -1302,6 +1502,8 @@ function Invoke-JenkinsJob()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER IncludeClass
     This allows the class of objects that are returned to be limited to only these types.
 .PARAMETER ExcludeClass
@@ -1345,10 +1547,16 @@ function Get-JenkinsView()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String[]] $IncludeClass,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String[]] $IncludeClass,
+
+        [parameter(
+            Position=5,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String[]] $ExcludeClass
@@ -1370,6 +1578,8 @@ function Get-JenkinsView()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Name
     The name of the view to check for.
 .EXAMPLE
@@ -1405,6 +1615,12 @@ function Test-JenkinsView()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
+
+        [parameter(
+            Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
         [String] $Name
     )
 
@@ -1426,6 +1642,8 @@ function Test-JenkinsView()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional job folder to retrieve the folders from.
 .EXAMPLE
@@ -1467,6 +1685,12 @@ function Get-JenkinsFolderList()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
+
+        [parameter(
+            Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
         [String] $Folder
     )
 
@@ -1492,6 +1716,8 @@ function Get-JenkinsFolderList()
     Contains the Uri to the Jenkins Master server to set the Job definition on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional folder the new folder will be created in.
     If the folder does not exist then an error will occur.
@@ -1546,22 +1772,28 @@ function New-JenkinsFolder()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $Name,
 
         [parameter(
-            Position=5,
+            Position=6,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $Description,
 
         [parameter(
-            Position=6,
+            Position=7,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $XML
@@ -1588,6 +1820,7 @@ function New-JenkinsFolder()
     } # if
     $Command += "createItem?name=$Name"
     $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('Description')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('Confirm')
     $null = $PSBoundParameters.Add('Command',$Command)
@@ -1613,6 +1846,8 @@ function New-JenkinsFolder()
     Contains the Uri to the Jenkins Master server to execute the command on.
 .PARAMETER Credential
     Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 .PARAMETER Folder
     The optional folder to look for the folder in.
 .PARAMETER Name
@@ -1659,10 +1894,16 @@ function Test-JenkinsFolder()
             Position=3,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        [String] $Folder,
+        [String] $Crumb,
 
         [parameter(
             Position=4,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
+
+        [parameter(
+            Position=5,
             Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [String] $Name
