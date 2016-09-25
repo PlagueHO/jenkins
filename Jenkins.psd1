@@ -59,6 +59,7 @@ PowerShellVersion = '4.0'
 
 # Functions to export from this module
 FunctionsToExport = @(
+    'Get-JenkinsCrumb'
     'Invoke-JenkinsCommand'
     'Get-JenkinsPluginsList'
     'Get-JenkinsObject'
