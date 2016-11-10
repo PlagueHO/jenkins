@@ -584,35 +584,15 @@ function Invoke-JenkinsJobReload {
         [ValidateNotNullOrEmpty()]
         [String] $Crumb
     )
-
-    if ($PSBoundParameters.ContainsKey('Credential')) {
-        # Jenkins Credentials were passed so create the Authorization Header
-        $Username = $Credential.Username
-
-        # Decrypt the secure string password
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
-        $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
-        $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
-
-        $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
-    } # if
-
-    if ($PSBoundParameters.ContainsKey('Crumb')) {
-        Write-Verbose -Message $($LocalizedData.UsingCrumbMessage -f
-            $Crumb)
-
-        $Headers += @{ ".crumb" = $Crumb }
-    } # if
-
-    # Do NOT change this to HTTP - password would be sent unencryted.
-    # Instead, ensure all Jenkins servers are using HTTPS.
-    $null = Invoke-WebRequest `
-        -Uri "$Uri/reload" `
-        -Headers $Headers `
-        -Method Post `
-        -UseBasicParsing
+    # Invoke-JenkinsCommand with the 'reload' rest command
+    Invoke-JenkinsCommand `
+        -Uri $uri `
+        -Credential $Credential `
+        -Crumb $Crumb `
+        -Type 'restcommand' `
+        -Command 'reload' `
+        -Method 'post' `
+        -Verbose
 } # function Invoke-JenkinsJobReload
 
 
