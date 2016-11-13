@@ -195,6 +195,9 @@ For further examples, please see module help for individual cmdlets.
 
 # Versions
 
+### Unreleased
+*  Fixed Invoke-JenkinsJobReload to use invoke-jenkinscommand
+
 ### 1.0.0.140
 * Fix error in New-JenkinsFolder.
 * Added Cross Site Request Forgery Support.
