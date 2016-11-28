@@ -11,7 +11,8 @@ if (-not (Get-Module -Name Pester -ListAvailable -ErrorAction SilentlyContinue))
 {
     Install-Module `
         -Name 'Pester' `
-        -Confirm:$False
+        -Confirm:$False `
+        -Scope CurrentUser
 }
 Import-Module `
     -Name 'Pester' `

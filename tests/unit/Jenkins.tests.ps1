@@ -16,7 +16,8 @@ try
     {
         Install-Module `
             -Name 'PSScriptAnalyzer' `
-            -Confirm:$False
+            -Confirm:$False `
+            -Scope CurrentUser
     } # if
     Import-Module `
         -Name 'PSScriptAnalyzer' `
