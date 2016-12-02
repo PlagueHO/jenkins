@@ -342,7 +342,7 @@ function Invoke-JenkinsCommand()
         $Body
     )
 
-    if ($PSBoundParameters.ContainsKey('Credential')) {
+    if ($PSBoundParameters.ContainsKey('Credential') -and $Credential -ne [System.Management.Automation.PSCredential]::Empty) {
         # Jenkins Credentials were passed so create the Authorization Header
         $Username = $Credential.Username
 
