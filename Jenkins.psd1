@@ -4,7 +4,7 @@
 RootModule = 'Jenkins.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.148'
+ModuleVersion = '1.0.0.154'
 
 # ID used to uniquely identify this module
 GUID = 'd4de78f0-e143-4e58-8fb2-a543eacc1682'
@@ -104,6 +104,7 @@ AliasesToExport = '*'
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
