@@ -426,20 +426,24 @@ function Invoke-JenkinsCommand()
             $null = $PSBoundParameters.remove('Command')
             $null = $PSBoundParameters.remove('Api')
 
-            try {
-                Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
-                    $FullUri)
+            Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
+                $FullUri)
 
-                $Result = Invoke-WebRequest `
-                    -Uri $FullUri `
-                    -Headers $Headers `
-                    @PSBoundParameters `
-                    -ErrorAction Stop
-            }
-            catch {
+            $Result = Invoke-WebRequest `
+                -Uri $FullUri `
+                -Headers $Headers `
+                -MaximumRedirection 0 `
+                @PSBoundParameters `
+                -ErrorAction SilentlyContinue `
+                -ErrorVariable RequestErrors
+
+            if ($RequestErrors.Count -eq 1 -and $Result.StatusCode -eq 302 `
+                -and $RequestErrors[0].FullyQualifiedErrorId -like "MaximumRedirectExceeded,*") {
+                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $Result.Headers.Location)
+            } elseif ($RequestErrors.Count -ge 1) {
                 # Todo: Improve error handling.
-                Throw $_
-            } # catch
+                throw $RequestErrors[0].Exception
+            }
         } # 'command'
         'pluginmanager' {
             $FullUri = $Uri

@@ -55,7 +55,6 @@ New-JenkinsFolder `
 ```
 
 # Known Issues
- - Remove-JenkinsJob: An IE window pops up after deleting the job for some reason requesting authentication.
  - Initialize-JenkinsUpdateCache: Does not correctly set the signature information in the update-center.json file that is created.
 
 # Recommendations
