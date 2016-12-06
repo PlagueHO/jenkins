@@ -416,7 +416,7 @@ function Invoke-JenkinsCommand()
                 # Todo: Improve error handling.
                 Throw $_
             } # catch
-        } # 'rest'
+        } # 'restcommand'
         'command' {
             $FullUri = $Uri
             if ($PSBoundParameters.ContainsKey('Command')) {
@@ -440,7 +440,7 @@ function Invoke-JenkinsCommand()
                 # Todo: Improve error handling.
                 Throw $_
             } # catch
-        } # 'rest'
+        } # 'command'
         'pluginmanager' {
             $FullUri = $Uri
             if ($PSBoundParameters.ContainsKey('Command')) {
@@ -464,8 +464,8 @@ function Invoke-JenkinsCommand()
                 # Todo: Improve error handling.
                 Throw $_
             } # catch
-        }
-    } # swtich
+        } # 'pluginmanager'
+    } # switch
     Return $Result
 } # Invoke-JenkinsCommand
 
