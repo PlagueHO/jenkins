@@ -1554,7 +1554,7 @@ function Invoke-JenkinsJob()
         $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
         $null = $PSBoundParameters.Add('Body',$body)
     }
-    $Result = Invoke-JenkinsCommand @PSBoundParameters
+    Invoke-JenkinsCommand @PSBoundParameters | Out-Null
 } # Invoke-JenkinsJob
 
 
