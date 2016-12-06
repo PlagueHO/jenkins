@@ -6,7 +6,7 @@ ConvertFrom-StringData -StringData @'
     InvokingRestApiCommandMessage = Invoking Rest Api Command '{0}'.
     InvokingCommandMessage = Invoking Command '{0}'.
     InvokeRestApiCommandError = Rest Api Command '{0}' returned '{1}'.
-    UpdateListBadFormatError = The {0} update list file downloaded from '{0}' was in an unexpected format.
+    UpdateListBadFormatError = The {0} update list file downloaded from '{1}' was in an unexpected format.
 
     NewJobMessage = Create the job '{0}'
     NewFolderMessage = Create the folder '{0}'
