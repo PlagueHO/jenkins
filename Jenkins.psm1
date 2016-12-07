@@ -1575,13 +1575,13 @@ function Invoke-JenkinsJob()
 .PARAMETER ExcludeClass
     This allows the class of objects that are returned to exclude these types.
 .EXAMPLE
-    $Views = Get-JenkinsView `
+    $Views = Get-JenkinsViewList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Verbose
     Returns the list of views on https://jenkins.contoso.com using the credentials provided by the user.
 .EXAMPLE
-    $Views = Get-JenkinsView `
+    $Views = Get-JenkinsViewList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -ExcludeClass 'hudson.model.AllView' `
@@ -1591,7 +1591,7 @@ function Invoke-JenkinsJob()
 .OUTPUTS
     An array of Jenkins View objects.
 #>
-function Get-JenkinsView()
+function Get-JenkinsViewList()
 {
     [CmdLetBinding()]
     [OutputType([Object[]])]
@@ -1632,7 +1632,7 @@ function Get-JenkinsView()
     $null = $PSBoundParameters.Add( 'Attribute', @( 'name','url' ) )
     return Get-JenkinsObject `
         @PSBoundParameters
-} # Get-JenkinsView
+} # Get-JenkinsViewList
 
 
 <#
