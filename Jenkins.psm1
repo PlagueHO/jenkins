@@ -1146,6 +1146,88 @@ function Test-JenkinsJob()
 
 <#
 .SYNOPSIS
+    Renames an existing Jenkins Job.
+.DESCRIPTION
+    Renames an existing Jenkins Job in the specified Jenkins Master server.
+    If the job does not exist or a job with the new name exists already an error will occur.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server that contains the existing job.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
+.PARAMETER Name
+    The name of the job to rename.
+.PARAMETER NewName
+    The new name to rename the job to.
+.EXAMPLE
+    Rename-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -NewName 'My Renamed Build' `
+        -Verbose
+    Rename the 'My App Build' job on https://jenkins.contoso.com to 'My Renamed Build' using the credentials provided by
+    the user.
+.OUTPUTS
+    None.
+#>
+function Rename-JenkinsJob()
+{
+    [CmdLetBinding(SupportsShouldProcess=$true,
+        ConfirmImpact="High")]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name,
+
+        [parameter(
+            Position=5,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $NewName,
+        
+        [Switch] $Force
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    $Command = "job/$Name/doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName)
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('NewName')
+    $null = $PSBoundParameters.Remove('Confirm')
+    $null = $PSBoundParameters.Remove('Force')
+    $null = $PSBoundParameters.Add('Command', $Command)
+    $null = $PSBoundParameters.Add('Method', 'post')
+    if ($Force -or $PSCmdlet.ShouldProcess( `
+        $URI, `
+        $($LocalizedData.RenameJobMessage -f $Name, $NewName))) {
+        $null = Invoke-JenkinsCommand @PSBoundParameters
+    } # if
+} # Rename-JenkinsJob
+
+
+<#
+.SYNOPSIS
     Create a new Jenkins Job.
 .DESCRIPTION
     Creates a new Jenkins Job using the provided XML.
@@ -1161,7 +1243,7 @@ function Test-JenkinsJob()
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
 .PARAMETER Name
-    The name of the job to set the definition on.
+    The name of the job to add.
 .PARAMETER XML
     The config XML of the job to import.
 .EXAMPLE
@@ -1237,7 +1319,7 @@ function New-JenkinsJob()
             $Command += "job/$Folder/"
         } # foreach
     } # if
-    $Command += "createItem?name=$Name"
+    $Command += "createItem?name={0}" -f [System.Uri]::EscapeDataString($Name)
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('XML')
@@ -1271,7 +1353,7 @@ function New-JenkinsJob()
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
 .PARAMETER Name
-    The name of the job to set the definition on.
+    The name of the job to remove.
 .EXAMPLE
     Remove-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
@@ -1472,7 +1554,7 @@ function Invoke-JenkinsJob()
         $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
         $null = $PSBoundParameters.Add('Body',$body)
     }
-    $Result = Invoke-JenkinsCommand @PSBoundParameters
+    $null = Invoke-JenkinsCommand @PSBoundParameters
 } # Invoke-JenkinsJob
 
 
