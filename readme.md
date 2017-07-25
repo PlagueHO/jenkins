@@ -30,6 +30,7 @@ Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell
 - Set-JenkinsJob: Set a Jenkins Job definition.
 - Test-JenkinsJob: Determines if a Jenkins Job exists.
 - New-JenkinsJob: Create a new Jenkins Job.
+- Rename-JenkinsJob: Rename an existing Jenkins Job.
 - Remove-JenkinsJob: Remove an existing Jenkins Job.
 - Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins Job.
 - Get-JenkinsViewList: Get a list of views in a Jenkins master server.
