@@ -347,7 +347,7 @@ function Invoke-JenkinsCommand()
         $Body
     )
 
-    if ($PSBoundParameters.ContainsKey('Credential')) {
+    if ($PSBoundParameters.ContainsKey('Credential') -and $Credential -ne [System.Management.Automation.PSCredential]::Empty) {
         # Jenkins Credentials were passed so create the Authorization Header
         $Username = $Credential.Username
 
@@ -421,7 +421,7 @@ function Invoke-JenkinsCommand()
                 # Todo: Improve error handling.
                 Throw $_
             } # catch
-        } # 'rest'
+        } # 'restcommand'
         'command' {
             $FullUri = $Uri
             if ($PSBoundParameters.ContainsKey('Command')) {
@@ -431,21 +431,25 @@ function Invoke-JenkinsCommand()
             $null = $PSBoundParameters.remove('Command')
             $null = $PSBoundParameters.remove('Api')
 
-            try {
-                Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
-                    $FullUri)
+            Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
+                $FullUri)
 
-                $Result = Invoke-WebRequest `
-                    -Uri $FullUri `
-                    -Headers $Headers `
-                    @PSBoundParameters `
-                    -ErrorAction Stop
-            }
-            catch {
+            $Result = Invoke-WebRequest `
+                -Uri $FullUri `
+                -Headers $Headers `
+                -MaximumRedirection 0 `
+                @PSBoundParameters `
+                -ErrorAction SilentlyContinue `
+                -ErrorVariable RequestErrors
+
+            if ($RequestErrors.Count -eq 1 -and $Result.StatusCode -eq 302 `
+                -and $RequestErrors[0].FullyQualifiedErrorId -like "MaximumRedirectExceeded,*") {
+                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $Result.Headers.Location)
+            } elseif ($RequestErrors.Count -ge 1) {
                 # Todo: Improve error handling.
-                Throw $_
-            } # catch
-        } # 'rest'
+                throw $RequestErrors[0].Exception
+            }
+        } # 'command'
         'pluginmanager' {
             $FullUri = $Uri
             if ($PSBoundParameters.ContainsKey('Command')) {
@@ -469,8 +473,8 @@ function Invoke-JenkinsCommand()
                 # Todo: Improve error handling.
                 Throw $_
             } # catch
-        }
-    } # swtich
+        } # 'pluginmanager'
+    } # switch
     Return $Result
 } # Invoke-JenkinsCommand
 
@@ -589,35 +593,15 @@ function Invoke-JenkinsJobReload {
         [ValidateNotNullOrEmpty()]
         [String] $Crumb
     )
-
-    if ($PSBoundParameters.ContainsKey('Credential')) {
-        # Jenkins Credentials were passed so create the Authorization Header
-        $Username = $Credential.Username
-
-        # Decrypt the secure string password
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
-        $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
-        $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
-
-        $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
-    } # if
-
-    if ($PSBoundParameters.ContainsKey('Crumb')) {
-        Write-Verbose -Message $($LocalizedData.UsingCrumbMessage -f
-            $Crumb)
-
-        $Headers += @{ ".crumb" = $Crumb }
-    } # if
-
-    # Do NOT change this to HTTP - password would be sent unencryted.
-    # Instead, ensure all Jenkins servers are using HTTPS.
-    $null = Invoke-WebRequest `
-        -Uri "$Uri/reload" `
-        -Headers $Headers `
-        -Method Post `
-        -UseBasicParsing
+    # Invoke-JenkinsCommand with the 'reload' rest command
+    Invoke-JenkinsCommand `
+        -Uri $uri `
+        -Credential $Credential `
+        -Crumb $Crumb `
+        -Type 'restcommand' `
+        -Command 'reload' `
+        -Method 'post' `
+        -Verbose
 } # function Invoke-JenkinsJobReload
 
 
@@ -1167,6 +1151,88 @@ function Test-JenkinsJob()
 
 <#
 .SYNOPSIS
+    Renames an existing Jenkins Job.
+.DESCRIPTION
+    Renames an existing Jenkins Job in the specified Jenkins Master server.
+    If the job does not exist or a job with the new name exists already an error will occur.
+.PARAMETER Uri
+    Contains the Uri to the Jenkins Master server that contains the existing job.
+.PARAMETER Credential
+    Contains the credentials to use to authenticate with the Jenkins Master server.
+.PARAMETER Crumb
+    Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
+.PARAMETER Name
+    The name of the job to rename.
+.PARAMETER NewName
+    The new name to rename the job to.
+.EXAMPLE
+    Rename-JenkinsJob `
+        -Uri 'https://jenkins.contoso.com' `
+        -Credential (Get-Credential) `
+        -Name 'My App Build' `
+        -NewName 'My Renamed Build' `
+        -Verbose
+    Rename the 'My App Build' job on https://jenkins.contoso.com to 'My Renamed Build' using the credentials provided by
+    the user.
+.OUTPUTS
+    None.
+#>
+function Rename-JenkinsJob()
+{
+    [CmdLetBinding(SupportsShouldProcess=$true,
+        ConfirmImpact="High")]
+    Param
+    (
+        [parameter(
+            Position=1,
+            Mandatory=$true)]
+        [String] $Uri,
+
+        [parameter(
+            Position=2,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.CredentialAttribute()] $Credential,
+
+        [parameter(
+            Position=3,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Crumb,
+
+        [parameter(
+            Position=4,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name,
+
+        [parameter(
+            Position=5,
+            Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $NewName,
+        
+        [Switch] $Force
+    )
+    $null = $PSBoundParameters.Add('Type','Command')
+    $Command = "job/$Name/doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName)
+    $null = $PSBoundParameters.Remove('Name')
+    $null = $PSBoundParameters.Remove('NewName')
+    $null = $PSBoundParameters.Remove('Confirm')
+    $null = $PSBoundParameters.Remove('Force')
+    $null = $PSBoundParameters.Add('Command', $Command)
+    $null = $PSBoundParameters.Add('Method', 'post')
+    if ($Force -or $PSCmdlet.ShouldProcess( `
+        $URI, `
+        $($LocalizedData.RenameJobMessage -f $Name, $NewName))) {
+        $null = Invoke-JenkinsCommand @PSBoundParameters
+    } # if
+} # Rename-JenkinsJob
+
+
+<#
+.SYNOPSIS
     Create a new Jenkins Job.
 .DESCRIPTION
     Creates a new Jenkins Job using the provided XML.
@@ -1182,7 +1248,7 @@ function Test-JenkinsJob()
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
 .PARAMETER Name
-    The name of the job to set the definition on.
+    The name of the job to add.
 .PARAMETER XML
     The config XML of the job to import.
 .EXAMPLE
@@ -1258,7 +1324,7 @@ function New-JenkinsJob()
             $Command += "job/$Folder/"
         } # foreach
     } # if
-    $Command += "createItem?name=$Name"
+    $Command += "createItem?name={0}" -f [System.Uri]::EscapeDataString($Name)
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('XML')
@@ -1292,7 +1358,7 @@ function New-JenkinsJob()
     The optional job folder the job is in. This requires the Jobs Plugin to be installed on Jenkins.
     If the folder does not exist then an error will occur.
 .PARAMETER Name
-    The name of the job to set the definition on.
+    The name of the job to remove.
 .EXAMPLE
     Remove-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
@@ -1493,7 +1559,7 @@ function Invoke-JenkinsJob()
         $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
         $null = $PSBoundParameters.Add('Body',$body)
     }
-    $Result = Invoke-JenkinsCommand @PSBoundParameters
+    $null = Invoke-JenkinsCommand @PSBoundParameters
 } # Invoke-JenkinsJob
 
 
@@ -1514,13 +1580,13 @@ function Invoke-JenkinsJob()
 .PARAMETER ExcludeClass
     This allows the class of objects that are returned to exclude these types.
 .EXAMPLE
-    $Views = Get-JenkinsView `
+    $Views = Get-JenkinsViewList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -Verbose
     Returns the list of views on https://jenkins.contoso.com using the credentials provided by the user.
 .EXAMPLE
-    $Views = Get-JenkinsView `
+    $Views = Get-JenkinsViewList `
         -Uri 'https://jenkins.contoso.com' `
         -Credential (Get-Credential) `
         -ExcludeClass 'hudson.model.AllView' `
@@ -1530,7 +1596,7 @@ function Invoke-JenkinsJob()
 .OUTPUTS
     An array of Jenkins View objects.
 #>
-function Get-JenkinsView()
+function Get-JenkinsViewList()
 {
     [CmdLetBinding()]
     [OutputType([Object[]])]
@@ -1571,7 +1637,7 @@ function Get-JenkinsView()
     $null = $PSBoundParameters.Add( 'Attribute', @( 'name','url' ) )
     return Get-JenkinsObject `
         @PSBoundParameters
-} # Get-JenkinsView
+} # Get-JenkinsViewList
 
 
 <#

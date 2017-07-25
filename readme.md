@@ -164,6 +164,17 @@ New-JenkinsJob `
     -XML $MyAppBuildConfig
 ```
 
+### Rename an existing job called 'My App Build' to 'Other Build' on a Jenkins Server
+
+```powershell
+Import-Module -Name Jenkins
+Rename-JenkinsJob `
+    -Uri 'https://jenkins.contoso.com' `
+    -Credential (Get-Credential) `
+    -Name 'My App Build'
+    -NewName 'Other Build'
+```
+
 ### Remove a job called 'My App Build' from a Jenkins Server
 
 ```powershell
@@ -222,6 +233,10 @@ For further examples, please see module help for individual cmdlets.
 
 - Fix Markdown rule violations in README.MD.
 - Changed Get-JenkinsCrumb cmdlet to accept alternate format crumb.
+
+### 1.0.0.148
+
+- Fixed Invoke-JenkinsJobReload to use invoke-jenkinscommand
 
 ### 1.0.0.140
 
