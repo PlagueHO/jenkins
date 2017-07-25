@@ -209,13 +209,18 @@ function Get-JenkinsCrumb()
     $Regex = '^Jenkins-Crumb:([A-Z0-9]*)'
     $Matches = @([regex]::matches($Result.Content, $Regex, 'IgnoreCase'))
     if (-not $Matches.Groups) {
-        $ExceptionParameters = @{
-            errorId = 'CrumbResponseFormatError'
-            errorCategory = 'InvalidArgument'
-            errorMessage = $($LocalizedData.CrumbResponseFormatError -f `
-                $Result.Content)
-        }
-        New-Exception @ExceptionParameters
+        # Attempt to match the alternate Jenkins Crumb format
+        $Regex = '^.crumb:([A-Z0-9]*)'
+        $Matches = @([regex]::matches($Result.Content, $Regex, 'IgnoreCase'))
+        if (-not $Matches.Groups) {
+            $ExceptionParameters = @{
+                errorId = 'CrumbResponseFormatError'
+                errorCategory = 'InvalidArgument'
+                errorMessage = $($LocalizedData.CrumbResponseFormatError -f `
+                    $Result.Content)
+            }
+            New-Exception @ExceptionParameters
+        } # if
     } # if
     $Crumb = $Matches.Groups[1].Value
 
