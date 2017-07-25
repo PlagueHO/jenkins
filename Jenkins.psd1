@@ -16,7 +16,7 @@ Author = 'Daniel Scott-Raynsford, Liam Binns-Conroy'
 CompanyName = 'IAG NZ Ltd.'
 
 # Copyright statement for this module
-Copyright = '(c) 2016 IAG NZ Ltd. All rights reserved.'
+Copyright = '(c) 2017 IAG NZ Ltd. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module for interacting with a CloudBees Jenkins server using the Jenkins Rest API created by IAG NZ Ltd.'

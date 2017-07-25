@@ -1,46 +1,52 @@
 # Jenkins
+
 [![Build status](https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true)](https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master)
 
 PowerShell module for interacting with a CloudBees Jenkins server using the [Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API). Created by IAG NZ Ltd.
 
-# Installation
+## Installation
+
 > If Windows Management Framework 5.0 or above is installed or the PowerShell Package management module is available:
 
 The easiest way to download and install the Jenkins module is using PowerShell Get to download it from the PowerShell Gallery:
+
 ```powershell
 Install-Module -Name Jenkins
 ```
 
 > If Windows Management Framework 5.0 or above is not available and and the PowerShell Package management module is not available:
 
-```
+```text
 Unzip the file containing this Module to your c:\Program Files\WindowsPowerShell\Modules folder.
 ```
 
-# Cmdlets
- - Get-JenkinsCrumb: Gets a Jenkins Crumb.
- - Invoke-JenkinsCommand: Execute a Jenkins command or request via the Jenkins Rest API.
- - Get-JenkinsObject: Get a list of objects in a Jenkins master server.
- - Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
- - Get-JenkinsJob: Get a Jenkins Job Definition.
- - Set-JenkinsJob: Set a Jenkins Job definition.
- - Test-JenkinsJob: Determines if a Jenkins Job exists.
- - New-JenkinsJob: Create a new Jenkins Job.
- - Remove-JenkinsJob: Remove an existing Jenkins Job.
- - Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins Job.
- - Get-JenkinsViewList: Get a list of views in a Jenkins master server.
- - Test-JenkinsView: Determines if a Jenkins View exists.
- - Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
- - Test-JenkinsFolder: Determines if a Jenkins Folder exists.
- - Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
- - Get-JenkinsPluginsList: Retreives a list of installed plugins.
- - Invoke-JenkinsJobReload: Reloads a job config on a given URL.
+## Cmdlets
 
-# Cross Site Request Forgery (CSRF) Support
+- Get-JenkinsCrumb: Gets a Jenkins Crumb.
+- Invoke-JenkinsCommand: Execute a Jenkins command or request via the Jenkins Rest API.
+- Get-JenkinsObject: Get a list of objects in a Jenkins master server.
+- Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
+- Get-JenkinsJob: Get a Jenkins Job Definition.
+- Set-JenkinsJob: Set a Jenkins Job definition.
+- Test-JenkinsJob: Determines if a Jenkins Job exists.
+- New-JenkinsJob: Create a new Jenkins Job.
+- Remove-JenkinsJob: Remove an existing Jenkins Job.
+- Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins Job.
+- Get-JenkinsViewList: Get a list of views in a Jenkins master server.
+- Test-JenkinsView: Determines if a Jenkins View exists.
+- Get-JenkinsFolderList: Get a list of folders in a Jenkins master server.
+- Test-JenkinsFolder: Determines if a Jenkins Folder exists.
+- Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins Update cache.
+- Get-JenkinsPluginsList: Retrieves a list of installed plugins.
+- Invoke-JenkinsJobReload: Reloads a job config on a given URL.
+
+## Cross Site Request Forgery (CSRF) Support
+
 If a Jenkins Server has the CSRF setting enabled, then a "Crumb" will first need to be obtained and passed to each subsequent call to Jenkins in the Crumb parameter.
 If you receive errors regarding crumbs then your Jenkins Server has CSRF enabled and you will to ensure you are passing a valid "Crumb" obtained by calling the ```Get-JenkinsCrumb``` cmdlet.
 
 To work with a Jenkins Master that has CSRF enabled:
+
 ```powershell
 $Crumb = Get-JenkinsCrumb `
     -Uri 'https://jenkins.contoso.com' `
@@ -54,17 +60,21 @@ New-JenkinsFolder `
     -Verbose
 ```
 
-# Known Issues
- - Remove-JenkinsJob: An IE window pops up after deleting the job for some reason requesting authentication.
- - Initialize-JenkinsUpdateCache: Does not correctly set the signature information in the update-center.json file that is created.
+## Known Issues
 
-# Recommendations
- - If your Jenkins Server has security enabled then you should ensure that you are only connecting to it via HTTPS.
- - If your Jenkins Server has security enabled, the Credentials parameter that can accept either the password for the Jenkins account or the API Token.
-It is strongly recommended that you use the API Token for the account as the password rather than the Jenkins account, even if you have implemented HTTPS.
+- Remove-JenkinsJob: An IE window pops up after deleting the job for some reason requesting authentication.
+- Initialize-JenkinsUpdateCache: Does not correctly set the signature information in the update-center.json file that is created.
 
-# Examples
-## Get a Crumb from a CSRF enabled Jenkins Server
+## Recommendations
+
+- If your Jenkins Server has security enabled then you should ensure that you are only connecting to it via HTTPS.
+- If your Jenkins Server has security enabled, the Credentials parameter that can accept either the password for the Jenkins account or the API Token.
+  It is strongly recommended that you use the API Token for the account as the password rather than the Jenkins account, even if you have implemented HTTPS.
+
+## Examples
+
+### Get a Crumb from a CSRF enabled Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $Crumb = Get-JenkinsCrumb `
@@ -72,7 +82,8 @@ $Crumb = Get-JenkinsCrumb `
     -Credential $Credential
 ```
 
-## Get a list of jobs from a Jenkins Server
+### Get a list of jobs from a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $Jobs = Get-JenkinsJobList `
@@ -80,7 +91,8 @@ $Jobs = Get-JenkinsJobList `
     -Credential (Get-Credential)
 ```
 
-## Get a list of jobs from the 'Misc' folder a Jenkins Server
+### Get a list of jobs from the 'Misc' folder a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $Jobs = Get-JenkinsJobList `
@@ -89,7 +101,8 @@ $Jobs = Get-JenkinsJobList `
     -Folder 'Misc'
 ```
 
-## Get a list of 'Freestyle' jobs from a Jenkins Server
+### Get a list of 'Freestyle' jobs from a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $Jobs = Get-JenkinsJobList `
@@ -98,7 +111,8 @@ $Jobs = Get-JenkinsJobList `
     -IncludeClass 'hudson.model.FreeStyleProject'
 ```
 
-## Get a list of job folders from a Jenkins Server
+### Get a list of job folders from a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $Folders = Get-JenkinsFolderList `
@@ -106,7 +120,8 @@ $Folders = Get-JenkinsFolderList `
     -Credential (Get-Credential)
 ```
 
-## Get the job definition for 'My App Build' from a Jenkins Server
+### Get the job definition for 'My App Build' from a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 $MyAppBuildConfig = Get-JenkinsJob `
@@ -115,7 +130,8 @@ $MyAppBuildConfig = Get-JenkinsJob `
     -Name 'My App Build'
 ```
 
-## Update the job definition for 'My App Build' on a Jenkins Server
+### Update the job definition for 'My App Build' on a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 Set-JenkinsJob `
@@ -125,7 +141,8 @@ Set-JenkinsJob `
     -XML $MyAppBuildConfig
 ```
 
-## Test if a job exists on a Jenkins Server
+### Test if a job exists on a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 if (Test-JenkinsJob `
@@ -136,7 +153,8 @@ if (Test-JenkinsJob `
 }
 ```
 
-## Create a new job called 'My App Build' on a Jenkins Server
+### Create a new job called 'My App Build' on a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 New-JenkinsJob `
@@ -146,7 +164,8 @@ New-JenkinsJob `
     -XML $MyAppBuildConfig
 ```
 
-## Remove a job called 'My App Build' from a Jenkins Server
+### Remove a job called 'My App Build' from a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 Remove-JenkinsJob `
@@ -155,7 +174,8 @@ Remove-JenkinsJob `
     -Name 'My App Build'
 ```
 
-## Invoke a job called 'My App Build' on a Jenkins Server
+### Invoke a job called 'My App Build' on a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 Invoke-JenkinsJob `
@@ -164,7 +184,8 @@ Invoke-JenkinsJob `
     -Name 'My App Build'
 ```
 
-## Invoke a parameterized job called 'My App Build' on a Jenkins Server
+### Invoke a parameterized job called 'My App Build' on a Jenkins Server
+
 ```powershell
 Import-Module -Name Jenkins
 Invoke-JenkinsJob `
@@ -174,7 +195,8 @@ Invoke-JenkinsJob `
     -Parameters @{ verbosity = 'full'; buildtitle = 'test build' }
 ```
 
-## Get a list of installed plugins installed on a Jenkins Server
+### Get a list of installed plugins installed on a Jenkins Server
+
 ```powershell
 $Plugins = Get-JenkinsPluginsList `
         -Uri 'https://jenkins.contoso.com' `
@@ -182,7 +204,8 @@ $Plugins = Get-JenkinsPluginsList `
         -Verbose
 ```
 
-## Reload a job
+### Reload a job
+
 ```powershell
 Invoke-JenkinsJobReload `
         -Uri 'https://jenkins.contoso.com' `
@@ -193,47 +216,64 @@ Invoke-JenkinsJobReload `
 
 For further examples, please see module help for individual cmdlets.
 
-# Versions
+## Versions
+
+### Unreleased
+
+- Fix Markdown rule violations in README.MD.
+- Changed Get-JenkinsCrumb cmdlet to accept alternate format crumb.
 
 ### 1.0.0.140
-* Fix error in New-JenkinsFolder.
-* Added Cross Site Request Forgery Support.
+
+- Fix error in New-JenkinsFolder.
+- Added Cross Site Request Forgery Support.
 
 ### 1.0.0.133
-* Updated Invoke-JenkinsJobReload to use the -UseBasicParsing switch
+
+- Updated Invoke-JenkinsJobReload to use the -UseBasicParsing switch
 
 ### 1.0.0.124
-* Fixed readme
-* Added the Invoke-JenkinsJobReload cmdlet
+
+- Fixed readme
+- Added the Invoke-JenkinsJobReload cmdlet
 
 ### 1.0.0.115
-* Added Get-JenkinsPluginsList cmdlet to retreive a list of installed plugins
+
+- Added Get-JenkinsPluginsList cmdlet to retrieve a list of installed plugins
 
 ### 1.0.0.108
-* Added Initialize-JenkinsUpdateCache cmdlet to create or update a local Jenkins Update Cache
+
+- Added Initialize-JenkinsUpdateCache cmdlet to create or update a local Jenkins Update Cache
 
 ### 1.0.0.101
-* Fix bug when pulling Jenkins items from more than 1 folder deep
-* Added support for folder to be specified with / or \
+
+- Fix bug when pulling Jenkins items from more than 1 folder deep
+- Added support for folder to be specified with / or \
 
 ### 1.0.0.94
-* Update AppVeyor deployment process to tag releases
+
+- Update AppVeyor deployment process to tag releases
 
 ### 1.0.0.88
-* Added New-JenkinsFolder cmdlet
+
+- Added New-JenkinsFolder cmdlet
 
 ### 1.0.0.82
-* Added Invoke-JenkinsJob cmdlet
+
+- Added Invoke-JenkinsJob cmdlet
 
 ### 1.0.0.70
-* Added Examples to Readme.md
+
+- Added Examples to Readme.md
 
 ### 1.0.0.46
-* Appveyor build improvements
-* Additional unit tests added
+
+- Appveyor build improvements
+- Additional unit tests added
 
 ### 1.0.0.36
-* Initial Release containing:
+
+- Initial Release containing:
   - Invoke-JenkinsCommand
   - Get-JenkinsObject
   - Get-JenkinsJobList
@@ -247,8 +287,8 @@ For further examples, please see module help for individual cmdlets.
   - Get-JenkinsFolderList
   - Test-JenkinsFolder
 
-# Links
-* [IAG NZ Web Site](http://www.iag.co.nz)
-* [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
-* [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+## Links
 
+- [IAG NZ Web Site](http://www.iag.co.nz)
+- [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
+- [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
