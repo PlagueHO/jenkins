@@ -115,6 +115,12 @@ try
                         Should Be '?tree=Views[name,url,Views[name,url,Views[name,url]]]'
                 }
             }
+            Context 'depth 2, type jobs, attribute name,lastBuild[number]' {
+                It "should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" {
+                    Get-JenkinsTreeRequest -Depth 2 -Type 'Jobs' -Attribute @('name','lastBuild[number]') |
+                        Should Be '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'
+                }
+            }
         } # Describe
     } # InModuleScope
 
@@ -479,14 +485,14 @@ try
     } # Describe 'Invoke-JenkinsCommand'
 
     Describe 'Get-JenkinsObject' {
-        $GetJenkinsObjectSplat = @{
-            Uri        = $testURI
-            Credential = $testCredential
-            Type       = 'jobs'
-            Attribute = @('name')
-        }
-
         Context 'jobs type, attribute name, no folder, credentials passed' {
+            $GetJenkinsObjectSplat = @{
+                Uri        = $testURI
+                Credential = $testCredential
+                Type       = 'jobs'
+                Attribute = @('name')
+            }
+
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -511,6 +517,44 @@ try
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq '?tree=jobs[name]'
+                    } `
+                    -Exactly 1
+            }
+        } # Context
+
+        Context 'jobs type, attribute name, folder, credentials passed' {
+            $GetJenkinsObjectSplat = @{
+                Uri        = $testURI
+                Credential = $testCredential
+                Folder     = 'test\folder'
+                Type       = 'jobs'
+                Attribute = @('name')
+            }
+
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -ParameterFilter {
+                    $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
+                } `
+                -MockWith { @{
+                            jobs = @(
+                                @{ name = 'test1' },
+                                @{ name = 'test2' }
+                            )
+                        }
+                    }
+            $Splat = $GetJenkinsObjectSplat.Clone()
+            $Result = Get-JenkinsObject @Splat
+            It "should return expected objects" {
+                $Result.Count | Should Be 2
+                $Result[0].Name | Should Be 'test1'
+                $Result[1].Name | Should Be 'test2'
+            }
+            It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                    -ParameterFilter {
+                        $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
                     } `
                     -Exactly 1
             }

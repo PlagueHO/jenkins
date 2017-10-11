@@ -719,6 +719,7 @@ function Get-JenkinsObject()
         $FolderItems = $Folder -split '\\'
         $TreeRequestSplat = @{
             Depth = ($FolderItems.Count + 1)
+            Attribute = $Attribute
         }
     } # if
     $Command = Get-JenkinsTreeRequest @TreeRequestSplat
@@ -1212,7 +1213,7 @@ function Rename-JenkinsJob()
             Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String] $NewName,
-        
+
         [Switch] $Force
     )
     $null = $PSBoundParameters.Add('Type','Command')
