@@ -230,6 +230,10 @@ For further examples, please see module help for individual cmdlets.
 
 ## Versions
 
+### Unreleased
+
+- Fixed Get-JenkinsObject to use passed attributes when folder is specified.
+
 ### 1.0.0.182
 
 - Fix Markdown rule violations in README.MD.
