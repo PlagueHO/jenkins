@@ -230,6 +230,10 @@ For further examples, please see module help for individual cmdlets.
 
 ## Versions
 
+### Unreleased
+
+- Added support for Jenkins servers using TLS 1.2.
+
 ### 1.0.0.188
 
 - Fixed Get-JenkinsObject to use passed attributes when folder is specified.
