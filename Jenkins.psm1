@@ -98,7 +98,8 @@ function Set-JenkinsTLSSupport
     )
 
     if (-not ([Net.ServicePointManager]::SecurityProtocol).ToString().Contains([Net.SecurityProtocolType]::Tls12)) {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol + [Net.SecurityProtocolType]::Tls12
+        [Net.ServicePointManager]::SecurityProtocol = `
+            [Net.ServicePointManager]::SecurityProtocol + [Net.SecurityProtocolType]::Tls12
     }
 } # function Set-JenkinsTLSSupport
 
