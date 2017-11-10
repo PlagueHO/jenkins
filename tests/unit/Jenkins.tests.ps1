@@ -90,6 +90,12 @@ try
     $testJobName    = 'TestJob'
 
     InModuleScope 'Jenkins' {
+        Describe 'Set-JenkinsTLSSupport' {
+            It "should not throw" {
+                { Set-JenkinsTLSSupport } | Should Not Throw
+            }
+        }
+
         Describe 'Get-JenkinsTreeRequest' {
             Context 'default depth, default type, default attribute' {
                 It "should return '?tree=jobs[name,buildable,url,color]'" {
@@ -131,6 +137,8 @@ try
         }
 
         Context 'uri passed, credentials passed, standard crumb returned' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -147,6 +155,8 @@ try
                 $Result | Should Be '1234567890'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq ('{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $testURI) -and `
@@ -158,6 +168,8 @@ try
         } # Context
 
         Context 'uri passed, credentials passed, internal crumb returned' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -174,6 +186,8 @@ try
                 $Result | Should Be '1234567890'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq ('{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $testURI) -and `
@@ -185,6 +199,8 @@ try
         } # Context
 
         Context 'uri passed, credentials passed, invalid crumb returned' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -200,6 +216,8 @@ try
                 { $Result = Get-JenkinsCrumb @Splat } | Should Throw 'Invalid Crumb'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq ('{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $testURI) -and `
@@ -219,6 +237,8 @@ try
         }
 
         Context 'default type, default api, credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -235,6 +255,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/api/json/$testCommand" -and `
@@ -246,6 +268,8 @@ try
         } # Context
 
         Context 'default type, default api, no credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -263,6 +287,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                     $Uri -eq "$testURI/api/json/$testCommand" -and `
@@ -273,6 +299,8 @@ try
         } # Context
 
         Context 'default type, xml api, credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -290,6 +318,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/api/xml/$testCommand" -and `
@@ -301,6 +331,8 @@ try
         } # Context
 
         Context 'default type, xml api, credentials passed, header passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -320,6 +352,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/api/xml/$testCommand" -and `
@@ -332,6 +366,8 @@ try
         } # Context
 
         Context 'default type, xml api, credentials passed, header passed, get method' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -353,6 +389,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/api/xml/$testCommand" -and `
@@ -366,6 +404,8 @@ try
         } # Context
 
         Context 'default type, xml api, credentials passed, body passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-RestMethod called with incorrect parameters' }
 
@@ -385,6 +425,8 @@ try
                 $Result | Should Be 'Invoke-RestMethod Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/api/xml/$testCommand" -and `
@@ -397,6 +439,8 @@ try
         } # Context
 
         Context 'command type, default api, credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
 
@@ -414,6 +458,8 @@ try
                 $Result | Should Be 'Invoke-WebRequest Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/$testCommand" -and `
@@ -425,6 +471,8 @@ try
         } # Context
 
         Context 'pluginmanager type, default api, credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
 
@@ -443,6 +491,8 @@ try
                 $Result | Should Be 'Invoke-WebRequest Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
@@ -454,6 +504,8 @@ try
         } # Context
 
         Context 'pluginmanager type, xml api, credentials passed' {
+            Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
+
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -MockWith { Throw 'Invoke-WebRequest called with incorrect parameters' }
 
@@ -473,6 +525,8 @@ try
                 $Result | Should Be 'Invoke-WebRequest Result'
             }
             It "should return call expected mocks" {
+                Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
+
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
                         $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
