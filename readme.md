@@ -230,6 +230,12 @@ For further examples, please see module help for individual cmdlets.
 
 ## Versions
 
+### Unreleased
+
+- Fixed enabling of TLS 1.2 to work with older .NET Framework versions.
+- Updated tests to meet Pester V4 guidelines.
+- Updated license year to 2018.
+
 ### 1.0.0.196
 
 - Added support for Jenkins servers using TLS 1.2.
