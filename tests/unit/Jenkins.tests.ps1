@@ -38,7 +38,7 @@ try
                     Write-Warning -Message 'There are PSScriptAnalyzer errors that need to be fixed:'
                     @($PSScriptAnalyzerErrors).Foreach( { Write-Warning -Message "$($_.Scriptname) (Line $($_.Line)): $($_.Message)" } )
                     Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/psscriptAnalyzer/'
-                    $PSScriptAnalyzerErrors.Count | Should Be $null
+                    $PSScriptAnalyzerErrors.Count | Should -Be $null
                 }
                 if ($PSScriptAnalyzerWarnings -ne $null)
                 {
@@ -91,40 +91,44 @@ try
 
     InModuleScope 'Jenkins' {
         Describe 'Set-JenkinsTLSSupport' {
-            It "should not throw" {
-                { Set-JenkinsTLSSupport } | Should Not Throw
+            It "Should not throw" {
+                { Set-JenkinsTLSSupport } | Should -Not -Throw
+            }
+
+            It "Security Protocol Type should contain 'Tls12'" {
+                ([Net.ServicePointManager]::SecurityProtocol).ToString().Contains([Net.SecurityProtocolType]::Tls12) | Should -Be $true
             }
         }
 
         Describe 'Get-JenkinsTreeRequest' {
-            Context 'default depth, default type, default attribute' {
-                It "should return '?tree=jobs[name,buildable,url,color]'" {
+            Context 'When default depth, default type, default attribute' {
+                It "Should return '?tree=jobs[name,buildable,url,color]'" {
                     Get-JenkinsTreeRequest |
-                        Should Be '?tree=jobs[name,buildable,url,color]'
+                        Should -Be '?tree=jobs[name,buildable,url,color]'
                 }
             }
-            Context 'depth 2, default type, default attribute' {
-                It "should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" {
+            Context 'When depth 2, default type, default attribute' {
+                It "Should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" {
                     Get-JenkinsTreeRequest -Depth 2 |
-                        Should Be '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'
+                        Should -Be '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'
                 }
             }
-            Context 'depth 2, type views, default attribute' {
-                It "should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" {
+            Context 'When depth 2, type views, default attribute' {
+                It "Should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" {
                     Get-JenkinsTreeRequest -Depth 2 -Type 'Views' |
-                        Should Be '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'
+                        Should -Be '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'
                 }
             }
-            Context 'depth 3, type views, attribute name,url' {
-                It "should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" {
+            Context 'When depth 3, type views, attribute name,url' {
+                It "Should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" {
                     Get-JenkinsTreeRequest -Depth 3 -Type 'Views' -Attribute @('name','url') |
-                        Should Be '?tree=Views[name,url,Views[name,url,Views[name,url]]]'
+                        Should -Be '?tree=Views[name,url,Views[name,url,Views[name,url]]]'
                 }
             }
-            Context 'depth 2, type jobs, attribute name,lastBuild[number]' {
-                It "should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" {
+            Context 'When depth 2, type jobs, attribute name,lastBuild[number]' {
+                It "Should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" {
                     Get-JenkinsTreeRequest -Depth 2 -Type 'Jobs' -Attribute @('name','lastBuild[number]') |
-                        Should Be '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'
+                        Should -Be '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'
                 }
             }
         } # Describe
@@ -136,7 +140,7 @@ try
             Credential = $testCredential
         }
 
-        Context 'uri passed, credentials passed, standard crumb returned' {
+        Context 'When uri passed, credentials passed, standard crumb returned' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -151,10 +155,10 @@ try
                 -MockWith { [pscustomobject] @{ Content = 'Jenkins-Crumb:1234567890' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
             $Result = Get-JenkinsCrumb @Splat
-            It "should return '1234567890'" {
-                $Result | Should Be '1234567890'
+            It "Should return '1234567890'" {
+                $Result | Should -Be '1234567890'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -167,7 +171,7 @@ try
             }
         } # Context
 
-        Context 'uri passed, credentials passed, internal crumb returned' {
+        Context 'When uri passed, credentials passed, internal crumb returned' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -182,10 +186,10 @@ try
                 -MockWith { [pscustomobject] @{ Content = '.crumb:1234567890' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
             $Result = Get-JenkinsCrumb @Splat
-            It "should return '1234567890'" {
-                $Result | Should Be '1234567890'
+            It "Should return '1234567890'" {
+                $Result | Should -Be '1234567890'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -198,7 +202,7 @@ try
             }
         } # Context
 
-        Context 'uri passed, credentials passed, invalid crumb returned' {
+        Context 'When uri passed, credentials passed, invalid crumb returned' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -212,10 +216,10 @@ try
                 } `
                 -MockWith { [pscustomobject] @{ Content = 'Invalid Crumb' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
-            It "should throw exception" {
-                { $Result = Get-JenkinsCrumb @Splat } | Should Throw 'Invalid Crumb'
+            It "Should throw exception" {
+                { $Result = Get-JenkinsCrumb @Splat } | Should -Throw 'Invalid Crumb'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -236,7 +240,7 @@ try
             Command    = $testCommand
         }
 
-        Context 'default type, default api, credentials passed' {
+        Context 'When default type, default api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -251,10 +255,10 @@ try
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -267,7 +271,7 @@ try
             }
         } # Context
 
-        Context 'default type, default api, no credentials passed' {
+        Context 'When default type, default api, no credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -283,10 +287,10 @@ try
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.Remove('Credential')
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -298,7 +302,7 @@ try
             }
         } # Context
 
-        Context 'default type, xml api, credentials passed' {
+        Context 'When default type, xml api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -314,10 +318,10 @@ try
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.api = 'xml'
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -330,7 +334,7 @@ try
             }
         } # Context
 
-        Context 'default type, xml api, credentials passed, header passed' {
+        Context 'When default type, xml api, credentials passed, header passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -348,10 +352,10 @@ try
             $Splat.api = 'xml'
             $Splat.headers = @{ test = 'test' }
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -365,7 +369,7 @@ try
             }
         } # Context
 
-        Context 'default type, xml api, credentials passed, header passed, get method' {
+        Context 'When default type, xml api, credentials passed, header passed, get method' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -385,10 +389,10 @@ try
             $Splat.headers = @{ test = 'test' }
             $Splat.method = 'get'
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -403,7 +407,7 @@ try
             }
         } # Context
 
-        Context 'default type, xml api, credentials passed, body passed' {
+        Context 'When default type, xml api, credentials passed, body passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -421,10 +425,10 @@ try
             $Splat.api = 'xml'
             $Splat.body = 'body'
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-RestMethod Result'" {
-                $Result | Should Be 'Invoke-RestMethod Result'
+            It "Should return 'Invoke-RestMethod Result'" {
+                $Result | Should -Be 'Invoke-RestMethod Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
@@ -438,7 +442,7 @@ try
             }
         } # Context
 
-        Context 'command type, default api, credentials passed' {
+        Context 'When command type, default api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -454,10 +458,10 @@ try
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.Type = 'command'
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-WebRequest Result'" {
-                $Result | Should Be 'Invoke-WebRequest Result'
+            It "Should return 'Invoke-WebRequest Result'" {
+                $Result | Should -Be 'Invoke-WebRequest Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -470,7 +474,7 @@ try
             }
         } # Context
 
-        Context 'pluginmanager type, default api, credentials passed' {
+        Context 'When pluginmanager type, default api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -487,10 +491,10 @@ try
             $Splat.Type = 'pluginmanager'
 
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-WebRequest Result'" {
-                $Result | Should Be 'Invoke-WebRequest Result'
+            It "Should return 'Invoke-WebRequest Result'" {
+                $Result | Should -Be 'Invoke-WebRequest Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -503,7 +507,7 @@ try
             }
         } # Context
 
-        Context 'pluginmanager type, xml api, credentials passed' {
+        Context 'When pluginmanager type, xml api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -521,10 +525,10 @@ try
             $Splat.api = 'xml'
 
             $Result = Invoke-JenkinsCommand @Splat
-            It "should return 'Invoke-WebRequest Result'" {
-                $Result | Should Be 'Invoke-WebRequest Result'
+            It "Should return 'Invoke-WebRequest Result'" {
+                $Result | Should -Be 'Invoke-WebRequest Result'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
@@ -539,7 +543,7 @@ try
     } # Describe 'Invoke-JenkinsCommand'
 
     Describe 'Get-JenkinsObject' {
-        Context 'jobs type, attribute name, no folder, credentials passed' {
+        Context 'When jobs type, attribute name, no folder, credentials passed' {
             $GetJenkinsObjectSplat = @{
                 Uri        = $testURI
                 Credential = $testCredential
@@ -562,12 +566,12 @@ try
                     }
             $Splat = $GetJenkinsObjectSplat.Clone()
             $Result = Get-JenkinsObject @Splat
-            It "should return expected objects" {
-                $Result.Count | Should Be 2
-                $Result[0].Name | Should Be 'test1'
-                $Result[1].Name | Should Be 'test2'
+            It "Should return expected objects" {
+                $Result.Count | Should -Be 2
+                $Result[0].Name | Should -Be 'test1'
+                $Result[1].Name | Should -Be 'test2'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq '?tree=jobs[name]'
@@ -576,7 +580,7 @@ try
             }
         } # Context
 
-        Context 'jobs type, attribute name, folder, credentials passed' {
+        Context 'When jobs type, attribute name, folder, credentials passed' {
             $GetJenkinsObjectSplat = @{
                 Uri        = $testURI
                 Credential = $testCredential
@@ -600,12 +604,12 @@ try
                     }
             $Splat = $GetJenkinsObjectSplat.Clone()
             $Result = Get-JenkinsObject @Splat
-            It "should return expected objects" {
-                $Result.Count | Should Be 2
-                $Result[0].Name | Should Be 'test1'
-                $Result[1].Name | Should Be 'test2'
+            It "Should return expected objects" {
+                $Result.Count | Should -Be 2
+                $Result[0].Name | Should -Be 'test1'
+                $Result[1].Name | Should -Be 'test2'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
@@ -622,7 +626,7 @@ try
             Name       = $testJobName
         }
 
-        Context 'Name is set, no folder is passed' {
+        Context 'When Name is set, no folder is passed' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -632,10 +636,10 @@ try
                 -MockWith { @{ Content = 'JobXML'} }
             $Splat = $GetJenkinsJobSplat.Clone()
             $Result = Get-JenkinsJob @Splat
-            It "should return expected XML" {
-                $Result | Should Be 'JobXML'
+            It "Should return expected XML" {
+                $Result | Should -Be 'JobXML'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq "job/$testJobName/config.xml"
@@ -644,7 +648,7 @@ try
             }
         }
 
-        Context 'Name is set, single folder is passed' {
+        Context 'When Name is set, single folder is passed' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -655,10 +659,10 @@ try
             $Splat = $GetJenkinsJobSplat.Clone()
             $Splat.Folder = 'test'
             $Result = Get-JenkinsJob @Splat
-            It "should return expected XML" {
-                $Result | Should Be 'JobXML'
+            It "Should return expected XML" {
+                $Result | Should -Be 'JobXML'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq "job/test/job/$testJobName/config.xml"
@@ -667,7 +671,7 @@ try
             }
         } # Context
 
-        Context 'Name is set, two folders are passed separated by \' {
+        Context 'When Name is set, two folders are passed separated by \' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -678,10 +682,10 @@ try
             $Splat = $GetJenkinsJobSplat.Clone()
             $Splat.Folder = 'test1\test2'
             $Result = Get-JenkinsJob @Splat
-            It "should return expected XML" {
-                $Result | Should Be 'JobXML'
+            It "Should return expected XML" {
+                $Result | Should -Be 'JobXML'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
@@ -690,7 +694,7 @@ try
             }
         } # Context
 
-        Context 'Name is set, two folders are passed separated by /' {
+        Context 'When Name is set, two folders are passed separated by /' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -701,10 +705,10 @@ try
             $Splat = $GetJenkinsJobSplat.Clone()
             $Splat.Folder = 'test1/test2'
             $Result = Get-JenkinsJob @Splat
-            It "should return expected XML" {
-                $Result | Should Be 'JobXML'
+            It "Should return expected XML" {
+                $Result | Should -Be 'JobXML'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq "job/test1/job/test2/job/$testJobName/config.xml"
@@ -713,7 +717,7 @@ try
             }
         } # Context
 
-        Context 'Name is set, two folders are passed separated by \ and /' {
+        Context 'When Name is set, two folders are passed separated by \ and /' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
@@ -724,10 +728,10 @@ try
             $Splat = $GetJenkinsJobSplat.Clone()
             $Splat.Folder = 'test1\test2/test3'
             $Result = Get-JenkinsJob @Splat
-            It "should return expected XML" {
-                $Result | Should Be 'JobXML'
+            It "Should return expected XML" {
+                $Result | Should -Be 'JobXML'
             }
-            It "should return call expected mocks" {
+            It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
                         $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/config.xml"
