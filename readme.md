@@ -230,7 +230,7 @@ For further examples, please see module help for individual cmdlets.
 
 ## Versions
 
-### Unreleased
+### 1.0.0.203
 
 - Fixed enabling of TLS 1.2 to work with older .NET Framework versions.
 - Updated tests to meet Pester V4 guidelines.
@@ -322,6 +322,7 @@ For further examples, please see module help for individual cmdlets.
 - [IAG NZ Web Site](http://www.iag.co.nz)
 - [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 - [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
 
 
 
