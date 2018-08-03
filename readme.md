@@ -230,6 +230,12 @@ For further examples, please see module help for individual cmdlets.
 
 ## Versions
 
+### Unreleased
+
+- Jenkins 2.107.1 returns XML 1.1, which .NET can't parse. `Get-JenkinsJob` changes the version in the XML declaration to be "version='1.0'" before returning it.
+- Fixed: `Get-JenkinsObject` fails if using a forward slash "/" as the folder seperator.
+- Added `Folder` parameter to `Rename-JenkinsJob`. It can now rename jobs in folders.
+
 ### 1.0.0.203
 
 - Fixed enabling of TLS 1.2 to work with older .NET Framework versions.
