@@ -751,7 +751,7 @@ function Get-JenkinsObject()
         Attribute = $Attribute
     }
     if ($Folder) {
-        $FolderItems = $Folder -split '\\'
+        $FolderItems = ($Folder -split '\\') -split '/'
         $TreeRequestSplat = @{
             Depth = ($FolderItems.Count + 1)
             Attribute = $Attribute
