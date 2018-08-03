@@ -751,7 +751,7 @@ function Get-JenkinsObject()
         Attribute = $Attribute
     }
     if ($Folder) {
-        $FolderItems = $Folder -split '\\'
+        $FolderItems = ($Folder -split '\\') -split '/'
         $TreeRequestSplat = @{
             Depth = ($FolderItems.Count + 1)
             Attribute = $Attribute
@@ -988,7 +988,8 @@ function Get-JenkinsJob()
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Add('Command',$Command)
-    return (Invoke-JenkinsCommand @PSBoundParameters).Content
+    $configXml = (Invoke-JenkinsCommand @PSBoundParameters).Content
+    return $configXml -replace '^<\?xml\ version=(''|")1\.1(''|")','<?xml version=''1.0'''
 } # Get-JenkinsJob
 
 
@@ -1201,6 +1202,8 @@ function Test-JenkinsJob()
     The name of the job to rename.
 .PARAMETER NewName
     The new name to rename the job to.
+.PARAMETER Folder
+    The optional job folder to look for the job in. This requires the Jobs Plugin to be installed on Jenkins.
 .EXAMPLE
     Rename-JenkinsJob `
         -Uri 'https://jenkins.contoso.com' `
@@ -1249,14 +1252,29 @@ function Rename-JenkinsJob()
         [ValidateNotNullOrEmpty()]
         [String] $NewName,
 
+        [parameter(
+            Position=6,
+            Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Folder,
         [Switch] $Force
     )
     $null = $PSBoundParameters.Add('Type','Command')
-    $Command = "job/$Name/doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName)
+    if ($PSBoundParameters.ContainsKey('Folder')) {
+        $Folders = ($Folder -split '\\') -split '/'
+        $Command = 'job/'
+        foreach ($Folder in $Folders) {
+            $Command += "$Folder/job/"
+        } # foreach
+    } else {
+        $Command = "job/"
+    } # if
+    $Command = "$Command$Name/doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName)
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('NewName')
     $null = $PSBoundParameters.Remove('Confirm')
     $null = $PSBoundParameters.Remove('Force')
+    $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Add('Command', $Command)
     $null = $PSBoundParameters.Add('Method', 'post')
     if ($Force -or $PSCmdlet.ShouldProcess( `

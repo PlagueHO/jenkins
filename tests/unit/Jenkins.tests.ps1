@@ -581,41 +581,46 @@ try
         } # Context
 
         Context 'When jobs type, attribute name, folder, credentials passed' {
-            $GetJenkinsObjectSplat = @{
-                Uri        = $testURI
-                Credential = $testCredential
-                Folder     = 'test\folder'
-                Type       = 'jobs'
-                Attribute = @('name')
-            }
-
-            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
-                -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
-            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
-                -ParameterFilter {
-                    $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
-                } `
-                -MockWith { @{
-                            jobs = @(
-                                @{ name = 'test1' },
-                                @{ name = 'test2' }
-                            )
-                        }
+            foreach( $slash in @( '/', '\') )
+            {
+                Context $slash {
+                    $GetJenkinsObjectSplat = @{
+                        Uri        = $testURI
+                        Credential = $testCredential
+                        Folder     = ('test{0}folder' -f $slash)
+                        Type       = 'jobs'
+                        Attribute = @('name')
                     }
-            $Splat = $GetJenkinsObjectSplat.Clone()
-            $Result = Get-JenkinsObject @Splat
-            It "Should return expected objects" {
-                $Result.Count | Should -Be 2
-                $Result[0].Name | Should -Be 'test1'
-                $Result[1].Name | Should -Be 'test2'
-            }
-            It "Should return call expected mocks" {
-                Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
-                    -ParameterFilter {
-                        $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
-                    } `
-                    -Exactly 1
-            }
+
+                    Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                        -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
+                    Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                        -ParameterFilter {
+                            $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
+                        } `
+                        -MockWith { @{
+                                    jobs = @(
+                                        @{ name = 'test1' },
+                                        @{ name = 'test2' }
+                                    )
+                                }
+                            }
+                    $Splat = $GetJenkinsObjectSplat.Clone()
+                    $Result = Get-JenkinsObject @Splat
+                    It "Should return expected objects" {
+                        $Result.Count | Should -Be 2
+                        $Result[0].Name | Should -Be 'test1'
+                        $Result[1].Name | Should -Be 'test2'
+                    }
+                    It "Should return call expected mocks" {
+                        Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                            -ParameterFilter {
+                                $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
+                            } `
+                            -Exactly 1
+                    }
+                } # Context
+            } # foreach
         } # Context
     } # Describe 'Get-JenkinsObject'
 
@@ -737,6 +742,20 @@ try
                         $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/config.xml"
                     } `
                     -Exactly 1
+            }
+        } # Context
+
+        Context 'When Jenkins returns Xml 1.1' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { [pscustomobject]@{ Content = @'
+<?xml version='1.1' encoding='UTF-8'?>
+<project />
+'@ } }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test1\test2/test3'
+            $Result = Get-JenkinsJob @Splat
+            It 'should return XML parseable by .NET' {
+                { [xml]$Result } | Should -Not -Throw
             }
         } # Context
     } # Describe 'Get-JenkinsJob'
