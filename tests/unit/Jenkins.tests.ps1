@@ -739,6 +739,20 @@ try
                     -Exactly 1
             }
         } # Context
+
+        Context 'When Jenkins returns Xml 1.1' {
+            Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
+                -MockWith { [pscustomobject]@{ Content = @'
+<?xml version='1.1' encoding='UTF-8'?>
+<project />
+'@ } }
+            $Splat = $GetJenkinsJobSplat.Clone()
+            $Splat.Folder = 'test1\test2/test3'
+            $Result = Get-JenkinsJob @Splat
+            It 'should return XML parseable by .NET' {
+                { [xml]$Result } | Should -Not -Throw
+            }
+        } # Context
     } # Describe 'Get-JenkinsJob'
 }
 catch

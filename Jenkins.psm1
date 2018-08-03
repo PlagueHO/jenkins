@@ -988,7 +988,8 @@ function Get-JenkinsJob()
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Add('Command',$Command)
-    return (Invoke-JenkinsCommand @PSBoundParameters).Content
+    $configXml = (Invoke-JenkinsCommand @PSBoundParameters).Content
+    return $configXml -replace '^<\?xml\ version=(''|")1\.1(''|")','<?xml version=''1.0'''
 } # Get-JenkinsJob
 
 
