@@ -1,7 +1,19 @@
-// Place your settings in this file to overwrite the default settings
-{
-    "editor.rulers": [120],
-    "editor.renderWhitespace": true,
+﻿{
+    // Use a custom PowerShell Script Analyzer settings file for this workspace.
+    // Relative paths for this setting are always relative to the workspace root dir.
+    "powershell.scriptAnalysis.settingsPath": "PSScriptAnalyzerSettings.psd1",
+
+    // When enabled, will trim trailing whitespace when you save a file.
+    "powershell.codeFormatting.openBraceOnSameLine": false,
+    "powershell.codeFormatting.newLineAfterOpenBrace": false,
+    "powershell.codeFormatting.newLineAfterCloseBrace": true,
+    "powershell.codeFormatting.whitespaceBeforeOpenBrace": true,
+    "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
+    "powershell.codeFormatting.whitespaceAroundOperator": true,
+    "powershell.codeFormatting.whitespaceAfterSeparator": true,
+    "powershell.codeFormatting.ignoreOneLineBlock": false,
+    "powershell.codeFormatting.preset": "Custom",
     "files.trimTrailingWhitespace": true,
-    "terminal.integrated.shell.windows": "C:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
+    "files.insertFinalNewline": true
 }
+
