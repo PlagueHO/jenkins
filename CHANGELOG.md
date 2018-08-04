@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 1.0.1.222
 
 - Jenkins 2.107.1 returns XML 1.1, which .NET can not parse. `Get-JenkinsJob`
   changes the version in the XML declaration to be "version=1.0" before
