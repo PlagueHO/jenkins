@@ -12,6 +12,7 @@
 - Clean up markdown in readme.md.
 - Split functions into separate files in the `lib` folder.
 - Refactored module structure to improve deployability.
+- Moved documentation into docs folder.
 
 ## 1.0.0.203
 

@@ -1,28 +1,3 @@
-<#
-    .SYNOPSIS
-        Gets a Jenkins Crumb.
-
-    .DESCRIPTION
-        This cmdlet is used to obtain a crumb that must be passed to all other commands
-        to a Jenkins Server if CSRF is enabled in Global Settings of the server.
-        The crumb must be added to the header of any commands or requests sent to this
-        master.
-
-    .PARAMETER Uri
-        Contains the Uri to the Jenkins Master server to obtain the crumb from.
-
-    .PARAMETER Credential
-        Contains the credentials to use to authenticate with the Jenkins Master server.
-
-    .EXAMPLE
-        Get-JenkinsCrumb `
-            -Uri 'https://jenkins.contoso.com' `
-            -Credential (Get-Credential)
-        Returns a Jenkins Crumb.
-
-    .OUTPUTS
-        The crumb string.
-#>
 function Get-JenkinsCrumb
 {
     [CmdLetBinding()]

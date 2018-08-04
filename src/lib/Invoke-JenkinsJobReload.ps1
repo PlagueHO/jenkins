@@ -1,26 +1,3 @@
-<#
-    .SYNOPSIS
-        Triggers a reload on a jenkins server
-
-    .DESCRIPTION
-        Triggers a reload on a jenkins server, e.g. if the job configs are altered on disk.
-
-    .PARAMETER Uri
-        The uri of the Jenkins server to trigger the reload on.
-
-    .PARAMETER Credential
-        Contains the credentials to use to authenticate with the Jenkins Master server.
-
-    .PARAMETER Crumb
-        Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
-
-    .EXAMPLE
-        Invoke-JenkinsJobReload `
-            -Uri 'https://jenkins.contoso.com' `
-            -Credential (Get-Credential) `
-            -Verbose
-        Triggers a reload of the jenkins server 'https://jenkins.contoso.com'
-#>
 function Invoke-JenkinsJobReload
 {
     [CmdLetBinding()]
