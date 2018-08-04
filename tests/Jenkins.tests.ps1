@@ -53,39 +53,6 @@ Describe 'PSScriptAnalyzer' -Tag 'PSScriptAnalyzer' {
     }
 }
 
-<#
-.SYNOPSIS
-Helper function that just creates an exception record for testing.
-#>
-function Get-ExceptionRecord
-{
-    [CmdLetBinding()]
-    param
-    (
-        [Parameter(Mandatory)]
-        [String]
-        $ErrorId,
-
-        [Parameter(Mandatory)]
-        [System.Management.Automation.ErrorCategory]
-        $ErrorCategory,
-
-        [Parameter(Mandatory)]
-        [String]
-        $ErrorMessage,
-
-        [Switch]
-        $terminate
-    )
-
-    $exception = New-Object -TypeName System.Exception `
-        -ArgumentList $ErrorMessage
-    $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
-        -ArgumentList $exception, $ErrorId, $ErrorCategory, $null
-
-    return $errorRecord
-} # function
-
 $testURI        = 'https://jenkins.contoso.com'
 $testUsername   = 'DummyUser'
 $testPassword   = 'DummyPassword'
@@ -96,6 +63,9 @@ $Bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $t
 $Base64Bytes    = [System.Convert]::ToBase64String($Bytes)
 $testAuthHeader = "Basic $Base64Bytes"
 $testJobName    = 'TestJob'
+
+Import-Module -Name $ModuleManifestPath -Force
+Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath 'TestHelper') -Force
 
 InModuleScope 'Jenkins' {
     Describe 'Set-JenkinsTLSSupport' {
