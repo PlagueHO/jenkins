@@ -45,22 +45,7 @@ function Remove-JenkinsJob
 
     $null = $PSBoundParameters.Add('Type', 'Command')
 
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
-        $Command = 'job/'
-
-        foreach ($Folder in $Folders)
-        {
-            $Command += "$Folder/job/"
-        } # foreach
-
-        $Command += "$Name/doDelete"
-    }
-    else
-    {
-        $Command = "job/$Name/doDelete"
-    } # if
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'doDelete'
 
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')

@@ -74,6 +74,7 @@
         'New-JenkinsJob'
         'Remove-JenkinsJob'
         'Rename-JenkinsJob'
+        'Resolve-JenkinsCommandUri',
         'Set-JenkinsJob'
         'Test-JenkinsFolder'
         'Test-JenkinsJob'

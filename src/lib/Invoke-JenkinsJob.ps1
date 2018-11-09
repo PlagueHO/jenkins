@@ -47,22 +47,7 @@ function Invoke-JenkinsJob
 
     $null = $PSBoundParameters.Add('Type', 'RestCommand')
 
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
-        $Command = 'job/'
-
-        foreach ($Folder in $Folders)
-        {
-            $Command += "$Folder/job/"
-        } # foreach
-
-        $Command += "$Name/build"
-    }
-    else
-    {
-        $Command = "job/$Name/build"
-    } # if
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'build'
 
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')

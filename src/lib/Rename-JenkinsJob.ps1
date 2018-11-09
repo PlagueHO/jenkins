@@ -52,22 +52,8 @@ function Rename-JenkinsJob
 
     $null = $PSBoundParameters.Add('Type', 'Command')
 
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
-        $Command = 'job/'
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command ("doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName))
 
-        foreach ($Folder in $Folders)
-        {
-            $Command += "$Folder/job/"
-        } # foreach
-    }
-    else
-    {
-        $Command = "job/"
-    } # if
-
-    $Command = "$Command$Name/doRename?newName={0}" -f [System.Uri]::EscapeDataString($NewName)
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('NewName')
     $null = $PSBoundParameters.Remove('Confirm')

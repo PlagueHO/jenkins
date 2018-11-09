@@ -49,19 +49,9 @@ function New-JenkinsJob
     )
 
     $null = $PSBoundParameters.Add('Type', 'Command')
-    $Command = ''
 
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -Command ("createItem?name={0}" -f [System.Uri]::EscapeDataString($Name))
 
-        foreach ($Folder in $Folders)
-        {
-            $Command += "job/$Folder/"
-        } # foreach
-    } # if
-
-    $Command += "createItem?name={0}" -f [System.Uri]::EscapeDataString($Name)
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('XML')
