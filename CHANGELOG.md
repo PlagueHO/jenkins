@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+
+- Added `Disable-JenkinsJob` and `Enable-JenkinsJob` functions for disabling
+  and enabling Jenkins jobs, respectively.
+
 ## 1.0.1.222
 
 - Jenkins 2.107.1 returns XML 1.1, which .NET can not parse. `Get-JenkinsJob`
