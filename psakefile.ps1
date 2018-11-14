@@ -20,43 +20,78 @@ Properties {
 Task Default -Depends Build
 
 Task Init {
-    $separator
-
     Set-Location -Path $ProjectRoot
+
+    # Install any dependencies required for the Init stage
+    Invoke-PSDepend `
+        -Path $PSScriptRoot `
+        -Force `
+        -Import `
+        -Install `
+        -Tags 'Init'
+
+    Set-BuildEnvironment -Force
+
+    $separator
     'Build System Details:'
     Get-Item -Path ENV:BH*
     "`n"
+
+    $separator
+    'Other Environment Variables:'
+    Get-ChildItem -Path ENV:
+    "`n"
+
+    $separator
     'PowerShell Details:'
     $PSVersionTable
-
     "`n"
 }
 
-Task Test -Depends Init {
+Task PrepareTest -Depends Init {
+    # Install any dependencies required for testing
+    Invoke-PSDepend `
+        -Path $PSScriptRoot `
+        -Force `
+        -Import `
+        -Install `
+        -Tags 'Test',('Test_{0}' -f $PSVersionTable.PSEdition)
+}
+
+Task Test -Depends UnitTest, IntegrationTest
+
+Task UnitTest -Depends Init, PrepareTest {
     $separator
 
     # Execute tests
-    $testResultsFile = Join-Path -Path $ProjectRoot -ChildPath 'test\TestResults.xml'
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\Unit'
+    $testResultsFile = Join-Path -Path $testScriptsPath -ChildPath 'TestResults.unit.xml'
+    $codeCoverageFile = Join-Path -Path $testScriptsPath -ChildPath 'CodeCoverage.xml'
+    $codeCoverageSource = Get-ChildItem -Path (Join-Path -Path $ProjectRoot -ChildPath 'src\lib\*.ps1') -Recurse
     $testResults = Invoke-Pester `
+        -Script $testScriptsPath `
         -OutputFormat NUnitXml `
         -OutputFile $testResultsFile `
         -PassThru `
         -ExcludeTag Incomplete `
-        -CodeCoverage @( Join-Path -Path $ProjectRoot -ChildPath 'src\lib\*.ps1' )
+        -CodeCoverage $codeCoverageSource `
+        -CodeCoverageOutputFile $codeCoverageFile `
+        -CodeCoverageOutputFileFormat JaCoCo
 
     # Prepare and uploade code coverage
     if ($testResults.CodeCoverage)
     {
-        'Preparing CodeCoverage'
-        Import-Module `
-            -Name (Join-Path -Path $ProjectRoot -ChildPath '.codecovio\CodeCovio.psm1')
-
-        $jsonPath = Export-CodeCovIoJson `
-            -CodeCoverage $testResults.CodeCoverage `
-            -RepoRoot $ProjectRoot
-
+        # Only bother generating code coverage in AppVeyor
         if ($ENV:BHBuildSystem -eq 'AppVeyor')
         {
+            'Preparing CodeCoverage'
+            Import-Module `
+                -Name (Join-Path -Path $ProjectRoot -ChildPath '.codecovio\CodeCovio.psm1')
+
+            $jsonPath = Export-CodeCovIoJson `
+                -CodeCoverage $testResults.CodeCoverage `
+                -RepoRoot $ProjectRoot
+
             'Uploading CodeCoverage to CodeCov.io'
             try
             {
@@ -83,19 +118,65 @@ Task Test -Depends Init {
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
             (Resolve-Path $testResultsFile))
 
-        "Publishing test results to AppVeyor as Artifact"
+        'Publishing test results to AppVeyor as Artifact'
         Push-AppveyorArtifact $testResultsFile
 
         if ($testResults.FailedCount -gt 0)
         {
-            throw "$($testResults.FailedCount) tests failed."
+            throw "$($testResults.FailedCount) unit tests failed."
         }
     }
     else
     {
         if ($testResults.FailedCount -gt 0)
         {
-            Write-Error -Exception "$($testResults.FailedCount) tests failed."
+            Write-Error -Exception "$($testResults.FailedCount) unit tests failed."
+        }
+    }
+
+    "`n"
+}
+
+Task IntegrationTest -Depends Init, PrepareTest {
+    $separator
+
+    # Execute tests
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\Integration'
+    if (-not (Test-Path -Path $testScriptsPath))
+    {
+        'Skipping integration tests because they do not exist.'
+        return
+    }
+
+    $testResultsFile = Join-Path -Path $testScriptsPath -ChildPath 'TestResults.integration.xml'
+    $testResults = Invoke-Pester `
+        -Script $testScriptsPath `
+        -OutputFormat NUnitXml `
+        -OutputFile $testResultsFile `
+        -PassThru `
+        -ExcludeTag Incomplete
+
+    # Upload tests
+    if ($ENV:BHBuildSystem -eq 'AppVeyor')
+    {
+        'Publishing test results to AppVeyor'
+        (New-Object 'System.Net.WebClient').UploadFile(
+            "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+            (Resolve-Path $testResultsFile))
+
+        'Publishing test results to AppVeyor as Artifact'
+        Push-AppveyorArtifact $testResultsFile
+
+        if ($testResults.FailedCount -gt 0)
+        {
+            throw "$($testResults.FailedCount) integration tests failed."
+        }
+    }
+    else
+    {
+        if ($testResults.FailedCount -gt 0)
+        {
+            Write-Error -Exception "$($testResults.FailedCount) integration tests failed."
         }
     }
 
