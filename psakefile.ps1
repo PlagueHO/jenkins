@@ -380,7 +380,7 @@ Task Deploy -Depends Build {
                 # This is not a PR so deploy
                 'Beginning update to master branch with deployed information'
 
-                # Pull the master branch, update the readme.md and manifest
+                # Pull the master branch, update the CHANGELOG.md and manifest
                 Set-Location -Path $ProjectRoot
                 Invoke-Git -GitParameters @('config', '--global', 'credential.helper', 'store')
 
