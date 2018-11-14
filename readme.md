@@ -5,14 +5,30 @@
 
 # Jenkins
 
-| Branch | Build Status | Code Coverage |
-| --- | --- | --- |
-| dev | [![Build status](https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true)](https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev) | [![codecov](https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg)](https://codecov.io/gh/IAG-NZ/jenkins/branch/dev) |
-| master | [![Build status](https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true)](https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master) | [![codecov](https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg)](https://codecov.io/gh/IAG-NZ/jenkins/branch/master) |
-
 PowerShell module for interacting with a CloudBees Jenkins server using the
 [Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
 Created by IAG NZ Ltd.
+
+## Module Build Status
+
+| Branch | AzurePipelines CI | AppVeyor CI | Travis CI | Code Coverage |
+| --- | --- | --- | --- | --- |
+| dev | Comming Soon | [![av-image-dev][]][av-site-dev] | [![tv-image-dev][]][tv-site-dev] | [![cc-image-dev][]][cc-site-dev] |
+| master | Comming Soon | [![av-image-master][]][av-site-master] | [![tv-image-master][]][tv-site-master] | [![cc-image-master][]][cc-site-master] |
+
+[av-image-dev]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true
+[av-site-dev]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev
+[tv-image-dev]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=dev
+[tv-site-dev]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg
+[cc-site-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev
+
+[av-image-master]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true
+[av-site-master]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master
+[tv-image-master]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=master
+[tv-site-master]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg
+[cc-site-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master
 
 ## Installation
 
@@ -47,6 +63,7 @@ folder.
 - `Invoke-JenkinsCommand`: Execute a Jenkins command or request via the Jenkins Rest API.
 - `Invoke-JenkinsJob`: Run a parameterized or non-parameterized Jenkins Job.
 - `Invoke-JenkinsJobReload`: Reloads a job config on a given URL.
+- `New-JenkinsFolder`: Create a new Jenkins Folder.
 - `New-JenkinsJob`: Create a new Jenkins Job.
 - `Remove-JenkinsJob`: Remove an existing Jenkins Job.
 - `Rename-JenkinsJob`: Rename an existing Jenkins Job.
@@ -54,7 +71,6 @@ folder.
 - `Test-JenkinsFolder`: Determines if a Jenkins Folder exists.
 - `Test-JenkinsJob`: Determines if a Jenkins Job exists.
 - `Test-JenkinsView`: Determines if a Jenkins View exists.
-
 
 ## Cross Site Request Forgery (CSRF) Support
 

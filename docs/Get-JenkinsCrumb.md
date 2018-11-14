@@ -8,15 +8,17 @@ schema: 2.0.0
 # Get-JenkinsCrumb
 
 ## SYNOPSIS
+
 Gets a Jenkins Crumb.
 
 ## SYNTAX
 
-```
+```powershell
 Get-JenkinsCrumb [-Uri] <String> [[-Credential] <PSCredential>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
+
 This cmdlet is used to obtain a crumb that must be passed to all other commands
 to a Jenkins Server if CSRF is enabled in Global Settings of the server.
 The crumb must be added to the header of any commands or requests sent to this
@@ -25,17 +27,19 @@ master.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
-Get-JenkinsCrumb `
+
+```powershell
+PS C:\>Get-JenkinsCrumb `
+    -Uri 'https://jenkins.contoso.com' \`
+    -Credential (Get-Credential)
 ```
 
--Uri 'https://jenkins.contoso.com' \`
-    -Credential (Get-Credential)
 Returns a Jenkins Crumb.
 
 ## PARAMETERS
 
 ### -Uri
+
 Contains the Uri to the Jenkins Master server to obtain the crumb from.
 
 ```yaml
@@ -51,6 +55,7 @@ Accept wildcard characters: False
 ```
 
 ### -Credential
+
 Contains the credentials to use to authenticate with the Jenkins Master server.
 
 ```yaml
@@ -66,6 +71,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
