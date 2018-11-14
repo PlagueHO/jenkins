@@ -8,7 +8,7 @@ $moduleRoot = Split-Path `
     -Parent
 
 #region LocalizedData
-$culture = 'en-us'
+$culture = 'en-US'
 if (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath $PSUICulture))
 {
     $culture = $PSUICulture
