@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 1.0.2.240
 
 - Added `Disable-JenkinsJob` and `Enable-JenkinsJob` functions for disabling
   and enabling Jenkins jobs, respectively.

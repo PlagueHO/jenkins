@@ -1,6 +1,6 @@
 # Release Notes
 
-## What is New in Jenkins Unreleased
+## What is New in Jenkins 1.0.2.240
 
 November 14, 2018
 
