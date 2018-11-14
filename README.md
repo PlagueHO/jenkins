@@ -1,18 +1,35 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/IAG-NZ/Jenkins/blob/dev/LICENSE)
+[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-CosmosDB-blue.svg)](https://github.com/IAG-NZ/Jenkins/wiki)
 [![PowerShell Gallery - Jenkins](https://img.shields.io/badge/PowerShell%20Gallery-Jenkins-blue.svg)](https://www.powershellgallery.com/packages/Jenkins)
 [![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-4.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
 [![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PowerShell_Core-6.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
 
 # Jenkins
 
-| Branch | Build Status | Code Coverage |
-| --- | --- | --- |
-| dev | [![Build status](https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true)](https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev) | [![codecov](https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg)](https://codecov.io/gh/IAG-NZ/jenkins/branch/dev) |
-| master | [![Build status](https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true)](https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master) | [![codecov](https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg)](https://codecov.io/gh/IAG-NZ/jenkins/branch/master) |
-
 PowerShell module for interacting with a CloudBees Jenkins server using the
 [Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
 Created by IAG NZ Ltd.
+
+## Module Build Status
+
+| Branch | AzurePipelines CI | AppVeyor CI | Travis CI | Code Coverage |
+| --- | --- | --- | --- | --- |
+| dev | Comming Soon | [![av-image-dev][]][av-site-dev] | [![tv-image-dev][]][tv-site-dev] | [![cc-image-dev][]][cc-site-dev] |
+| master | Comming Soon | [![av-image-master][]][av-site-master] | [![tv-image-master][]][tv-site-master] | [![cc-image-master][]][cc-site-master] |
+
+[av-image-dev]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true
+[av-site-dev]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev
+[tv-image-dev]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=dev
+[tv-site-dev]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg
+[cc-site-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev
+
+[av-image-master]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true
+[av-site-master]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master
+[tv-image-master]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=master
+[tv-site-master]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg
+[cc-site-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master
 
 ## Installation
 
@@ -34,28 +51,27 @@ folder.
 
 ## Cmdlets
 
-- Get-JenkinsCrumb: Gets a Jenkins Crumb.
-- Invoke-JenkinsCommand: Execute a Jenkins command or request via the
-  Jenkins Rest API.
-- Get-JenkinsObject: Get a list of objects in a Jenkins master server.
-- Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
-- Get-JenkinsJob: Get a Jenkins Job Definition.
-- Set-JenkinsJob: Set a Jenkins Job definition.
-- Test-JenkinsJob: Determines if a Jenkins Job exists.
-- New-JenkinsJob: Create a new Jenkins Job.
-- Rename-JenkinsJob: Rename an existing Jenkins Job.
-- Remove-JenkinsJob: Remove an existing Jenkins Job.
-- Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins
-  Job.
-- Get-JenkinsViewList: Get a list of views in a Jenkins master server.
-- Test-JenkinsView: Determines if a Jenkins View exists.
-- Get-JenkinsFolderList: Get a list of folders in a Jenkins master
-  server.
-- Test-JenkinsFolder: Determines if a Jenkins Folder exists.
-- Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins
-  Update cache.
-- Get-JenkinsPluginsList: Retrieves a list of installed plugins.
-- Invoke-JenkinsJobReload: Reloads a job config on a given URL.
+- `Disable-JenkinsJob`: Disables a Jenkins job.
+- `Enable-JenkinsJob`: Enables a Jenkins job.
+- `Get-JenkinsCrumb`: Gets a Jenkins Crumb.
+- `Get-JenkinsFolderList`: Get a list of folders in a Jenkins master server.
+- `Get-JenkinsJob`: Get a Jenkins Job Definition.
+- `Get-JenkinsJobList`: Get a list of jobs in a Jenkins master server.
+- `Get-JenkinsObject`: Get a list of objects in a Jenkins master server.
+- `Get-JenkinsPluginsList`: Retrieves a list of installed plugins.
+- `Get-JenkinsViewList`: Get a list of views in a Jenkins master server.
+- `Initialize-JenkinsUpdateCache`: Creates or updates a local Jenkins Update cache.
+- `Invoke-JenkinsCommand`: Execute a Jenkins command or request via the Jenkins Rest API.
+- `Invoke-JenkinsJob`: Run a parameterized or non-parameterized Jenkins Job.
+- `Invoke-JenkinsJobReload`: Reloads a job config on a given URL.
+- `New-JenkinsFolder`: Create a new Jenkins Folder.
+- `New-JenkinsJob`: Create a new Jenkins Job.
+- `Remove-JenkinsJob`: Remove an existing Jenkins Job.
+- `Rename-JenkinsJob`: Rename an existing Jenkins Job.
+- `Set-JenkinsJob`: Set a Jenkins Job definition.
+- `Test-JenkinsFolder`: Determines if a Jenkins Folder exists.
+- `Test-JenkinsJob`: Determines if a Jenkins Job exists.
+- `Test-JenkinsView`: Determines if a Jenkins View exists.
 
 ## Cross Site Request Forgery (CSRF) Support
 

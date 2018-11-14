@@ -1,5 +1,14 @@
 # Change Log
 
+## Unreleased
+
+- Added `Disable-JenkinsJob` and `Enable-JenkinsJob` functions for disabling
+  and enabling Jenkins jobs, respectively.
+- Split unit tests into individual files and moved to `unit` subfolder.
+- Converted `Resolve-JenkinsCommandUri` to be private function.
+- Updated markdown documentation.
+- Added Travis CI build pipeline for multi-platform builds/testing.
+
 ## 1.0.1.222
 
 - Jenkins 2.107.1 returns XML 1.1, which .NET can not parse. `Get-JenkinsJob`

@@ -7,64 +7,95 @@ Locale: en-US
 ---
 
 # jenkins Module
+
 ## Description
-{{Manually Enter Description Here}}
+
+PowerShell module for interacting with a CloudBees Jenkins server using the
+[Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
+Created by IAG NZ Ltd.
 
 ## jenkins Cmdlets
+
+### [Disable-JenkinsJob](Disable-JenkinsJob.md)
+
+Disables a Jenkins job.
+
+### [Enable-JenkinsJob](Enable-JenkinsJob.md)
+
+Enables a Jenkins job.
+
 ### [Get-JenkinsCrumb](Get-JenkinsCrumb.md)
-{{Manually Enter Get-JenkinsCrumb Description Here}}
+
+Gets a Jenkins Crumb.
 
 ### [Get-JenkinsFolderList](Get-JenkinsFolderList.md)
-{{Manually Enter Get-JenkinsFolderList Description Here}}
+
+Get a list of folders in a Jenkins master server.
 
 ### [Get-JenkinsJob](Get-JenkinsJob.md)
-{{Manually Enter Get-JenkinsJob Description Here}}
+
+Get a Jenkins Job Definition.
 
 ### [Get-JenkinsJobList](Get-JenkinsJobList.md)
-{{Manually Enter Get-JenkinsJobList Description Here}}
+
+Get a list of jobs in a Jenkins master server.
 
 ### [Get-JenkinsObject](Get-JenkinsObject.md)
-{{Manually Enter Get-JenkinsObject Description Here}}
+
+Get a list of objects in a Jenkins master server.
 
 ### [Get-JenkinsPluginsList](Get-JenkinsPluginsList.md)
-{{Manually Enter Get-JenkinsPluginsList Description Here}}
+
+Retrieves a list of installed plugins.
 
 ### [Get-JenkinsViewList](Get-JenkinsViewList.md)
-{{Manually Enter Get-JenkinsViewList Description Here}}
+
+Get a list of views in a Jenkins master server.
 
 ### [Initialize-JenkinsUpdateCache](Initialize-JenkinsUpdateCache.md)
-{{Manually Enter Initialize-JenkinsUpdateCache Description Here}}
+
+Creates or updates a local Jenkins Update cache.
 
 ### [Invoke-JenkinsCommand](Invoke-JenkinsCommand.md)
-{{Manually Enter Invoke-JenkinsCommand Description Here}}
+
+Execute a Jenkins command or request via the Jenkins Rest API.
 
 ### [Invoke-JenkinsJob](Invoke-JenkinsJob.md)
-{{Manually Enter Invoke-JenkinsJob Description Here}}
+
+Run a parameterized or non-parameterized Jenkins Job.
 
 ### [Invoke-JenkinsJobReload](Invoke-JenkinsJobReload.md)
-{{Manually Enter Invoke-JenkinsJobReload Description Here}}
+
+Reloads a job config on a given URL.
 
 ### [New-JenkinsFolder](New-JenkinsFolder.md)
-{{Manually Enter New-JenkinsFolder Description Here}}
+
+Create a new Jenkins Folder.
 
 ### [New-JenkinsJob](New-JenkinsJob.md)
-{{Manually Enter New-JenkinsJob Description Here}}
+
+Create a new Jenkins Job.
 
 ### [Remove-JenkinsJob](Remove-JenkinsJob.md)
-{{Manually Enter Remove-JenkinsJob Description Here}}
+
+Remove an existing Jenkins Job.
 
 ### [Rename-JenkinsJob](Rename-JenkinsJob.md)
-{{Manually Enter Rename-JenkinsJob Description Here}}
+
+Rename an existing Jenkins Job.
 
 ### [Set-JenkinsJob](Set-JenkinsJob.md)
-{{Manually Enter Set-JenkinsJob Description Here}}
+
+Set a Jenkins Job definition.
 
 ### [Test-JenkinsFolder](Test-JenkinsFolder.md)
-{{Manually Enter Test-JenkinsFolder Description Here}}
+
+Determines if a Jenkins Folder exists.
 
 ### [Test-JenkinsJob](Test-JenkinsJob.md)
-{{Manually Enter Test-JenkinsJob Description Here}}
+
+Determines if a Jenkins Job exists.
 
 ### [Test-JenkinsView](Test-JenkinsView.md)
-{{Manually Enter Test-JenkinsView Description Here}}
 
+Determines if a Jenkins View exists.

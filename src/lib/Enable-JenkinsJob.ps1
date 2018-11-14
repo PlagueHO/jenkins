@@ -1,4 +1,5 @@
-function New-JenkinsJob
+
+function Enable-JenkinsJob
 {
     [CmdLetBinding(SupportsShouldProcess = $true)]
     [OutputType([System.String])]
@@ -37,34 +38,32 @@ function New-JenkinsJob
             Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String]
-        $Name,
-
-        [parameter(
-            Position = 6,
-            Mandatory = $true,
-            ValueFromPipeline = $True)]
-        [ValidateNotNullOrEmpty()]
-        [System.String]
-        $XML
+        $Name
     )
 
     $null = $PSBoundParameters.Add('Type', 'Command')
 
-    $Command = Resolve-JenkinsCommandUri -Folder $Folder -Command ("createItem?name={0}" -f [System.Uri]::EscapeDataString($Name))
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'enable'
 
-    $null = $PSBoundParameters.Remove('Name')
-    $null = $PSBoundParameters.Remove('Folder')
-    $null = $PSBoundParameters.Remove('XML')
-    $null = $PSBoundParameters.Remove('Confirm')
-    $null = $PSBoundParameters.Add('Command', $Command)
-    $null = $PSBoundParameters.Add('Method', 'post')
-    $null = $PSBoundParameters.Add('ContentType', 'application/xml')
-    $null = $PSBoundParameters.Add('Body', $XML)
-
-    if ($PSCmdlet.ShouldProcess(`
-                $URI, `
-            $($LocalizedData.NewJobMessage -f $Name)))
+    $optionalParams = @{}
+    if( $Credential )
     {
-        $null = Invoke-JenkinsCommand @PSBoundParameters
-    } # if
-} # New-JenkinsJob
+        $optionalParams['Credential'] = $Credential
+    }
+
+    if( $Crumb )
+    {
+        $optionalParams['Crumb'] = $Crumb
+    }
+
+    $displayName = $Name
+    if( $Folder )
+    {
+        $displayName = '{0}/{1}' -f $Folder,$Name
+    }
+
+    if ($PSCmdlet.ShouldProcess( $Uri, $($LocalizedData.EnableJobMessage -f $displayName)))
+    {
+        $null = Invoke-JenkinsCommand -Uri $Uri -Type 'Command' -Command $Command -Method post @optionalParams
+    }
+}

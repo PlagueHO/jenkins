@@ -68,16 +68,9 @@ function New-JenkinsFolder
 "@
     }
     $null = $PSBoundParameters.Remove('XML')
-    $Command = ''
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
-        foreach ($Folder in $Folders)
-        {
-            $Command += "job/$Folder/"
-        } # foreach
-    } # if
-    $Command += "createItem?name=$Name"
+
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -Command "createItem?name=$Name"
+
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Description')
     $null = $PSBoundParameters.Remove('Folder')
