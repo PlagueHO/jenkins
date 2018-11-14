@@ -42,22 +42,7 @@ function Get-JenkinsJob
 
     $null = $PSBoundParameters.Add('Type', 'Command')
 
-    if ($PSBoundParameters.ContainsKey('Folder'))
-    {
-        $Folders = ($Folder -split '\\') -split '/'
-        $Command = 'job/'
-
-        foreach ($Folder in $Folders)
-        {
-            $Command += "$Folder/job/"
-        } # foreach
-
-        $Command += "$Name/config.xml"
-    }
-    else
-    {
-        $Command = "job/$Name/config.xml"
-    } # if
+    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'config.xml'
 
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')

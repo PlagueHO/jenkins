@@ -59,6 +59,8 @@
 
     # Functions to export from this module
     FunctionsToExport = @(
+        'Disable-JenkinsJob'
+        'Enable-JenkinsJob'
         'Get-JenkinsCrumb'
         'Get-JenkinsFolderList'
         'Get-JenkinsJob'
@@ -74,6 +76,7 @@
         'New-JenkinsJob'
         'Remove-JenkinsJob'
         'Rename-JenkinsJob'
+        'Resolve-JenkinsCommandUri'
         'Set-JenkinsJob'
         'Test-JenkinsFolder'
         'Test-JenkinsJob'

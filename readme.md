@@ -34,28 +34,27 @@ folder.
 
 ## Cmdlets
 
-- Get-JenkinsCrumb: Gets a Jenkins Crumb.
-- Invoke-JenkinsCommand: Execute a Jenkins command or request via the
-  Jenkins Rest API.
-- Get-JenkinsObject: Get a list of objects in a Jenkins master server.
-- Get-JenkinsJobList: Get a list of jobs in a Jenkins master server.
-- Get-JenkinsJob: Get a Jenkins Job Definition.
-- Set-JenkinsJob: Set a Jenkins Job definition.
-- Test-JenkinsJob: Determines if a Jenkins Job exists.
-- New-JenkinsJob: Create a new Jenkins Job.
-- Rename-JenkinsJob: Rename an existing Jenkins Job.
-- Remove-JenkinsJob: Remove an existing Jenkins Job.
-- Invoke-JenkinsJob: Run a parameterized or non-parameterized Jenkins
-  Job.
-- Get-JenkinsViewList: Get a list of views in a Jenkins master server.
-- Test-JenkinsView: Determines if a Jenkins View exists.
-- Get-JenkinsFolderList: Get a list of folders in a Jenkins master
-  server.
-- Test-JenkinsFolder: Determines if a Jenkins Folder exists.
-- Initialize-JenkinsUpdateCache: Creates or updates a local Jenkins
-  Update cache.
-- Get-JenkinsPluginsList: Retrieves a list of installed plugins.
-- Invoke-JenkinsJobReload: Reloads a job config on a given URL.
+- `Disable-JenkinsJob`: Disables a Jenkins job.
+- `Enable-JenkinsJob`: Enables a Jenkins job.
+- `Get-JenkinsCrumb`: Gets a Jenkins Crumb.
+- `Get-JenkinsFolderList`: Get a list of folders in a Jenkins master server.
+- `Get-JenkinsJob`: Get a Jenkins Job Definition.
+- `Get-JenkinsJobList`: Get a list of jobs in a Jenkins master server.
+- `Get-JenkinsObject`: Get a list of objects in a Jenkins master server.
+- `Get-JenkinsPluginsList`: Retrieves a list of installed plugins.
+- `Get-JenkinsViewList`: Get a list of views in a Jenkins master server.
+- `Initialize-JenkinsUpdateCache`: Creates or updates a local Jenkins Update cache.
+- `Invoke-JenkinsCommand`: Execute a Jenkins command or request via the Jenkins Rest API.
+- `Invoke-JenkinsJob`: Run a parameterized or non-parameterized Jenkins Job.
+- `Invoke-JenkinsJobReload`: Reloads a job config on a given URL.
+- `New-JenkinsJob`: Create a new Jenkins Job.
+- `Remove-JenkinsJob`: Remove an existing Jenkins Job.
+- `Rename-JenkinsJob`: Rename an existing Jenkins Job.
+- `Set-JenkinsJob`: Set a Jenkins Job definition.
+- `Test-JenkinsFolder`: Determines if a Jenkins Folder exists.
+- `Test-JenkinsJob`: Determines if a Jenkins Job exists.
+- `Test-JenkinsView`: Determines if a Jenkins View exists.
+
 
 ## Cross Site Request Forgery (CSRF) Support
 
