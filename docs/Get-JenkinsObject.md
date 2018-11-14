@@ -8,50 +8,55 @@ schema: 2.0.0
 # Get-JenkinsObject
 
 ## SYNOPSIS
+
 Get a list of objects in a Jenkins master server.
 
 ## SYNTAX
 
-```
+```powershell
 Get-JenkinsObject [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>] [-Type] <String>
  [-Attribute] <String[]> [[-Folder] <String>] [[-IncludeClass] <String[]>] [[-ExcludeClass] <String[]>]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
+
 Returns a list of objects within a specific level of the Jenkins tree.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
-$Jobs = Get-JenkinsObject `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+PS C:\>$Jobs = Get-JenkinsObject `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -Type 'jobs' \`
     -Attribute 'name','buildable','url','color' \`
     -Verbose
+```
+
 Returns the list of jobs on https://jenkins.contoso.com using the credentials provided by the user.
 
 ### EXAMPLE 2
-```
-$Jobs = Get-JenkinsObject `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+$Jobs = Get-JenkinsObject `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -Folder 'Misc' \`
     -Type 'jobs' \`
     -Attribute 'name','buildable','url','color' \`
     -Verbose
+```
+
 Returns the list of jobs in the 'Misc' folder on
 https://jenkins.contoso.com using the credentials provided by the user.
 
 ## PARAMETERS
 
 ### -Uri
+
 Contains the Uri to the Jenkins Master server to execute the command on.
 
 ```yaml
@@ -67,6 +72,7 @@ Accept wildcard characters: False
 ```
 
 ### -Credential
+
 Contains the credentials to use to authenticate with the Jenkins Master server.
 
 ```yaml
@@ -82,6 +88,7 @@ Accept wildcard characters: False
 ```
 
 ### -Crumb
+
 Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 
 ```yaml
@@ -97,6 +104,7 @@ Accept wildcard characters: False
 ```
 
 ### -Type
+
 The type of object to return.
 Defaults to jobs.
 
@@ -113,6 +121,7 @@ Accept wildcard characters: False
 ```
 
 ### -Attribute
+
 The list of attribute to return.
 
 ```yaml
@@ -128,6 +137,7 @@ Accept wildcard characters: False
 ```
 
 ### -Folder
+
 The optional job folder to retrieve the jobs from.
 This requires the Jobs Plugin to be installed on Jenkins.
 
@@ -144,6 +154,7 @@ Accept wildcard characters: False
 ```
 
 ### -IncludeClass
+
 This allows the class of objects that are returned to be limited to only these types.
 
 ```yaml
@@ -159,6 +170,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExcludeClass
+
 This allows the class of objects that are returned to exclude these types.
 
 ```yaml
@@ -174,6 +186,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 

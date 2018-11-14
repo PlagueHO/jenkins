@@ -8,16 +8,18 @@ schema: 2.0.0
 # New-JenkinsFolder
 
 ## SYNOPSIS
+
 Create a new Jenkins Folder.
 
 ## SYNTAX
 
-```
+```powershell
 New-JenkinsFolder [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>] [[-Folder] <String>]
  [-Name] <String> [[-Description] <String>] [[-XML] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
+
 Creates a new Jenkins Folder with the specifed Name and optional Description.
 If a folder is specified it will create the new folder inside the specified folder.
 If the folder already exists an error will occur.
@@ -28,35 +30,38 @@ This requires the Jobs Plugin to be installed on Jenkins.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
-New-JenkinsFolder `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+PS C:\>New-JenkinsFolder `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -Name 'Management' \`
     -Description 'Management jobs' \`
     -Verbose
+```
+
 Creates a new folder on https://jenkins.contoso.com using the credentials provided by
 the user.
 
 ### EXAMPLE 2
-```
-New-JenkinsFolder `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+PS C:\>New-JenkinsFolder `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -Folder 'Apps' \`
     -Name 'Management' \`
     -Description 'Management jobs' \`
     -Verbose
+```
+
 Creates a new folder in the 'Apps' folder on https://jenkins.contoso.com using the credentials provided by
 the user.
 
 ## PARAMETERS
 
 ### -Uri
+
 Contains the Uri to the Jenkins Master server to set the Job definition on.
 
 ```yaml
@@ -72,6 +77,7 @@ Accept wildcard characters: False
 ```
 
 ### -Credential
+
 Contains the credentials to use to authenticate with the Jenkins Master server.
 
 ```yaml
@@ -87,6 +93,7 @@ Accept wildcard characters: False
 ```
 
 ### -Crumb
+
 Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 
 ```yaml
@@ -102,6 +109,7 @@ Accept wildcard characters: False
 ```
 
 ### -Folder
+
 The optional folder the new folder will be created in.
 If the folder does not exist then an error will occur.
 
@@ -118,6 +126,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
+
 The name of the new folder to create.
 
 ```yaml
@@ -133,6 +142,7 @@ Accept wildcard characters: False
 ```
 
 ### -Description
+
 The optional description of the new folder to create.
 
 ```yaml
@@ -148,6 +158,7 @@ Accept wildcard characters: False
 ```
 
 ### -XML
+
 The optional config XML for the new folder.
 This allows additional properties to be set on the folder.
 
@@ -164,6 +175,7 @@ Accept wildcard characters: False
 ```
 
 ### -WhatIf
+
 Shows what would happen if the cmdlet runs.
 The cmdlet is not run.
 
@@ -180,6 +192,7 @@ Accept wildcard characters: False
 ```
 
 ### -Confirm
+
 Prompts you for confirmation before running the cmdlet.
 
 ```yaml
@@ -195,6 +208,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 

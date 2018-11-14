@@ -1,53 +1,50 @@
 ---
 external help file: Jenkins-help.xml
-Module Name: jenkins
+Module Name: Jenkins
 online version:
 schema: 2.0.0
 ---
 
-# Get-JenkinsPluginsList
+# Enable-JenkinsJob
 
 ## SYNOPSIS
 
-Get a list of installed plugins in a Jenkins master server.
+{{Fill in the Synopsis}}
 
 ## SYNTAX
 
 ```powershell
-Get-JenkinsPluginsList [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>] [[-Api] <String>]
- [[-Depth] <String>] [<CommonParameters>]
+Enable-JenkinsJob [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>] [[-Folder] <String>]
+ [-Name] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 
-Returns the list of installed plugins from a jenkins server, the list containing the name and version of each plugin.
+This function enables a Jenkins Job.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 
 ```powershell
-PS C:\>$Plugins = Get-JenkinsPluginsList `
-    -Uri 'https://jenkins.contoso.com' \`
-    -Credential (Get-Credential) \`
-    -Verbose
+PS C:\> {{ Add example code here }}
 ```
 
-Returns the list of installed plugins on https://jenkins.contoso.com using the credentials provided by the user.
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Uri
+### -Confirm
 
-Contains the Uri to the Jenkins Master server to execute the command on.
+Prompts you for confirmation before running the cmdlet.
 
 ```yaml
-Type: String
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: cf
 
-Required: True
-Position: 2
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -63,7 +60,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -79,43 +76,74 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Folder
+
+The optional job folder to look for the job in.
+This requires the Jobs Plugin to be installed on Jenkins.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Api
+### -Name
 
-The API to use.
-Can be XML, JSON or Python.
-Defaults to JSON.
+The name of the job to enable.
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 5
-Default value: Json
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Depth
+### -Uri
 
-The depth of the tree to return (must be at least 1).
-Defaults to 1.
+Contains the Uri to the Jenkins Master server to enable the job on.
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
 Required: False
-Position: 6
-Default value: 1
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -127,9 +155,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
-### An array of Jenkins objects.
+### System.String
 
 ## NOTES
 

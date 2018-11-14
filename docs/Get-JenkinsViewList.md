@@ -8,16 +8,18 @@ schema: 2.0.0
 # Get-JenkinsViewList
 
 ## SYNOPSIS
+
 Get a list of views in a Jenkins master server.
 
 ## SYNTAX
 
-```
+```powershell
 Get-JenkinsViewList [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>]
  [[-IncludeClass] <String[]>] [[-ExcludeClass] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
+
 Returns the list of views registered on a Jenkins Master server.
 The list of views returned can be filtered by
 setting the IncludeClass or ExcludeClass parameters.
@@ -25,30 +27,33 @@ setting the IncludeClass or ExcludeClass parameters.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
-$Views = Get-JenkinsViewList `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+PS C:\>$Views = Get-JenkinsViewList `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -Verbose
+```
+
 Returns the list of views on https://jenkins.contoso.com using the credentials provided by the user.
 
 ### EXAMPLE 2
-```
-$Views = Get-JenkinsViewList `
-```
 
--Uri 'https://jenkins.contoso.com' \`
+```powershell
+PS C:\>$Views = Get-JenkinsViewList `
+    -Uri 'https://jenkins.contoso.com' \`
     -Credential (Get-Credential) \`
     -ExcludeClass 'hudson.model.AllView' \`
     -Verbose
+```
+
 Returns the list of views except for the AllView on https://jenkins.contoso.com using the credentials provided
 by the user.
 
 ## PARAMETERS
 
 ### -Uri
+
 Contains the Uri to the Jenkins Master server to execute the command on.
 
 ```yaml
@@ -64,6 +69,7 @@ Accept wildcard characters: False
 ```
 
 ### -Credential
+
 Contains the credentials to use to authenticate with the Jenkins Master server.
 
 ```yaml
@@ -79,6 +85,7 @@ Accept wildcard characters: False
 ```
 
 ### -Crumb
+
 Contains a Crumb to pass to the Jenkins Master Server if CSRF is enabled.
 
 ```yaml
@@ -94,6 +101,7 @@ Accept wildcard characters: False
 ```
 
 ### -IncludeClass
+
 This allows the class of objects that are returned to be limited to only these types.
 
 ```yaml
@@ -109,6 +117,7 @@ Accept wildcard characters: False
 ```
 
 ### -ExcludeClass
+
 This allows the class of objects that are returned to exclude these types.
 
 ```yaml
@@ -124,6 +133,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 

@@ -4,7 +4,7 @@
     RootModule        = 'Jenkins.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.0.1.222'
+    ModuleVersion     = '1.0.2.222'
 
     # ID used to uniquely identify this module
     GUID              = 'd4de78f0-e143-4e58-8fb2-a543eacc1682'
@@ -117,6 +117,17 @@
 
             # ReleaseNotes of this module
             ReleaseNotes = '
+## What is New in Jenkins Unreleased
+
+November 14, 2018
+
+- Added `Disable-JenkinsJob` and `Enable-JenkinsJob` functions for disabling
+    and enabling Jenkins jobs, respectively.
+- Split unit tests into individual files and moved to `unit` subfolder.
+- Converted `Resolve-JenkinsCommandUri` to be private function.
+- Updated markdown documentation.
+- Added Travis CI build pipeline for multi-platform builds/testing.
+
 ## What is New in Jenkins 1.0.1.222
 
 August 4, 2018

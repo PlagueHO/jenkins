@@ -1,6 +1,9 @@
 # PSake makes variables declared here available in other scriptblocks
 # Init some things
 Properties {
+    # Modulue Name
+    $ModuleName = 'Jenkins'
+
     # Prepare the folder variables
     $ProjectRoot = $ENV:BHProjectPath
     if (-not $ProjectRoot)
@@ -10,7 +13,7 @@ Properties {
 
     # Determine the folder names for staging the module
     $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
-    $ModuleFolder = Join-Path -Path $StagingFolder -ChildPath 'Jenkins'
+    $ModuleFolder = Join-Path -Path $StagingFolder -ChildPath $ModuleName
 
     $Timestamp = Get-Date -uformat "%Y%m%d-%H%M%S"
     $PSVersion = $PSVersionTable.PSVersion.Major
@@ -20,43 +23,78 @@ Properties {
 Task Default -Depends Build
 
 Task Init {
-    $separator
-
     Set-Location -Path $ProjectRoot
+
+    # Install any dependencies required for the Init stage
+    Invoke-PSDepend `
+        -Path $PSScriptRoot `
+        -Force `
+        -Import `
+        -Install `
+        -Tags 'Init'
+
+    Set-BuildEnvironment -Force
+
+    $separator
     'Build System Details:'
     Get-Item -Path ENV:BH*
     "`n"
+
+    $separator
+    'Other Environment Variables:'
+    Get-ChildItem -Path ENV:
+    "`n"
+
+    $separator
     'PowerShell Details:'
     $PSVersionTable
-
     "`n"
 }
 
-Task Test -Depends Init {
+Task PrepareTest -Depends Init {
+    # Install any dependencies required for testing
+    Invoke-PSDepend `
+        -Path $PSScriptRoot `
+        -Force `
+        -Import `
+        -Install `
+        -Tags 'Test',('Test_{0}' -f $PSVersionTable.PSEdition)
+}
+
+Task Test -Depends UnitTest, IntegrationTest
+
+Task UnitTest -Depends Init, PrepareTest {
     $separator
 
     # Execute tests
-    $testResultsFile = Join-Path -Path $ProjectRoot -ChildPath 'test\TestResults.xml'
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\unit'
+    $testResultsFile = Join-Path -Path $testScriptsPath -ChildPath 'TestResults.unit.xml'
+    $codeCoverageFile = Join-Path -Path $testScriptsPath -ChildPath 'CodeCoverage.xml'
+    $codeCoverageSource = Get-ChildItem -Path (Join-Path -Path $ProjectRoot -ChildPath 'src\lib\*.ps1') -Recurse
     $testResults = Invoke-Pester `
+        -Script $testScriptsPath `
         -OutputFormat NUnitXml `
         -OutputFile $testResultsFile `
         -PassThru `
         -ExcludeTag Incomplete `
-        -CodeCoverage @( Join-Path -Path $ProjectRoot -ChildPath 'src\lib\*.ps1' )
+        -CodeCoverage $codeCoverageSource `
+        -CodeCoverageOutputFile $codeCoverageFile `
+        -CodeCoverageOutputFileFormat JaCoCo
 
     # Prepare and uploade code coverage
     if ($testResults.CodeCoverage)
     {
-        'Preparing CodeCoverage'
-        Import-Module `
-            -Name (Join-Path -Path $ProjectRoot -ChildPath '.codecovio\CodeCovio.psm1')
-
-        $jsonPath = Export-CodeCovIoJson `
-            -CodeCoverage $testResults.CodeCoverage `
-            -RepoRoot $ProjectRoot
-
+        # Only bother generating code coverage in AppVeyor
         if ($ENV:BHBuildSystem -eq 'AppVeyor')
         {
+            'Preparing CodeCoverage'
+            Import-Module `
+                -Name (Join-Path -Path $ProjectRoot -ChildPath '.codecovio\CodeCovio.psm1')
+
+            $jsonPath = Export-CodeCovIoJson `
+                -CodeCoverage $testResults.CodeCoverage `
+                -RepoRoot $ProjectRoot
+
             'Uploading CodeCoverage to CodeCov.io'
             try
             {
@@ -83,19 +121,65 @@ Task Test -Depends Init {
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
             (Resolve-Path $testResultsFile))
 
-        "Publishing test results to AppVeyor as Artifact"
+        'Publishing test results to AppVeyor as Artifact'
         Push-AppveyorArtifact $testResultsFile
 
         if ($testResults.FailedCount -gt 0)
         {
-            throw "$($testResults.FailedCount) tests failed."
+            throw "$($testResults.FailedCount) unit tests failed."
         }
     }
     else
     {
         if ($testResults.FailedCount -gt 0)
         {
-            Write-Error -Exception "$($testResults.FailedCount) tests failed."
+            Write-Error -Exception "$($testResults.FailedCount) unit tests failed."
+        }
+    }
+
+    "`n"
+}
+
+Task IntegrationTest -Depends Init, PrepareTest {
+    $separator
+
+    # Execute tests
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\integration'
+    if (-not (Test-Path -Path $testScriptsPath))
+    {
+        'Skipping integration tests because they do not exist.'
+        return
+    }
+
+    $testResultsFile = Join-Path -Path $testScriptsPath -ChildPath 'TestResults.integration.xml'
+    $testResults = Invoke-Pester `
+        -Script $testScriptsPath `
+        -OutputFormat NUnitXml `
+        -OutputFile $testResultsFile `
+        -PassThru `
+        -ExcludeTag Incomplete
+
+    # Upload tests
+    if ($ENV:BHBuildSystem -eq 'AppVeyor')
+    {
+        'Publishing test results to AppVeyor'
+        (New-Object 'System.Net.WebClient').UploadFile(
+            "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+            (Resolve-Path $testResultsFile))
+
+        'Publishing test results to AppVeyor as Artifact'
+        Push-AppveyorArtifact $testResultsFile
+
+        if ($testResults.FailedCount -gt 0)
+        {
+            throw "$($testResults.FailedCount) integration tests failed."
+        }
+    }
+    else
+    {
+        if ($testResults.FailedCount -gt 0)
+        {
+            Write-Error -Exception "$($testResults.FailedCount) integration tests failed."
         }
     }
 
@@ -105,8 +189,16 @@ Task Test -Depends Init {
 Task Build -Depends Test {
     $separator
 
+    # Install any dependencies required for the Build stage
+    Invoke-PSDepend `
+        -Path $PSScriptRoot `
+        -Force `
+        -Import `
+        -Install `
+        -Tags 'Build'
+
     # Generate the next version by adding the build system build number to the manifest version
-    $manifestPath = Join-Path -Path $ProjectRoot -ChildPath 'src/Jenkins.psd1'
+    $manifestPath = Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psd1"
     $newVersion = Get-NewVersionNumber `
         -ManifestPath $manifestPath `
         -Build $ENV:BHBuildNumber
@@ -127,14 +219,63 @@ Task Build -Depends Test {
     $null = New-Item -Path $VersionFolder -Type directory
 
     # Populate Version Folder
-    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/Jenkins.psd1') -Destination $VersionFolder
-    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/Jenkins.psm1') -Destination $VersionFolder
-    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/lib') -Destination $VersionFolder -Recurse
-    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/en-us') -Destination $VersionFolder -Recurse
+    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psd1") -Destination $VersionFolder
+    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psm1") -Destination $VersionFolder
+    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/en-US') -Destination $VersionFolder -Recurse
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'LICENSE') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'README.md') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'CHANGELOG.md') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'RELEASENOTES.md') -Destination $VersionFolder
+
+    # Load the Libs files into the PSM1
+    $libFiles = Get-ChildItem `
+        -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/lib') `
+        -Include '*.ps1' `
+        -Recurse
+
+    # Assemble all the libs content into a single string
+    $libFilesStringBuilder = [System.Text.StringBuilder]::new()
+    foreach ($libFile in $libFiles)
+    {
+        $libContent = Get-Content -Path $libFile -Raw
+        $null = $libFilesStringBuilder.AppendLine($libContent)
+    }
+
+    <#
+        Load the PSM1 file into an array of lines and step through each line
+        adding it to a string builder if the line is not part of the ImportFunctions
+        Region. Then add the content of the $libFilesStringBuilder string builder
+        immediately following the end of the region.
+    #>
+    $modulePath = Join-Path -Path $versionFolder -ChildPath "$ModuleName.psm1"
+    $moduleContent = Get-Content -Path $modulePath
+    $moduleStringBuilder = [System.Text.StringBuilder]::new()
+    $importFunctionsRegionFound = $false
+    foreach ($moduleLine in $moduleContent)
+    {
+        if ($importFunctionsRegionFound)
+        {
+            if ($moduleLine -eq '#endregion')
+            {
+                $null = $moduleStringBuilder.AppendLine('#region Functions')
+                $null = $moduleStringBuilder.AppendLine($libFilesStringBuilder)
+                $null = $moduleStringBuilder.AppendLine('#endregion')
+                $importFunctionsRegionFound = $false
+            }
+        }
+        else
+        {
+            if ($moduleLine -eq '#region ImportFunctions')
+            {
+                $importFunctionsRegionFound = $true
+            }
+            else
+            {
+                $null = $moduleStringBuilder.AppendLine($moduleLine)
+            }
+        }
+    }
+    Set-Content -Path $modulePath -Value $moduleStringBuilder -Force
 
     # Prepare external help
     'Building external help file'
@@ -145,10 +286,10 @@ Task Build -Depends Test {
 
     # Set the new version number in the staged Module Manifest
     'Updating module manifest'
-    $stagedManifestPath = Join-Path -Path $VersionFolder -ChildPath 'Jenkins.psd1'
+    $stagedManifestPath = Join-Path -Path $VersionFolder -ChildPath "$ModuleName.psd1"
     $stagedManifestContent = Get-Content -Path $stagedManifestPath -Raw
     $stagedManifestContent = $stagedManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $newVersion
-    $stagedManifestContent = $stagedManifestContent -replace '## What is New in Jenkins Unreleased', "## What is New in Jenkins $newVersion"
+    $stagedManifestContent = $stagedManifestContent -replace "## What is New in $ModuleName Unreleased", "## What is New in $ModuleName $newVersion"
     Set-Content -Path $stagedManifestPath -Value $stagedManifestContent -NoNewLine -Force
 
     # Set the new version number in the staged CHANGELOG.md
@@ -162,7 +303,7 @@ Task Build -Depends Test {
     'Updating RELEASENOTES.MD'
     $stagedReleaseNotesPath = Join-Path -Path $VersionFolder -ChildPath 'RELEASENOTES.md'
     $stagedReleaseNotesContent = Get-Content -Path $stagedReleaseNotesPath -Raw
-    $stagedReleaseNotesContent = $stagedReleaseNotesContent -replace '## What is New in Jenkins Unreleased', "## What is New in Jenkins $newVersion"
+    $stagedReleaseNotesContent = $stagedReleaseNotesContent -replace "## What is New in $ModuleName Unreleased", "## What is New in $ModuleName $newVersion"
     Set-Content -Path $stagedReleaseNotesPath -Value $stagedReleaseNotesContent -NoNewLine -Force
 
     "`n"
@@ -172,7 +313,7 @@ Task Deploy -Depends Build {
     $separator
 
     # Generate the next version by adding the build system build number to the manifest version
-    $manifestPath = Join-Path -Path $ProjectRoot -ChildPath 'src/Jenkins.psd1'
+    $manifestPath = Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psd1"
     $newVersion = Get-NewVersionNumber `
         -ManifestPath $manifestPath `
         -Build $ENV:BHBuildNumber
@@ -231,7 +372,7 @@ Task Deploy -Depends Build {
                     -Name NuGet `
                     -ForceBootstrap
                 Publish-Module `
-                    -Name 'Jenkins' `
+                    -Name $ModuleName `
                     -RequiredVersion $newVersion `
                     -NuGetApiKey $ENV:PowerShellGalleryApiKey `
                     -Confirm:$false
@@ -239,7 +380,7 @@ Task Deploy -Depends Build {
                 # This is not a PR so deploy
                 'Beginning update to master branch with deployed information'
 
-                # Pull the master branch, update the readme.md and manifest
+                # Pull the master branch, update the CHANGELOG.md and manifest
                 Set-Location -Path $ProjectRoot
                 Invoke-Git -GitParameters @('config', '--global', 'credential.helper', 'store')
 
@@ -254,7 +395,7 @@ Task Deploy -Depends Build {
                 # Replace the manifest with the one that was published
                 'Updating files changed during deployment.='
                 Copy-Item `
-                    -Path (Join-Path -Path $VersionFolder -ChildPath 'Jenkins.psd1') `
+                    -Path (Join-Path -Path $VersionFolder -ChildPath "$ModuleName.psd1") `
                     -Destination (Join-Path -Path $ProjectRoot -ChildPath 'src') `
                     -Force
                 Copy-Item `
