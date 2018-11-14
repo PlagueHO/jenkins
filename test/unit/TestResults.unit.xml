@@ -1,100 +1,100 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="53" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-11-14" time="20:33:17">
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="53" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-11-14" time="20:43:03">
   <environment user="Dan" machine-name="PLAGUE02" cwd="C:\Users\Dan\Source\GitHub\jenkins" user-domain="PLAGUE02" platform="Microsoft Windows 10 Enterprise|C:\WINDOWS|\Device\Harddisk1\Partition4" nunit-version="2.5.8.0" os-version="10.0.17134" clr-version="4.0.30319.42000" />
   <culture-info current-culture="en-NZ" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="4.8564" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="5.0987" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsCrumb.Tests.ps1" executed="True" result="Success" success="True" time="2.0201" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsCrumb.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsCrumb.Tests.ps1" executed="True" result="Success" success="True" time="2.0478" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsCrumb.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Get-JenkinsCrumb" executed="True" result="Success" success="True" time="2.0201" asserts="0" description="Get-JenkinsCrumb">
+          <test-suite type="TestFixture" name="Get-JenkinsCrumb" executed="True" result="Success" success="True" time="2.0478" asserts="0" description="Get-JenkinsCrumb">
             <results>
-              <test-suite type="TestFixture" name="When uri passed, credentials passed, standard crumb returned" executed="True" result="Success" success="True" time="1.8146" asserts="0" description="When uri passed, credentials passed, standard crumb returned">
+              <test-suite type="TestFixture" name="When uri passed, credentials passed, standard crumb returned" executed="True" result="Success" success="True" time="1.8312" asserts="0" description="When uri passed, credentials passed, standard crumb returned">
                 <results>
-                  <test-case description="Should return '1234567890'" name="Get-JenkinsCrumb.When uri passed, credentials passed, standard crumb returned.Should return '1234567890'" time="1.7895" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, standard crumb returned.Should return call expected mocks" time="0.0251" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '1234567890'" name="Get-JenkinsCrumb.When uri passed, credentials passed, standard crumb returned.Should return '1234567890'" time="1.8027" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, standard crumb returned.Should return call expected mocks" time="0.0284" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
               <test-suite type="TestFixture" name="When uri passed, credentials passed, internal crumb returned" executed="True" result="Success" success="True" time="0.1018" asserts="0" description="When uri passed, credentials passed, internal crumb returned">
                 <results>
-                  <test-case description="Should return '1234567890'" name="Get-JenkinsCrumb.When uri passed, credentials passed, internal crumb returned.Should return '1234567890'" time="0.0814" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, internal crumb returned.Should return call expected mocks" time="0.0204" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '1234567890'" name="Get-JenkinsCrumb.When uri passed, credentials passed, internal crumb returned.Should return '1234567890'" time="0.0816" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, internal crumb returned.Should return call expected mocks" time="0.0202" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When uri passed, credentials passed, invalid crumb returned" executed="True" result="Success" success="True" time="0.1037" asserts="0" description="When uri passed, credentials passed, invalid crumb returned">
+              <test-suite type="TestFixture" name="When uri passed, credentials passed, invalid crumb returned" executed="True" result="Success" success="True" time="0.1148" asserts="0" description="When uri passed, credentials passed, invalid crumb returned">
                 <results>
-                  <test-case description="Should throw exception" name="Get-JenkinsCrumb.When uri passed, credentials passed, invalid crumb returned.Should throw exception" time="0.0865" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, invalid crumb returned.Should return call expected mocks" time="0.0172" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should throw exception" name="Get-JenkinsCrumb.When uri passed, credentials passed, invalid crumb returned.Should throw exception" time="0.0964" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsCrumb.When uri passed, credentials passed, invalid crumb returned.Should return call expected mocks" time="0.0184" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsJob.Tests.ps1" executed="True" result="Success" success="True" time="0.6139" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsJob.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsJob.Tests.ps1" executed="True" result="Success" success="True" time="0.638" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsJob.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Get-JenkinsJob" executed="True" result="Success" success="True" time="0.6139" asserts="0" description="Get-JenkinsJob">
+          <test-suite type="TestFixture" name="Get-JenkinsJob" executed="True" result="Success" success="True" time="0.638" asserts="0" description="Get-JenkinsJob">
             <results>
-              <test-suite type="TestFixture" name="When Name is set, no folder is passed" executed="True" result="Success" success="True" time="0.2239" asserts="0" description="When Name is set, no folder is passed">
+              <test-suite type="TestFixture" name="When Name is set, no folder is passed" executed="True" result="Success" success="True" time="0.2378" asserts="0" description="When Name is set, no folder is passed">
                 <results>
-                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, no folder is passed.Should return expected XML" time="0.2104" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, no folder is passed.Should return call expected mocks" time="0.0135" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, no folder is passed.Should return expected XML" time="0.221" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, no folder is passed.Should return call expected mocks" time="0.0168" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When Name is set, single folder is passed" executed="True" result="Success" success="True" time="0.084" asserts="0" description="When Name is set, single folder is passed">
+              <test-suite type="TestFixture" name="When Name is set, single folder is passed" executed="True" result="Success" success="True" time="0.0819" asserts="0" description="When Name is set, single folder is passed">
                 <results>
-                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, single folder is passed.Should return expected XML" time="0.068" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, single folder is passed.Should return call expected mocks" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, single folder is passed.Should return expected XML" time="0.0653" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, single folder is passed.Should return call expected mocks" time="0.0166" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by \" executed="True" result="Success" success="True" time="0.0761" asserts="0" description="When Name is set, two folders are passed separated by \">
+              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by \" executed="True" result="Success" success="True" time="0.0843" asserts="0" description="When Name is set, two folders are passed separated by \">
                 <results>
-                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \.Should return expected XML" time="0.0628" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \.Should return call expected mocks" time="0.0133" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \.Should return expected XML" time="0.0713" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \.Should return call expected mocks" time="0.013" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by /" executed="True" result="Success" success="True" time="0.082" asserts="0" description="When Name is set, two folders are passed separated by /">
+              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by /" executed="True" result="Success" success="True" time="0.0844" asserts="0" description="When Name is set, two folders are passed separated by /">
                 <results>
-                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by /.Should return expected XML" time="0.0651" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, two folders are passed separated by /.Should return call expected mocks" time="0.0168" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by /.Should return expected XML" time="0.0716" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, two folders are passed separated by /.Should return call expected mocks" time="0.0128" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by \ and /" executed="True" result="Success" success="True" time="0.077" asserts="0" description="When Name is set, two folders are passed separated by \ and /">
+              <test-suite type="TestFixture" name="When Name is set, two folders are passed separated by \ and /" executed="True" result="Success" success="True" time="0.0857" asserts="0" description="When Name is set, two folders are passed separated by \ and /">
                 <results>
-                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \ and /.Should return expected XML" time="0.064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected XML" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \ and /.Should return expected XML" time="0.0728" asserts="0" success="True" result="Success" executed="True" />
                   <test-case description="Should return call expected mocks" name="Get-JenkinsJob.When Name is set, two folders are passed separated by \ and /.Should return call expected mocks" time="0.013" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When Jenkins returns Xml 1.1" executed="True" result="Success" success="True" time="0.0711" asserts="0" description="When Jenkins returns Xml 1.1">
+              <test-suite type="TestFixture" name="When Jenkins returns Xml 1.1" executed="True" result="Success" success="True" time="0.064" asserts="0" description="When Jenkins returns Xml 1.1">
                 <results>
-                  <test-case description="should return XML parseable by .NET" name="Get-JenkinsJob.When Jenkins returns Xml 1.1.should return XML parseable by .NET" time="0.0711" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="should return XML parseable by .NET" name="Get-JenkinsJob.When Jenkins returns Xml 1.1.should return XML parseable by .NET" time="0.064" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsObject.Tests.ps1" executed="True" result="Success" success="True" time="0.4318" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsObject.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsObject.Tests.ps1" executed="True" result="Success" success="True" time="0.4448" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsObject.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Get-JenkinsObject" executed="True" result="Success" success="True" time="0.4318" asserts="0" description="Get-JenkinsObject">
+          <test-suite type="TestFixture" name="Get-JenkinsObject" executed="True" result="Success" success="True" time="0.4448" asserts="0" description="Get-JenkinsObject">
             <results>
-              <test-suite type="TestFixture" name="When jobs type, attribute name, no folder, credentials passed" executed="True" result="Success" success="True" time="0.2356" asserts="0" description="When jobs type, attribute name, no folder, credentials passed">
+              <test-suite type="TestFixture" name="When jobs type, attribute name, no folder, credentials passed" executed="True" result="Success" success="True" time="0.2436" asserts="0" description="When jobs type, attribute name, no folder, credentials passed">
                 <results>
-                  <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, no folder, credentials passed.Should return expected objects" time="0.2197" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, no folder, credentials passed.Should return expected objects" time="0.2277" asserts="0" success="True" result="Success" executed="True" />
                   <test-case description="Should return call expected mocks" name="Get-JenkinsObject.When jobs type, attribute name, no folder, credentials passed.Should return call expected mocks" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When jobs type, attribute name, folder, credentials passed" executed="True" result="Success" success="True" time="0.1961" asserts="0" description="When jobs type, attribute name, folder, credentials passed">
+              <test-suite type="TestFixture" name="When jobs type, attribute name, folder, credentials passed" executed="True" result="Success" success="True" time="0.2012" asserts="0" description="When jobs type, attribute name, folder, credentials passed">
                 <results>
-                  <test-suite type="TestFixture" name="/" executed="True" result="Success" success="True" time="0.1078" asserts="0" description="/">
+                  <test-suite type="TestFixture" name="/" executed="True" result="Success" success="True" time="0.1102" asserts="0" description="/">
                     <results>
-                      <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed./.Should return expected objects" time="0.0918" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Should return call expected mocks" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed./.Should return call expected mocks" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed./.Should return expected objects" time="0.0974" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Should return call expected mocks" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed./.Should return call expected mocks" time="0.0128" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="\" executed="True" result="Success" success="True" time="0.0884" asserts="0" description="\">
+                  <test-suite type="TestFixture" name="\" executed="True" result="Success" success="True" time="0.091" asserts="0" description="\">
                     <results>
-                      <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed.\.Should return expected objects" time="0.0732" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Should return call expected mocks" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed.\.Should return call expected mocks" time="0.0152" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Should return expected objects" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed.\.Should return expected objects" time="0.0748" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Should return call expected mocks" name="Get-JenkinsObject.When jobs type, attribute name, folder, credentials passed.\.Should return call expected mocks" time="0.0162" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
                 </results>
@@ -103,136 +103,136 @@
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsTreeRequest.tests.ps1" executed="True" result="Success" success="True" time="0.3429" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsTreeRequest.tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsTreeRequest.tests.ps1" executed="True" result="Success" success="True" time="0.3618" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Get-JenkinsTreeRequest.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Get-JenkinsTreeRequest" executed="True" result="Success" success="True" time="0.3429" asserts="0" description="Get-JenkinsTreeRequest">
+          <test-suite type="TestFixture" name="Get-JenkinsTreeRequest" executed="True" result="Success" success="True" time="0.3618" asserts="0" description="Get-JenkinsTreeRequest">
             <results>
-              <test-suite type="TestFixture" name="When default depth, default type, default attribute" executed="True" result="Success" success="True" time="0.1942" asserts="0" description="When default depth, default type, default attribute">
+              <test-suite type="TestFixture" name="When default depth, default type, default attribute" executed="True" result="Success" success="True" time="0.1922" asserts="0" description="When default depth, default type, default attribute">
                 <results>
-                  <test-case description="Should return '?tree=jobs[name,buildable,url,color]'" name="Get-JenkinsTreeRequest.When default depth, default type, default attribute.Should return '?tree=jobs[name,buildable,url,color]'" time="0.1942" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '?tree=jobs[name,buildable,url,color]'" name="Get-JenkinsTreeRequest.When default depth, default type, default attribute.Should return '?tree=jobs[name,buildable,url,color]'" time="0.1922" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When depth 2, default type, default attribute" executed="True" result="Success" success="True" time="0.0355" asserts="0" description="When depth 2, default type, default attribute">
+              <test-suite type="TestFixture" name="When depth 2, default type, default attribute" executed="True" result="Success" success="True" time="0.0374" asserts="0" description="When depth 2, default type, default attribute">
                 <results>
-                  <test-case description="Should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" name="Get-JenkinsTreeRequest.When depth 2, default type, default attribute.Should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" time="0.0355" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" name="Get-JenkinsTreeRequest.When depth 2, default type, default attribute.Should return '?tree=jobs[name,buildable,url,color,jobs[name,buildable,url,color]]'" time="0.0374" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When depth 2, type views, default attribute" executed="True" result="Success" success="True" time="0.0382" asserts="0" description="When depth 2, type views, default attribute">
+              <test-suite type="TestFixture" name="When depth 2, type views, default attribute" executed="True" result="Success" success="True" time="0.043" asserts="0" description="When depth 2, type views, default attribute">
                 <results>
-                  <test-case description="Should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" name="Get-JenkinsTreeRequest.When depth 2, type views, default attribute.Should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" time="0.0382" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" name="Get-JenkinsTreeRequest.When depth 2, type views, default attribute.Should return '?tree=Views[name,buildable,url,color,Views[name,buildable,url,color]]'" time="0.043" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When depth 3, type views, attribute name,url" executed="True" result="Success" success="True" time="0.0373" asserts="0" description="When depth 3, type views, attribute name,url">
+              <test-suite type="TestFixture" name="When depth 3, type views, attribute name,url" executed="True" result="Success" success="True" time="0.0458" asserts="0" description="When depth 3, type views, attribute name,url">
                 <results>
-                  <test-case description="Should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" name="Get-JenkinsTreeRequest.When depth 3, type views, attribute name,url.Should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" time="0.0373" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" name="Get-JenkinsTreeRequest.When depth 3, type views, attribute name,url.Should return '?tree=Views[name,url,Views[name,url,Views[name,url]]]'" time="0.0458" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When depth 2, type jobs, attribute name,lastBuild[number]" executed="True" result="Success" success="True" time="0.0377" asserts="0" description="When depth 2, type jobs, attribute name,lastBuild[number]">
+              <test-suite type="TestFixture" name="When depth 2, type jobs, attribute name,lastBuild[number]" executed="True" result="Success" success="True" time="0.0434" asserts="0" description="When depth 2, type jobs, attribute name,lastBuild[number]">
                 <results>
-                  <test-case description="Should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" name="Get-JenkinsTreeRequest.When depth 2, type jobs, attribute name,lastBuild[number].Should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" time="0.0377" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" name="Get-JenkinsTreeRequest.When depth 2, type jobs, attribute name,lastBuild[number].Should return '?tree=Jobs[name,lastBuild[number],Jobs[name,lastBuild[number]]]'" time="0.0434" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Invoke-JenkinsCommand.Tests.ps1" executed="True" result="Success" success="True" time="0.996" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Invoke-JenkinsCommand.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Invoke-JenkinsCommand.Tests.ps1" executed="True" result="Success" success="True" time="1.1124" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Invoke-JenkinsCommand.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Invoke-JenkinsCommand" executed="True" result="Success" success="True" time="0.996" asserts="0" description="Invoke-JenkinsCommand">
+          <test-suite type="TestFixture" name="Invoke-JenkinsCommand" executed="True" result="Success" success="True" time="1.1124" asserts="0" description="Invoke-JenkinsCommand">
             <results>
-              <test-suite type="TestFixture" name="When default type, default api, credentials passed" executed="True" result="Success" success="True" time="0.2316" asserts="0" description="When default type, default api, credentials passed">
+              <test-suite type="TestFixture" name="When default type, default api, credentials passed" executed="True" result="Success" success="True" time="0.2481" asserts="0" description="When default type, default api, credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, default api, credentials passed.Should return 'Invoke-RestMethod Result'" time="0.2129" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, default api, credentials passed.Should return call expected mocks" time="0.0187" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, default api, credentials passed.Should return 'Invoke-RestMethod Result'" time="0.2268" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, default api, credentials passed.Should return call expected mocks" time="0.0213" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When default type, default api, no credentials passed" executed="True" result="Success" success="True" time="0.0929" asserts="0" description="When default type, default api, no credentials passed">
+              <test-suite type="TestFixture" name="When default type, default api, no credentials passed" executed="True" result="Success" success="True" time="0.0968" asserts="0" description="When default type, default api, no credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, default api, no credentials passed.Should return 'Invoke-RestMethod Result'" time="0.0747" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, default api, no credentials passed.Should return call expected mocks" time="0.0182" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, default api, no credentials passed.Should return 'Invoke-RestMethod Result'" time="0.078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, default api, no credentials passed.Should return call expected mocks" time="0.0188" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When default type, xml api, credentials passed" executed="True" result="Success" success="True" time="0.0907" asserts="0" description="When default type, xml api, credentials passed">
+              <test-suite type="TestFixture" name="When default type, xml api, credentials passed" executed="True" result="Success" success="True" time="0.0938" asserts="0" description="When default type, xml api, credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed.Should return 'Invoke-RestMethod Result'" time="0.0721" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed.Should return call expected mocks" time="0.0186" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed.Should return 'Invoke-RestMethod Result'" time="0.0757" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed.Should return call expected mocks" time="0.0181" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, header passed" executed="True" result="Success" success="True" time="0.091" asserts="0" description="When default type, xml api, credentials passed, header passed">
+              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, header passed" executed="True" result="Success" success="True" time="0.0925" asserts="0" description="When default type, xml api, credentials passed, header passed">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed.Should return 'Invoke-RestMethod Result'" time="0.0729" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed.Should return call expected mocks" time="0.0181" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed.Should return 'Invoke-RestMethod Result'" time="0.0743" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed.Should return call expected mocks" time="0.0182" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, header passed, get method" executed="True" result="Success" success="True" time="0.0958" asserts="0" description="When default type, xml api, credentials passed, header passed, get method">
+              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, header passed, get method" executed="True" result="Success" success="True" time="0.1061" asserts="0" description="When default type, xml api, credentials passed, header passed, get method">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed, get method.Should return 'Invoke-RestMethod Result'" time="0.077" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed, get method.Should return call expected mocks" time="0.0188" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed, get method.Should return 'Invoke-RestMethod Result'" time="0.0808" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, header passed, get method.Should return call expected mocks" time="0.0252" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, body passed" executed="True" result="Success" success="True" time="0.1004" asserts="0" description="When default type, xml api, credentials passed, body passed">
+              <test-suite type="TestFixture" name="When default type, xml api, credentials passed, body passed" executed="True" result="Success" success="True" time="0.1266" asserts="0" description="When default type, xml api, credentials passed, body passed">
                 <results>
-                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, body passed.Should return 'Invoke-RestMethod Result'" time="0.0781" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, body passed.Should return call expected mocks" time="0.0222" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-RestMethod Result'" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, body passed.Should return 'Invoke-RestMethod Result'" time="0.0993" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When default type, xml api, credentials passed, body passed.Should return call expected mocks" time="0.0274" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When command type, default api, credentials passed" executed="True" result="Success" success="True" time="0.1073" asserts="0" description="When command type, default api, credentials passed">
+              <test-suite type="TestFixture" name="When command type, default api, credentials passed" executed="True" result="Success" success="True" time="0.1594" asserts="0" description="When command type, default api, credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When command type, default api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.0871" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When command type, default api, credentials passed.Should return call expected mocks" time="0.0202" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When command type, default api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.1219" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When command type, default api, credentials passed.Should return call expected mocks" time="0.0375" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When pluginmanager type, default api, credentials passed" executed="True" result="Success" success="True" time="0.0951" asserts="0" description="When pluginmanager type, default api, credentials passed">
+              <test-suite type="TestFixture" name="When pluginmanager type, default api, credentials passed" executed="True" result="Success" success="True" time="0.0932" asserts="0" description="When pluginmanager type, default api, credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When pluginmanager type, default api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.077" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When pluginmanager type, default api, credentials passed.Should return call expected mocks" time="0.0181" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When pluginmanager type, default api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.0733" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When pluginmanager type, default api, credentials passed.Should return call expected mocks" time="0.0198" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="When pluginmanager type, xml api, credentials passed" executed="True" result="Success" success="True" time="0.0912" asserts="0" description="When pluginmanager type, xml api, credentials passed">
+              <test-suite type="TestFixture" name="When pluginmanager type, xml api, credentials passed" executed="True" result="Success" success="True" time="0.0959" asserts="0" description="When pluginmanager type, xml api, credentials passed">
                 <results>
-                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When pluginmanager type, xml api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.0734" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When pluginmanager type, xml api, credentials passed.Should return call expected mocks" time="0.0178" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return 'Invoke-WebRequest Result'" name="Invoke-JenkinsCommand.When pluginmanager type, xml api, credentials passed.Should return 'Invoke-WebRequest Result'" time="0.0766" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return call expected mocks" name="Invoke-JenkinsCommand.When pluginmanager type, xml api, credentials passed.Should return call expected mocks" time="0.0193" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Resolve-JenkinsCommandUri.Tests.ps1" executed="True" result="Success" success="True" time="0.294" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Resolve-JenkinsCommandUri.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Resolve-JenkinsCommandUri.Tests.ps1" executed="True" result="Success" success="True" time="0.3222" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Resolve-JenkinsCommandUri.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when ony an endpoint" executed="True" result="Success" success="True" time="0.1593" asserts="0" description="Resolve-JenkinsCommandUri.when ony an endpoint">
+          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when ony an endpoint" executed="True" result="Success" success="True" time="0.1671" asserts="0" description="Resolve-JenkinsCommandUri.when ony an endpoint">
             <results>
-              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when ony an endpoint.should resolve" time="0.1593" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when ony an endpoint.should resolve" time="0.1671" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folders seperated by forward slash" executed="True" result="Success" success="True" time="0.0338" asserts="0" description="Resolve-JenkinsCommandUri.when folders seperated by forward slash">
+          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folders seperated by forward slash" executed="True" result="Success" success="True" time="0.0328" asserts="0" description="Resolve-JenkinsCommandUri.when folders seperated by forward slash">
             <results>
-              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folders seperated by forward slash.should resolve" time="0.0338" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folders seperated by forward slash.should resolve" time="0.0328" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folders seperated by backward slash" executed="True" result="Success" success="True" time="0.0341" asserts="0" description="Resolve-JenkinsCommandUri.when folders seperated by backward slash">
+          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folders seperated by backward slash" executed="True" result="Success" success="True" time="0.0398" asserts="0" description="Resolve-JenkinsCommandUri.when folders seperated by backward slash">
             <results>
-              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folders seperated by backward slash.should resolve" time="0.0341" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folders seperated by backward slash.should resolve" time="0.0398" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when passing a job name" executed="True" result="Success" success="True" time="0.0323" asserts="0" description="Resolve-JenkinsCommandUri.when passing a job name">
+          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when passing a job name" executed="True" result="Success" success="True" time="0.0356" asserts="0" description="Resolve-JenkinsCommandUri.when passing a job name">
             <results>
-              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when passing a job name.should resolve" time="0.0323" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when passing a job name.should resolve" time="0.0356" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folder and job name are null" executed="True" result="Success" success="True" time="0.0346" asserts="0" description="Resolve-JenkinsCommandUri.when folder and job name are null">
+          <test-suite type="TestFixture" name="Resolve-JenkinsCommandUri.when folder and job name are null" executed="True" result="Success" success="True" time="0.0469" asserts="0" description="Resolve-JenkinsCommandUri.when folder and job name are null">
             <results>
-              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folder and job name are null.should resolve" time="0.0346" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="should resolve" name="Resolve-JenkinsCommandUri.when folder and job name are null.should resolve" time="0.0469" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Set-JenkinsTLSSupport.Tests.ps1" executed="True" result="Success" success="True" time="0.1577" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Set-JenkinsTLSSupport.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Set-JenkinsTLSSupport.Tests.ps1" executed="True" result="Success" success="True" time="0.1717" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\Unit\Set-JenkinsTLSSupport.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Set-JenkinsTLSSupport" executed="True" result="Success" success="True" time="0.1577" asserts="0" description="Set-JenkinsTLSSupport">
+          <test-suite type="TestFixture" name="Set-JenkinsTLSSupport" executed="True" result="Success" success="True" time="0.1717" asserts="0" description="Set-JenkinsTLSSupport">
             <results>
-              <test-case description="Should not throw" name="Set-JenkinsTLSSupport.Should not throw" time="0.1438" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Security Protocol Type should contain &quot;Tls12&quot;" name="Set-JenkinsTLSSupport.Security Protocol Type should contain &quot;Tls12&quot;" time="0.0139" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should not throw" name="Set-JenkinsTLSSupport.Should not throw" time="0.1587" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Security Protocol Type should contain &quot;Tls12&quot;" name="Set-JenkinsTLSSupport.Security Protocol Type should contain &quot;Tls12&quot;" time="0.013" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
         </results>
