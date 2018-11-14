@@ -221,12 +221,25 @@ Task Build -Depends Test {
     # Populate Version Folder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psd1") -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath "src/$ModuleName.psm1") -Destination $VersionFolder
-    $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/lib') -Destination $VersionFolder -Recurse
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/en-us') -Destination $VersionFolder -Recurse
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'LICENSE') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'README.md') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'CHANGELOG.md') -Destination $VersionFolder
     $null = Copy-Item -Path (Join-Path -Path $ProjectRoot -ChildPath 'RELEASENOTES.md') -Destination $VersionFolder
+
+    # Load the Libs files into the PSM1
+    $libFiles = Get-ChildItem `
+        -Path (Join-Path -Path $ProjectRoot -ChildPath 'src/lib') `
+        -Include '*.ps1' `
+        -Recurse
+
+    # Assemble all the libs content into a single string
+    $libFilesStringBuilder = [System.Text.StringBuilder]::new()
+    foreach ($libFile in $libFiles)
+    {
+        $libContent = Get-Content -Path $libFile -Raw
+        $null = $libFilesStringBuilder.AppendLine($libContent)
+    }
 
     <#
         Load the PSM1 file into an array of lines and step through each line

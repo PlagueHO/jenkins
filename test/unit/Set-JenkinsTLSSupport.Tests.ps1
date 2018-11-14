@@ -11,7 +11,7 @@ InModuleScope Jenkins {
             { Set-JenkinsTLSSupport } | Should -Not -Throw
         }
 
-        It 'Security Protocol Type should contain "Tls12"' {
+        It 'Security Protocol Type should contain "Tls12"' -Skip:($IsCoreClr -eq $true) {
             ([Net.ServicePointManager]::SecurityProtocol).ToString().Contains([Net.SecurityProtocolType]::Tls12) | Should -Be $true
         }
     }
