@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
+
 ## 1.0.2.240
 
 - Added `Disable-JenkinsJob` and `Enable-JenkinsJob` functions for disabling
