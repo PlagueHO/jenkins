@@ -45,30 +45,38 @@ function Invoke-JenkinsJob
         $Parameters
     )
 
-    $null = $PSBoundParameters.Add('Type', 'RestCommand')
-
-    $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'build'
+    $command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'build'
 
     $null = $PSBoundParameters.Remove('Name')
     $null = $PSBoundParameters.Remove('Folder')
     $null = $PSBoundParameters.Remove('Confirm')
-    $null = $PSBoundParameters.Remove('Parameters')
-    $null = $PSBoundParameters.Add('Command', $Command)
+    $null = $PSBoundParameters.Add('Command', $command)
     $null = $PSBoundParameters.Add('Method', 'post')
+    $null = $PSBoundParameters.Add('Type', 'Command')
 
-    if ($Parameters)
+    $body = @{}
+
+    if ($PSBoundParameters.ContainsKey('Parameters'))
     {
         $postValues = @()
 
         foreach ($key in $Parameters.Keys)
         {
-            $postValues += @( @{ name = $key; value = $Parameters[$key] } )
-        } # foreach
+            $postValues += @(
+                @{
+                    name = $key
+                    value = $Parameters[$key]
+                }
+            )
+        }
 
-        $postObject = @{ parameter = $postValues }
-        $body = @{ json = (ConvertTo-JSON -InputObject $postObject) }
+        $body = @{
+            parameter = $postValues
+        }
+
+        $null = $PSBoundParameters.Remove('Parameters')
         $null = $PSBoundParameters.Add('Body', $body)
     }
 
-    $null = Invoke-JenkinsCommand @PSBoundParameters
+    return Invoke-JenkinsCommand @PSBoundParameters
 } # Invoke-JenkinsJob

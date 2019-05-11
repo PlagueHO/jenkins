@@ -124,7 +124,7 @@ function Invoke-JenkinsCommand
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-RestMethod `
+                $result = Invoke-RestMethod `
                     -Uri $FullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
@@ -151,7 +151,7 @@ function Invoke-JenkinsCommand
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-RestMethod `
+                $result = Invoke-RestMethod `
                     -Uri $FullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
@@ -180,7 +180,7 @@ function Invoke-JenkinsCommand
 
             Set-JenkinsTLSSupport
 
-            $Result = Invoke-WebRequest `
+            $result = Invoke-WebRequest `
                 -Uri $FullUri `
                 -Headers $Headers `
                 -MaximumRedirection 0 `
@@ -188,10 +188,10 @@ function Invoke-JenkinsCommand
                 -ErrorAction SilentlyContinue `
                 -ErrorVariable RequestErrors
 
-            if ($RequestErrors.Count -eq 1 -and $Result.StatusCode -eq 302 `
+            if ($RequestErrors.Count -eq 1 -and $result.StatusCode -eq 302 `
                     -and $RequestErrors[0].FullyQualifiedErrorId -like "MaximumRedirectExceeded,*")
             {
-                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $Result.Headers.Location)
+                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $result.Headers.Location)
             }
             elseif ($RequestErrors.Count -ge 1)
             {
@@ -218,7 +218,7 @@ function Invoke-JenkinsCommand
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-WebRequest `
+                $result = Invoke-WebRequest `
                     -Uri $FullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
@@ -232,5 +232,5 @@ function Invoke-JenkinsCommand
         } # 'pluginmanager'
     } # switch
 
-    Return $Result
+    Return $result
 } # Invoke-JenkinsCommand
