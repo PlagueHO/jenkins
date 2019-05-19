@@ -67,7 +67,7 @@ Task UnitTest -Depends Init, PrepareTest {
     $separator
 
     # Execute tests
-    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\unit'
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\Unit'
     $testResultsFile = Join-Path -Path $testScriptsPath -ChildPath 'TestResults.unit.xml'
     $codeCoverageFile = Join-Path -Path $testScriptsPath -ChildPath 'CodeCoverage.xml'
     $codeCoverageSource = Get-ChildItem -Path (Join-Path -Path $ProjectRoot -ChildPath 'src\lib\*.ps1') -Recurse
@@ -144,7 +144,7 @@ Task IntegrationTest -Depends Init, PrepareTest {
     $separator
 
     # Execute tests
-    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\integration'
+    $testScriptsPath = Join-Path -Path $ProjectRoot -ChildPath 'test\Integration'
     if (-not (Test-Path -Path $testScriptsPath))
     {
         'Skipping integration tests because they do not exist.'
