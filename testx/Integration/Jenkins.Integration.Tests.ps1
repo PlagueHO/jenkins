@@ -3,6 +3,32 @@
 param (
 )
 
+switch ($ENV:BHBuildSystem)
+{
+    'Unknown'
+    {
+        Write-Verbose -Message 'Running Integration tests in Unknown build system.'
+    }
+
+    ''
+    {
+        Write-Verbose -Message 'Running Integration tests in an undetected build system.'
+    }
+
+    'AppVeyor'
+    {
+        Write-Warning -Message 'Skipping Integration tests for AppVeyor because Linux containers not supported in free tier.'
+        return
+    }
+
+    default
+    {
+        Write-Warning -Message 'Skipping Integration tests for Travis CI does not supporrt.'
+        return
+
+    }
+
+}
 if ($ENV:BHBuildSystem -notin 'AppVeyor','Unknown')
 {
     Write-Warning -Message "Skipping Integration tests when running in '$ENV:BHBuildSystem'."
@@ -20,7 +46,6 @@ Describe 'Jenkins Module Integration tests' {
     BeforeAll {
         # Ensure Linux Docker engine is running
         Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
-
         & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 
         # Set up a Linux Docker container running Jenkins

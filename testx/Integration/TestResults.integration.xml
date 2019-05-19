@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2019-05-19" time="10:19:56">
+  <environment user="Dan" machine-name="PLAGUE02" cwd="C:\Users\Dan\Source\GitHub\jenkins" user-domain="PLAGUE02" platform="Microsoft Windows 10 Enterprise|C:\WINDOWS|\Device\Harddisk1\Partition4" nunit-version="2.5.8.0" os-version="10.0.17134" clr-version="4.0.30319.42000" />
+  <culture-info current-culture="en-NZ" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="3.5775" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\Users\Dan\Source\GitHub\jenkins\test\integration\Jenkins.Integration.Tests.ps1" executed="True" result="Failure" success="False" time="3.5775" asserts="0" description="C:\Users\Dan\Source\GitHub\jenkins\test\integration\Jenkins.Integration.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Jenkins Module Integration tests" executed="True" result="Failure" success="False" time="3.4168" asserts="0" description="Jenkins Module Integration tests">
+            <results>
+              <test-suite type="TestFixture" name="When getting Jenkins Crumb" executed="True" result="Failure" success="False" time="3.35" asserts="0" description="When getting Jenkins Crumb">
+                <results>
+                  <test-case description="Error occurred in Context block" name="Jenkins Module Integration tests.When getting Jenkins Crumb.Error occurred in Context block" time="0" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Cannot validate argument on parameter 'Credential'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</message>
+                      <stack-trace>At C:\Users\Dan\Source\GitHub\jenkins\test\integration\Jenkins.Integration.Tests.ps1:92 char:35</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
