@@ -3,35 +3,13 @@
 param (
 )
 
-switch ($ENV:BHBuildSystem)
+if ($ENV:BHBuildSystem -in 'Travis CI','Unknown','')
 {
-    'Unknown'
-    {
-        Write-Verbose -Message 'Running Integration tests in Unknown build system.'
-    }
-
-    ''
-    {
-        Write-Verbose -Message 'Running Integration tests in an undetected build system.'
-    }
-
-    'AppVeyor'
-    {
-        Write-Warning -Message 'Skipping Integration tests for AppVeyor because Linux containers not supported in free tier.'
-        return
-    }
-
-    default
-    {
-        Write-Warning -Message 'Skipping Integration tests for Travis CI does not supporrt.'
-        return
-
-    }
-
+    Write-Verbose -Message "Running Integration tests in '$ENV:BHBuildSystem' build system."
 }
-if ($ENV:BHBuildSystem -notin 'AppVeyor','Unknown')
+else
 {
-    Write-Warning -Message "Skipping Integration tests when running in '$ENV:BHBuildSystem'."
+    Write-Warning -Message "Skipping Integration tests in '$ENV:BHBuildSystem' build system."
     return
 }
 
