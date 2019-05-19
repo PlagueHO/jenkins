@@ -7,6 +7,9 @@
 - Renamed `Jenkins.depends.psd1` to `requirements.psd1` to make more generic.
 - Updated PowerShell module dependencies to latest versions and removed
   PSDeploy dependency because it is not used.
+- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/IAG-NZ/jenkins/issues/100).
+- Added basic integration tests that will run on Linux agents in Travis CI
+  or on Windows 10 machines with Docker for Windows installed.
 
 ## 1.0.2.240
 

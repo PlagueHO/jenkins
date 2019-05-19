@@ -35,8 +35,8 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $result = Invoke-JenkinsJob @Splat
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -61,9 +61,9 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $Splat.Folder = 'test'
-        $result = Invoke-JenkinsJob @Splat
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $splat.Folder = 'test'
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -88,9 +88,9 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $Splat.Folder = 'test1\test2'
-        $result = Invoke-JenkinsJob @Splat
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $splat.Folder = 'test1\test2'
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -115,9 +115,9 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $Splat.Folder = 'test1/test2'
-        $result = Invoke-JenkinsJob @Splat
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $splat.Folder = 'test1/test2'
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -142,9 +142,9 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $Splat.Folder = 'test1\test2/test3'
-        $result = Invoke-JenkinsJob @Splat
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $splat.Folder = 'test1\test2/test3'
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -169,12 +169,12 @@ Describe 'Invoke-JenkinsJob' {
             -ModuleName Jenkins `
             -MockWith { 'Invoke Result' }
 
-        $Splat = $inokeJenkinsJob_Parameters.Clone()
-        $Splat.Parameters = @{
+        $splat = $inokeJenkinsJob_Parameters.Clone()
+        $splat.Parameters = @{
             parameter1 = 'value1'
             parameter2 = 'value2'
         }
-        $result = Invoke-JenkinsJob @Splat
+        $result = Invoke-JenkinsJob @splat
 
         It 'Should return expected XML' {
             $result | Should -Be 'Invoke Result'
@@ -185,11 +185,12 @@ Describe 'Invoke-JenkinsJob' {
                 -CommandName Invoke-JenkinsCommand `
                 -ModuleName Jenkins `
                 -ParameterFilter {
+                    $parameters = ConvertFrom-Json -InputObject $body.json;
                     $Command -eq "job/$testJobName/build" -and `
-                    $body.parameter.value -contains 'value1' -and `
-                    $body.parameter.name -contains 'parameter1' -and `
-                    $body.parameter.value -contains 'value2' -and `
-                    $body.parameter.name -contains 'parameter2'
+                    $parameters.parameter.value -contains 'value1' -and `
+                    $parameters.parameter.name -contains 'parameter1' -and `
+                    $parameters.parameter.value -contains 'value2' -and `
+                    $parameters.parameter.name -contains 'parameter2'
                 } `
                 -Exactly -Times 1
         }

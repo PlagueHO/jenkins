@@ -116,17 +116,136 @@ Describe 'Jenkins Module Integration tests' {
         $newJenkinsJob_Parameters = @{
             Uri        = $jenkinsUri
             Name       = 'Test'
+            XML        = $jenkinsJobXML['testjob']
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Verbose    = $true
+        }
+
+        It 'Should not throw an exception' {
+            {
+                New-JenkinsJob @newJenkinsJob_Parameters
+            } | Should -Not -Throw
+        }
+    }
+
+    Context 'When getting a Jenkins Job from the root folder' {
+        $getJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Verbose    = $true
+        }
+
+        It 'Should return the expected Job XML' {
+            $xmlString = Get-JenkinsJob @getJenkinsJob_Parameters
+            $xml = [System.Xml.XmlDocument]::new()
+            $xml.LoadXml($xmlString)
+            $xml.project.description | Should -Be 'Test Job'
+        }
+    }
+
+    Context 'When invoking a Jenkins Job from the root folder' {
+        $invokeJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Verbose    = $true
+        }
+
+        It 'Should not throw an exception' {
+            {
+                Invoke-JenkinsJob @invokeJenkinsJob_Parameters
+            } | Should -Not -Throw
+        }
+    }
+
+    Context 'When removing a Jenkins Job from the root folder' {
+        $removeJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Force      = $true
+            Verbose    = $true
+        }
+
+        It 'Should not throw an exception' {
+            {
+                Remove-JenkinsJob @removeJenkinsJob_Parameters
+            } | Should -Not -Throw
+        }
+    }
+
+    Context 'When creating a new Jenkins Job with Parameters in the root folder' {
+        $newJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
             XML        = $jenkinsJobXML['testjobwithparameter']
             Credential = $jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
 
-        $result = New-JenkinsJob @newJenkinsJob_Parameters
-        Write-Verbose -Message ($result | Out-String) -Verbose
+        It 'Should not throw an exception' {
+            {
+                New-JenkinsJob @newJenkinsJob_Parameters
+            } | Should -Not -Throw
+        }
+    }
 
-        It 'Should return a valid crumb' {
-            $script:jenkinsCrumb | Should -Not -BeNullOrEmpty
+    Context 'When getting a Jenkins Job with Parameters from the root folder' {
+        $getJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Verbose    = $true
+        }
+
+        It 'Should return the expected Job XML' {
+            $xmlString = Get-JenkinsJob @getJenkinsJob_Parameters
+            $xml = [System.Xml.XmlDocument]::new()
+            $xml.LoadXml($xmlString)
+            $xml.project.description | Should -Be 'Test Job With Parameter'
+        }
+    }
+
+    Context 'When invoking a Jenkins Job with Parameters from the root folder' {
+        $invokeJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Parameters = @{
+                testparameter = 'testvalue'
+            }
+            Verbose    = $true
+        }
+
+        It 'Should not throw an exception' {
+            {
+                Invoke-JenkinsJob @invokeJenkinsJob_Parameters
+            } | Should -Not -Throw
+        }
+    }
+
+    Context 'When removing a Jenkins Job with Parameters from the root folder' {
+        $removeJenkinsJob_Parameters = @{
+            Uri        = $jenkinsUri
+            Name       = 'Test'
+            Credential = $jenkinsCredential
+            Crumb      = $script:jenkinsCrumb
+            Force      = $true
+            Verbose    = $true
+        }
+
+        It 'Should not throw an exception' {
+            {
+                Remove-JenkinsJob @removeJenkinsJob_Parameters
+            } | Should -Not -Throw
         }
     }
 }

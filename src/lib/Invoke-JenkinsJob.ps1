@@ -70,8 +70,12 @@ function Invoke-JenkinsJob
             )
         }
 
-        $body = @{
+        $jsonBody = @{
             parameter = $postValues
+        }
+
+        $body = @{
+            json = ConvertTo-Json -InputObject $jsonBody
         }
 
         $null = $PSBoundParameters.Remove('Parameters')

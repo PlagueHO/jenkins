@@ -2,11 +2,16 @@
 #      environment configuration  #
 #---------------------------------#
 version: 1.0.0.{build}
-image: Visual Studio 2017
+
+image:
+- Visual Studio 2017
+- Visual Studio 2015
+
 environment:
   PowerShellGalleryApiKey:
     secure: 1dvlzHXj42LofdFsQADx+JH5T3rGvzgvcA2XzIWI/5h9TeCSD8EQU+ELD6PaXvOc
   GitHubPushFromPlagueHO:
     secure: T1YH80PnRtYOlW3XM6rYkavs91a+Dr37V9ln0OX1UrVYUoNHaJq0paGswPEWKraL
+
 build_script:
   - ps: . .\psake.ps1 -TaskList Deploy
