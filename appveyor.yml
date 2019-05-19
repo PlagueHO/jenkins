@@ -8,7 +8,5 @@ environment:
     secure: 1dvlzHXj42LofdFsQADx+JH5T3rGvzgvcA2XzIWI/5h9TeCSD8EQU+ELD6PaXvOc
   GitHubPushFromPlagueHO:
     secure: T1YH80PnRtYOlW3XM6rYkavs91a+Dr37V9ln0OX1UrVYUoNHaJq0paGswPEWKraL
-install:
-  - docker version
 build_script:
   - ps: . .\psake.ps1 -TaskList Deploy

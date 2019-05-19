@@ -21,44 +21,19 @@ Describe 'Jenkins Module Integration tests' {
         # Ensure Linux Docker engine is running
         Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
 
-        if ($ENV:BHBuildSystem -eq 'AppVeyor')
-        {
-            <#
-                To enable the Docker Linux engine on AppVeyor we must:
-                1. Remove the existing share for C: drive if there is one
-                2. Set the password for the DockerExchange local user.
-                3. Start the Docker engine and configure the details required
-                   to be able to create the SMB share on C drive.
-                4. Disable the 'File and Printer Sharing' rule inbound to
-                   allow the Docker SMB share to work.
-            #>
-            Remove-SmbShare -Name C -ErrorAction SilentlyContinue -Force
-            $dockerExchangeUsername = 'DockerExchange'
-            $dockerExchangePassword = 'ABC' + [guid]::NewGuid().ToString() + '!'
-            $dockerExchangeSecureString = ConvertTo-SecureString $dockerExchangePassword -AsPlainText -Force
-            Get-LocalUser -Name $dockerExchangeUsername | Set-LocalUser -Password $dockerExchangeSecureString
-            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -Start --testftw!928374kasljf039 # >$null 2>&1
-            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -Mount=C -Username="$ENV:computername\$dockerExchangeUsername" -Password="$dockerExchangePassword" --testftw!928374kasljf039 # >$null 2>&1
-            Disable-NetFirewallRule -DisplayGroup 'File and Printer Sharing' -Direction Inbound
-        }
-        else
-        {
-            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
-        }
+        & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 
         # Set up a Linux Docker container running Jenkins
         $dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
         $jenkinsPort = 49001
         $jenkinsContainerName = 'jenkinstest'
         $jenkinsImageTag = 'plagueho/jenkins'
-        $jenkinsVolume = Join-Path -Path $TestDrive -ChildPath 'jenkinstestvolume'
-        $null = New-Item -Path $jenkinsVolume -ItemType Directory -ErrorAction SilentlyContinue
 
         Write-Verbose -Message "Creating Docker jenkins image '$jenkinsImageTag'" -Verbose
         & docker ('image','build','-t',$jenkinsImageTag,$dockerFolder)
 
         Write-Verbose -Message "Starting Docker jenkins container '$jenkinsContainerName' from image '$jenkinsImageTag'" -Verbose
-        & docker ('run','-d','-p',"${jenkinsPort}:8080",'-v',"${jenkinsVolume}:/var/jenkins_home:z",'--name',$jenkinsContainerName,$jenkinsImageTag)
+        & docker ('run','-d','-p',"${jenkinsPort}:8080",'--name',$jenkinsContainerName,$jenkinsImageTag)
 
         $jenkinsUri        = [System.UriBuilder]::new('http','localhost',$jenkinsPort)
         $jenkinsUsername   = 'admin'
