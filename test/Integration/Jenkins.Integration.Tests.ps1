@@ -22,9 +22,12 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelper') -
 
 Describe 'Jenkins Module Integration tests' {
     BeforeAll {
-        # Ensure Linux Docker engine is running
-        Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
-        & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+        # Ensure Linux Docker engine is running on Windows
+        if ($null -eq $IsWindows -or $IsWindows)
+        {
+            Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
+            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+        }
 
         # Set up a Linux Docker container running Jenkins
         $dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
