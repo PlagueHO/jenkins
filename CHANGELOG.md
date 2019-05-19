@@ -4,6 +4,9 @@
 
 - Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
 - Added basic docker support for creation of integration tests.
+- Renamed `Jenkins.depends.psd1` to `requirements.psd1` to make more generic.
+- Updated PowerShell module dependencies to latest versions and removed
+  PSDeploy dependency because it is not used.
 
 ## 1.0.2.240
 

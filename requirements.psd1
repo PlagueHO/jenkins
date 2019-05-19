@@ -7,7 +7,7 @@
             SkipPublisherCheck = $true
         }
         Target         = 'CurrentUser'
-        Version        = '4.7.4'
+        Version        = '4.8.0'
         Tags           = 'Bootstrap'
     }
 
@@ -19,7 +19,7 @@
             SkipPublisherCheck = $true
         }
         Target         = 'CurrentUser'
-        Version        = '4.4.2'
+        Version        = '4.8.1'
         Tags           = 'Test'
     }
 
@@ -31,7 +31,7 @@
             SkipPublisherCheck = $true
         }
         Target         = 'CurrentUser'
-        Version        = '1.17.1'
+        Version        = '1.18.0'
         Tags           = 'Test'
     }
 
@@ -43,31 +43,19 @@
             SkipPublisherCheck = $true
         }
         Target         = 'CurrentUser'
-        Version        = '2.0.0'
+        Version        = '2.0.8'
         Tags           = 'Init'
     }
 
-    PSDeploy          = @{
-        Name           = 'PSDeploy'
-        DependencyType = 'PSGalleryModule'
-        Parameters     = @{
-            Repository         = 'PSGallery'
-            SkipPublisherCheck = $true
-        }
-        Target         = 'CurrentUser'
-        Version        = '1.0'
-        Tags           = 'Deploy'
-    }
-
     Platyps           = @{
-        Name           = 'Platyps'
+        Name           = 'platyPS'
         DependencyType = 'PSGalleryModule'
         Parameters     = @{
             Repository         = 'PSGallery'
             SkipPublisherCheck = $true
         }
         Target         = 'CurrentUser'
-        Version        = '0.11.1'
+        Version        = '0.14.0'
         Tags           = 'Build'
     }
 }
