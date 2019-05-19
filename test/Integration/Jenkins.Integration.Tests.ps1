@@ -3,9 +3,14 @@
 param (
 )
 
-if ($ENV:BHBuildSystem -in 'Travis CI','Unknown','')
+if ($ENV:BHBuildSystem -in 'Unknown','')
 {
     Write-Verbose -Message "Running Integration tests in '$ENV:BHBuildSystem' build system."
+}
+elseif ($ENV:BHBuildSystem -eq 'Travis CI' -and $IsMacOS)
+{
+    Write-Warning -Message "Skipping Integration tests in '$ENV:BHBuildSystem' build system on MacOS."
+    return
 }
 else
 {
