@@ -79,5 +79,5 @@ function Get-JenkinsCrumb
 
     $Crumb = $Matches.Groups[1].Value
 
-    Return $Crumb
+    return $Crumb
 } # Get-JenkinsCrumb

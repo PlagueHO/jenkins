@@ -237,5 +237,5 @@ function Invoke-JenkinsCommand
         } # 'pluginmanager'
     } # switch
 
-    Return $result
+    return $result
 } # Invoke-JenkinsCommand

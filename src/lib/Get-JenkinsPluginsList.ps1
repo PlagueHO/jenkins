@@ -48,5 +48,5 @@ function Get-JenkinsPluginsList
     $Objects = ConvertFrom-Json -InputObject $Result.Content
 
     # Returns the list of plugins, selecting just the name and version.
-    Return ($Objects.plugins | Select-Object shortName, version)
+    return ($Objects.plugins | Select-Object shortName, version)
 } # Get-JenkinsPluginsList
