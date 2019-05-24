@@ -16,9 +16,9 @@ $testPassword   = 'DummyPassword'
 $testCredential = New-Object -TypeName System.Management.Automation.PSCredential `
     -ArgumentList $testUsername, ( ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
 $testCommand    = 'CommandTest'
-$Bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
-$Base64Bytes    = [System.Convert]::ToBase64String($Bytes)
-$testAuthHeader = "Basic $Base64Bytes"
+$bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+$base64Bytes    = [System.Convert]::ToBase64String($bytes)
+$testAuthHeader = "Basic $base64Bytes"
 $testJobName    = 'TestJob'
 
 Describe 'Get-JenkinsJob' {
