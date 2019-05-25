@@ -10,6 +10,8 @@ matrix:
         - brew cask install powershell
     - os: linux
       dist: trusty
+      services:
+        - docker
       sudo: required
       addons:
         apt:

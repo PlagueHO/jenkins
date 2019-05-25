@@ -8,7 +8,7 @@ function Get-ExceptionRecord
     param
     (
         [Parameter(Mandatory)]
-        [String]
+        [System.String]
         $ErrorId,
 
         [Parameter(Mandatory)]
@@ -16,7 +16,7 @@ function Get-ExceptionRecord
         $ErrorCategory,
 
         [Parameter(Mandatory)]
-        [String]
+        [System.String]
         $ErrorMessage,
 
         [Switch]

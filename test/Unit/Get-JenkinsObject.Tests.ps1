@@ -16,14 +16,14 @@ $testPassword   = 'DummyPassword'
 $testCredential = New-Object -TypeName System.Management.Automation.PSCredential `
     -ArgumentList $testUsername, ( ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
 $testCommand    = 'CommandTest'
-$Bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
-$Base64Bytes    = [System.Convert]::ToBase64String($Bytes)
-$testAuthHeader = "Basic $Base64Bytes"
+$bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+$base64Bytes    = [System.Convert]::ToBase64String($bytes)
+$testAuthHeader = "Basic $base64Bytes"
 $testJobName    = 'TestJob'
 
 Describe 'Get-JenkinsObject' {
     Context 'When jobs type, attribute name, no folder, credentials passed' {
-        $GetJenkinsObjectSplat = @{
+        $getJenkinsObjectSplat = @{
             Uri        = $testURI
             Credential = $testCredential
             Type       = 'jobs'
@@ -43,14 +43,16 @@ Describe 'Get-JenkinsObject' {
                         )
                     }
                 }
-        $Splat = $GetJenkinsObjectSplat.Clone()
-        $Result = Get-JenkinsObject @Splat
-        It "Should return expected objects" {
-            $Result.Count | Should -Be 2
-            $Result[0].Name | Should -Be 'test1'
-            $Result[1].Name | Should -Be 'test2'
+        $splat = $getJenkinsObjectSplat.Clone()
+        $result = Get-JenkinsObject @splat
+
+        It 'Should return expected objects' {
+            $result.Count | Should -Be 2
+            $result[0].Name | Should -Be 'test1'
+            $result[1].Name | Should -Be 'test2'
         }
-        It "Should return call expected mocks" {
+
+        It 'Should return call expected mocks' {
             Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -ParameterFilter {
                     $Command -eq '?tree=jobs[name]'
@@ -62,8 +64,8 @@ Describe 'Get-JenkinsObject' {
     Context 'When jobs type, attribute name, folder, credentials passed' {
         foreach( $slash in @( '/', '\') )
         {
-            Context $slash {
-                $GetJenkinsObjectSplat = @{
+            Context "When slash in folder path is '$slash'" {
+                $getJenkinsObjectSplat = @{
                     Uri        = $testURI
                     Credential = $testCredential
                     Folder     = ('test{0}folder' -f $slash)
@@ -84,14 +86,16 @@ Describe 'Get-JenkinsObject' {
                                 )
                             }
                         }
-                $Splat = $GetJenkinsObjectSplat.Clone()
-                $Result = Get-JenkinsObject @Splat
-                It "Should return expected objects" {
-                    $Result.Count | Should -Be 2
-                    $Result[0].Name | Should -Be 'test1'
-                    $Result[1].Name | Should -Be 'test2'
+                $splat = $getJenkinsObjectSplat.Clone()
+                $result = Get-JenkinsObject @splat
+
+                It 'Should return expected objects' {
+                    $result.Count | Should -Be 2
+                    $result[0].Name | Should -Be 'test1'
+                    $result[1].Name | Should -Be 'test2'
                 }
-                It "Should return call expected mocks" {
+
+                It 'Should return call expected mocks' {
                     Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                         -ParameterFilter {
                             $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'

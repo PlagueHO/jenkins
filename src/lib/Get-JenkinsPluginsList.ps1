@@ -44,9 +44,9 @@ function Get-JenkinsPluginsList
     $null = $PSBoundParameters.Remove('Depth')
 
     # Invoke the Command to Get the Plugin List
-    $Result = Invoke-JenkinsCommand @PSBoundParameters
-    $Objects = ConvertFrom-Json -InputObject $Result.Content
+    $result = Invoke-JenkinsCommand @PSBoundParameters
+    $objects = ConvertFrom-Json -InputObject $result.Content
 
     # Returns the list of plugins, selecting just the name and version.
-    Return ($Objects.plugins | Select-Object shortName, version)
+    return ($objects.plugins | Select-Object shortName, version)
 } # Get-JenkinsPluginsList

@@ -1,8 +1,9 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/IAG-NZ/Jenkins/blob/dev/LICENSE)
-[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-CosmosDB-blue.svg)](https://github.com/IAG-NZ/Jenkins/wiki)
+[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-Jenkins-blue.svg)](https://github.com/IAG-NZ/Jenkins/wiki)
 [![PowerShell Gallery - Jenkins](https://img.shields.io/badge/PowerShell%20Gallery-Jenkins-blue.svg)](https://www.powershellgallery.com/packages/Jenkins)
 [![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-4.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
 [![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PowerShell_Core-6.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
+[![Wiki](https://img.shields.io/badge/Wiki-yellow.svg)](https://github.com/IAG-NZ/Jenkins/Wiki)
 
 # Jenkins
 
@@ -17,19 +18,28 @@ Created by IAG NZ Ltd.
 | dev | Comming Soon | [![av-image-dev][]][av-site-dev] | [![tv-image-dev][]][tv-site-dev] | [![cc-image-dev][]][cc-site-dev] |
 | master | Comming Soon | [![av-image-master][]][av-site-master] | [![tv-image-master][]][tv-site-master] | [![cc-image-master][]][cc-site-master] |
 
-[av-image-dev]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true
-[av-site-dev]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev
-[tv-image-dev]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=dev
-[tv-site-dev]: https://travis-ci.org/IAG-NZ/jenkins/branches
-[cc-image-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg
-[cc-site-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev
+## Table of Contents
 
-[av-image-master]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true
-[av-site-master]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master
-[tv-image-master]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=master
-[tv-site-master]: https://travis-ci.org/IAG-NZ/jenkins/branches
-[cc-image-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg
-[cc-site-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Compatibility and Testing](#compatibility-and-testing)
+- [Automated Integration Tests](#automated-integration-tests)
+- [Cross Site Request Forgery (CSRF) Support](#cross-site-request-forgery-csrf-support)
+- [Cmdlets](#cmdlets)
+- [Known Issues](#known-issues)
+- [Recommendations](#recommendations)
+- [Examples](#examples)
+- [Links](#links)
+
+## Requirements
+
+This module requires the following:
+
+- Windows PowerShell 4.x and above or
+- PowerShell Core 6.x on:
+  - Windows
+  - Linux
+  - macOS
 
 ## Installation
 
@@ -49,29 +59,29 @@ Install-Module -Name Jenkins
 Unzip the file containing this Module to your `c:\Program Files\WindowsPowerShell\Modules`
 folder.
 
-## Cmdlets
+## Compatibility and Testing
 
-- `Disable-JenkinsJob`: Disables a Jenkins job.
-- `Enable-JenkinsJob`: Enables a Jenkins job.
-- `Get-JenkinsCrumb`: Gets a Jenkins Crumb.
-- `Get-JenkinsFolderList`: Get a list of folders in a Jenkins master server.
-- `Get-JenkinsJob`: Get a Jenkins Job Definition.
-- `Get-JenkinsJobList`: Get a list of jobs in a Jenkins master server.
-- `Get-JenkinsObject`: Get a list of objects in a Jenkins master server.
-- `Get-JenkinsPluginsList`: Retrieves a list of installed plugins.
-- `Get-JenkinsViewList`: Get a list of views in a Jenkins master server.
-- `Initialize-JenkinsUpdateCache`: Creates or updates a local Jenkins Update cache.
-- `Invoke-JenkinsCommand`: Execute a Jenkins command or request via the Jenkins Rest API.
-- `Invoke-JenkinsJob`: Run a parameterized or non-parameterized Jenkins Job.
-- `Invoke-JenkinsJobReload`: Reloads a job config on a given URL.
-- `New-JenkinsFolder`: Create a new Jenkins Folder.
-- `New-JenkinsJob`: Create a new Jenkins Job.
-- `Remove-JenkinsJob`: Remove an existing Jenkins Job.
-- `Rename-JenkinsJob`: Rename an existing Jenkins Job.
-- `Set-JenkinsJob`: Set a Jenkins Job definition.
-- `Test-JenkinsFolder`: Determines if a Jenkins Folder exists.
-- `Test-JenkinsJob`: Determines if a Jenkins Job exists.
-- `Test-JenkinsView`: Determines if a Jenkins View exists.
+This PowerShell module is automatically tested and validated to run
+on the following systems:
+
+- Windows Server (using Windows PowerShell 5.1):
+  - Windows Server 2012 R2: Using [AppVeyor CI](https://ci.appveyor.com/project/PlagueHO/cosmosdb).
+  - Windows Server 2016: Using [AppVeyor CI](https://ci.appveyor.com/project/PlagueHO/cosmosdb).
+- Linux (using PowerShell Core 6.x):
+  - Ubuntu Trusty 14.04: Using [Tavis CI](https://travis-ci.org/PlagueHO/CosmosDB).
+- macOS (using PowerShell Core 6.x):
+  - macOS 10.13: Using [Tavis CI](https://travis-ci.org/PlagueHO/CosmosDB).
+
+This module should function correctly on other systems and configurations
+but is not automatically tested with them in every change.
+
+### Automated Integration Tests
+
+This project contains automated integration tests that use Docker to
+run a Jenkins master server in a Docker Linux container.
+These tests can run on Windows 10 with Docker for Windows 2.0.4 or
+above installed.
+The tests also run automatically in Travis CI in the Linux build.
 
 ## Cross Site Request Forgery (CSRF) Support
 
@@ -96,6 +106,33 @@ New-JenkinsFolder `
     -Name 'Management' `
     -Verbose
 ```
+
+## Cmdlets
+
+The full details of the cmdlets contained in this module can also be
+found in the [wiki](https://github.com/IAG-NZ/CosmosDB/wiki).
+
+- `Disable-JenkinsJob`: Disables a Jenkins job.
+- `Enable-JenkinsJob`: Enables a Jenkins job.
+- `Get-JenkinsCrumb`: Gets a Jenkins Crumb.
+- `Get-JenkinsFolderList`: Get a list of folders in a Jenkins master server.
+- `Get-JenkinsJob`: Get a Jenkins Job Definition.
+- `Get-JenkinsJobList`: Get a list of jobs in a Jenkins master server.
+- `Get-JenkinsObject`: Get a list of objects in a Jenkins master server.
+- `Get-JenkinsPluginsList`: Retrieves a list of installed plugins.
+- `Get-JenkinsViewList`: Get a list of views in a Jenkins master server.
+- `Initialize-JenkinsUpdateCache`: Creates or updates a local Jenkins Update cache.
+- `Invoke-JenkinsCommand`: Execute a Jenkins command or request via the Jenkins Rest API.
+- `Invoke-JenkinsJob`: Run a parameterized or non-parameterized Jenkins Job.
+- `Invoke-JenkinsJobReload`: Reloads a job config on a given URL.
+- `New-JenkinsFolder`: Create a new Jenkins Folder.
+- `New-JenkinsJob`: Create a new Jenkins Job.
+- `Remove-JenkinsJob`: Remove an existing Jenkins Job.
+- `Rename-JenkinsJob`: Rename an existing Jenkins Job.
+- `Set-JenkinsJob`: Set a Jenkins Job definition.
+- `Test-JenkinsFolder`: Determines if a Jenkins Folder exists.
+- `Test-JenkinsJob`: Determines if a Jenkins Job exists.
+- `Test-JenkinsView`: Determines if a Jenkins View exists.
 
 ## Known Issues
 
@@ -274,3 +311,17 @@ For further examples, please see module help for individual cmdlets.
 - [IAG NZ Web Site](http://www.iag.co.nz)
 - [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
 - [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+
+[av-image-dev]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true
+[av-site-dev]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev
+[tv-image-dev]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=dev
+[tv-site-dev]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg
+[cc-site-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev
+
+[av-image-master]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true
+[av-site-master]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master
+[tv-image-master]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=master
+[tv-site-master]: https://travis-ci.org/IAG-NZ/jenkins/branches
+[cc-image-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg
+[cc-site-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master
