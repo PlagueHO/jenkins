@@ -4,7 +4,7 @@
     RootModule        = 'Jenkins.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.0.2.240'
+    ModuleVersion     = '1.0.3.240'
 
     # ID used to uniquely identify this module
     GUID              = 'd4de78f0-e143-4e58-8fb2-a543eacc1682'
@@ -117,6 +117,19 @@
 
             # ReleaseNotes of this module
             ReleaseNotes = '
+## What is New in Jenkins Unreleased
+
+May 26, 2019
+
+- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
+- Added basic docker support for creation of integration tests.
+- Renamed `Jenkins.depends.psd1` to `requirements.psd1` to make more generic.
+- Updated PowerShell module dependencies to latest versions and removed
+    PSDeploy dependency because it is not used.
+- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/IAG-NZ/jenkins/issues/100).
+- Added basic integration tests that will run on Linux agents in Travis CI
+    or on Windows 10 machines with Docker for Windows installed.
+
 ## What is New in Jenkins 1.0.2.240
 
 November 14, 2018
