@@ -76,16 +76,16 @@ function Invoke-JenkinsCommand
     if ($PSBoundParameters.ContainsKey('Credential') -and $Credential -ne [System.Management.Automation.PSCredential]::Empty)
     {
         # Jenkins Credentials were passed so create the Authorization Header
-        $Username = $Credential.Username
+        $username = $Credential.Username
 
         # Decrypt the secure string password
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+        $passwordBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
+        $password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($passwordBstr)
 
-        $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
-        $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
+        $authorizationBytes = [System.Text.Encoding]::UTF8.GetBytes($username + ':' + $password)
+        $authorizationBytesBase64 = [System.Convert]::ToBase64String($authorizationBytes)
 
-        $Headers += @{ "Authorization" = "Basic $Base64Bytes" }
+        $Headers += @{ "Authorization" = "Basic $authorizationBytesBase64" }
     } # if
 
     if ($PSBoundParameters.ContainsKey('Crumb'))
@@ -108,10 +108,11 @@ function Invoke-JenkinsCommand
     {
         'rest'
         {
-            $FullUri = "$Uri/api/$Api"
+            $fullUri = "$Uri/api/$Api"
+
             if ($PSBoundParameters.ContainsKey('Command'))
             {
-                $FullUri = $FullUri + '/' + $Command
+                $fullUri = $fullUri + '/' + $Command
             } # if
 
             $null = $PSBoundParameters.remove('Command')
@@ -120,12 +121,12 @@ function Invoke-JenkinsCommand
             try
             {
                 Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
-                    $FullUri)
+                    $fullUri)
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-RestMethod `
-                    -Uri $FullUri `
+                $result = Invoke-RestMethod `
+                    -Uri $fullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
                     -ErrorAction Stop
@@ -139,7 +140,7 @@ function Invoke-JenkinsCommand
 
         'restcommand'
         {
-            $FullUri = "$Uri/$Command"
+            $fullUri = "$Uri/$Command"
 
             $null = $PSBoundParameters.remove('Command')
             $null = $PSBoundParameters.remove('Api')
@@ -147,12 +148,12 @@ function Invoke-JenkinsCommand
             try
             {
                 Write-Verbose -Message $($LocalizedData.InvokingRestApiCommandMessage -f
-                    $FullUri)
+                    $fullUri)
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-RestMethod `
-                    -Uri $FullUri `
+                $result = Invoke-RestMethod `
+                    -Uri $fullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
                     -ErrorAction Stop
@@ -166,32 +167,34 @@ function Invoke-JenkinsCommand
 
         'command'
         {
-            $FullUri = $Uri
+            $fullUri = $Uri
+
             if ($PSBoundParameters.ContainsKey('Command'))
             {
-                $FullUri = $FullUri + '/' + $Command
+                $fullUri = $fullUri + '/' + $Command
             } # if
 
             $null = $PSBoundParameters.remove('Command')
             $null = $PSBoundParameters.remove('Api')
 
             Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
-                $FullUri)
+                $fullUri)
 
             Set-JenkinsTLSSupport
 
-            $Result = Invoke-WebRequest `
-                -Uri $FullUri `
+            $result = Invoke-WebRequest `
+                -UseBasicParsing `
+                -Uri $fullUri `
                 -Headers $Headers `
                 -MaximumRedirection 0 `
                 @PSBoundParameters `
                 -ErrorAction SilentlyContinue `
                 -ErrorVariable RequestErrors
 
-            if ($RequestErrors.Count -eq 1 -and $Result.StatusCode -eq 302 `
+            if ($RequestErrors.Count -eq 1 -and $result.StatusCode -eq 302 `
                     -and $RequestErrors[0].FullyQualifiedErrorId -like "MaximumRedirectExceeded,*")
             {
-                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $Result.Headers.Location)
+                Write-Verbose -Message $($LocalizedData.SuppressingRedirectMessage -f $result.Headers.Location)
             }
             elseif ($RequestErrors.Count -ge 1)
             {
@@ -202,10 +205,11 @@ function Invoke-JenkinsCommand
 
         'pluginmanager'
         {
-            $FullUri = $Uri
+            $fullUri = $Uri
+
             if ($PSBoundParameters.ContainsKey('Command'))
             {
-                $FullUri = "$FullUri/pluginManager/api/$api/?$Command"
+                $fullUri = "$fullUri/pluginManager/api/$api/?$Command"
             } # if (condition) {
 
             $null = $PSBoundParameters.remove('Command')
@@ -214,12 +218,13 @@ function Invoke-JenkinsCommand
             try
             {
                 Write-Verbose -Message $($LocalizedData.InvokingCommandMessage -f
-                    $FullUri)
+                    $fullUri)
 
                 Set-JenkinsTLSSupport
 
-                $Result = Invoke-WebRequest `
-                    -Uri $FullUri `
+                $result = Invoke-WebRequest `
+                    -UseBasicParsing `
+                    -Uri $fullUri `
                     -Headers $Headers `
                     @PSBoundParameters `
                     -ErrorAction Stop
@@ -232,5 +237,5 @@ function Invoke-JenkinsCommand
         } # 'pluginmanager'
     } # switch
 
-    Return $Result
+    return $result
 } # Invoke-JenkinsCommand
