@@ -46,18 +46,20 @@ function Enable-JenkinsJob
     $Command = Resolve-JenkinsCommandUri -Folder $Folder -JobName $Name -Command 'enable'
 
     $optionalParams = @{}
-    if( $Credential )
+
+    if ($Credential)
     {
         $optionalParams['Credential'] = $Credential
     }
 
-    if( $Crumb )
+    if ($Crumb)
     {
         $optionalParams['Crumb'] = $Crumb
     }
 
     $displayName = $Name
-    if( $Folder )
+
+    if ($Folder)
     {
         $displayName = '{0}/{1}' -f $Folder,$Name
     }
