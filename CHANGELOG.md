@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+
+- Added style guidelines - fixes [issue #109](https://github.com/IAG-NZ/jenkins/issues/109).
+- Added contributing - fixes [issue #102](https://github.com/IAG-NZ/jenkins/issues/102).
+
 ## 1.0.3.257
 
 - Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
