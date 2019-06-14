@@ -64,7 +64,7 @@ function Enable-JenkinsJob
         $displayName = '{0}/{1}' -f $Folder,$Name
     }
 
-    if ($PSCmdlet.ShouldProcess( $Uri, $($LocalizedData.EnableJobMessage -f $displayName)))
+    if ($PSCmdlet.ShouldProcess($Uri, $($LocalizedData.EnableJobMessage -f $displayName)))
     {
         $null = Invoke-JenkinsCommand -Uri $Uri -Type 'Command' -Command $Command -Method post @optionalParams
     }
