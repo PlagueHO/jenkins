@@ -12,7 +12,6 @@ Locale: en-US
 
 PowerShell module for interacting with a CloudBees Jenkins server using the
 [Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
-Created by IAG NZ Ltd.
 
 ## jenkins Cmdlets
 

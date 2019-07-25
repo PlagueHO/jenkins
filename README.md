@@ -1,15 +1,14 @@
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/IAG-NZ/Jenkins/blob/dev/LICENSE)
-[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-Jenkins-blue.svg)](https://github.com/IAG-NZ/Jenkins/wiki)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/PlagueHO/Jenkins/blob/dev/LICENSE)
+[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-Jenkins-blue.svg)](https://github.com/PlagueHO/Jenkins/wiki)
 [![PowerShell Gallery - Jenkins](https://img.shields.io/badge/PowerShell%20Gallery-Jenkins-blue.svg)](https://www.powershellgallery.com/packages/Jenkins)
-[![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-4.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
-[![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PowerShell_Core-6.0-blue.svg)](https://github.com/IAG-NZ/Jenkins)
-[![Wiki](https://img.shields.io/badge/Wiki-yellow.svg)](https://github.com/IAG-NZ/Jenkins/Wiki)
+[![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-4.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
+[![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PowerShell_Core-6.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
+[![Wiki](https://img.shields.io/badge/Wiki-yellow.svg)](https://github.com/PlagueHO/Jenkins/Wiki)
 
 # Jenkins
 
 PowerShell module for interacting with a CloudBees Jenkins server using the
 [Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
-Created by IAG NZ Ltd.
 
 ## Module Build Status
 
@@ -110,7 +109,7 @@ New-JenkinsFolder `
 ## Cmdlets
 
 The full details of the cmdlets contained in this module can also be
-found in the [wiki](https://github.com/IAG-NZ/CosmosDB/wiki).
+found in the [wiki](https://github.com/PlagueHO/CosmosDB/wiki).
 
 - `Disable-JenkinsJob`: Disables a Jenkins job.
 - `Enable-JenkinsJob`: Enables a Jenkins job.
@@ -308,20 +307,18 @@ For further examples, please see module help for individual cmdlets.
 
 ## Links
 
-- [IAG NZ Web Site](http://www.iag.co.nz)
-- [IAG NZ GitHub Organization](https://github.com/IAG-NZ)
-- [Project site on GitHub](https://github.com/IAG-NZ/Jenkins)
+- [Project site on GitHub](https://github.com/PlagueHO/Jenkins)
 
-[av-image-dev]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/dev?svg=true
-[av-site-dev]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/dev
-[tv-image-dev]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=dev
-[tv-site-dev]: https://travis-ci.org/IAG-NZ/jenkins/branches
-[cc-image-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev/graph/badge.svg
-[cc-site-dev]: https://codecov.io/gh/IAG-NZ/jenkins/branch/dev
+[av-image-dev]: https://ci.appveyor.com/api/projects/status/rsga0lt7ksojyl9q/branch/dev?svg=true
+[av-site-dev]: https://ci.appveyor.com/project/PlagueHO/jenkins/branch/dev
+[tv-image-dev]: https://travis-ci.org/PlagueHO/jenkins.svg?branch=dev
+[tv-site-dev]: https://travis-ci.org/PlagueHO/jenkins/branches
+[cc-image-dev]: https://codecov.io/gh/PlagueHO/jenkins/branch/dev/graph/badge.svg
+[cc-site-dev]: https://codecov.io/gh/PlagueHO/jenkins/branch/dev
 
-[av-image-master]: https://ci.appveyor.com/api/projects/status/tp0scpm2rk0vej86/branch/master?svg=true
-[av-site-master]: https://ci.appveyor.com/project/IAG-NZ/jenkins/branch/master
-[tv-image-master]: https://travis-ci.org/IAG-NZ/jenkins.svg?branch=master
-[tv-site-master]: https://travis-ci.org/IAG-NZ/jenkins/branches
-[cc-image-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master/graph/badge.svg
-[cc-site-master]: https://codecov.io/gh/IAG-NZ/jenkins/branch/master
+[av-image-master]: https://ci.appveyor.com/api/projects/status/rsga0lt7ksojyl9q/branch/master?svg=true
+[av-site-master]: https://ci.appveyor.com/project/PlagueHO/jenkins/branch/master
+[tv-image-master]: https://travis-ci.org/PlagueHO/jenkins.svg?branch=master
+[tv-site-master]: https://travis-ci.org/PlagueHO/jenkins/branches
+[cc-image-master]: https://codecov.io/gh/PlagueHO/jenkins/branch/master/graph/badge.svg
+[cc-site-master]: https://codecov.io/gh/PlagueHO/jenkins/branch/master
