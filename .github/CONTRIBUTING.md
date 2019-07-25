@@ -2,7 +2,7 @@
 
 If you'd like to contribute to this project, there are several different methods:
 
-- Submit a [Pull Request](https://www.github.com/IAG-NZ/jenkins/pulls) against the GitHub repository, containing:
+- Submit a [Pull Request](https://www.github.com/PlagueHO/jenkins/pulls) against the GitHub repository, containing:
   - Bug fixes
   - Enhancements
   - New sample Labs
@@ -10,12 +10,12 @@ If you'd like to contribute to this project, there are several different methods
   - Documentation enhancements
   - Continuous integration & deployment enhancements
   - Unit tests
-- Perform user testing and validation, and report bugs on the [Issue Tracker](https://www.github.com/IAG-NZ/jenkins/issues)
+- Perform user testing and validation, and report bugs on the [Issue Tracker](https://www.github.com/PlagueHO/jenkins/issues)
 - Raise awareness about the project through [Twitter](https://twitter.com/#PowerShell), [Facebook](https://facebook.com), and other social media platforms
 
 Before working on any enhancement, submit an Issue describing the proposed enhancement. Someone may already be working on the same thing. It also allows other contributors to comment on the proposal.
 
-Alternately, feel free to post on the [Jenkins PowerShell Module Gitter Chat at https://gitter.im/IAG-NZ/jenkins](https://gitter.im/IAG-NZ/jenkins). This is also a great place to just say Hi, ask any questions you might have or get help.
+Alternately, feel free to post on the [Jenkins PowerShell Module Gitter Chat at https://gitter.im/PlagueHO/jenkins](https://gitter.im/PlagueHO/jenkins). This is also a great place to just say Hi, ask any questions you might have or get help.
 
 If you're new to Git revision control, and the GitHub service, it's suggested that you learn about some basic Git fundamentals, and take an overview of the GitHub service offerings.
 
