@@ -1,13 +1,18 @@
 # Change Log
 
+## Unreleased
+
+- Added style guidelines - fixes [issue #109](https://github.com/PlagueHO/jenkins/issues/109).
+- Added contributing - fixes [issue #102](https://github.com/PlagueHO/jenkins/issues/102).
+
 ## 1.0.3.257
 
-- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
+- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/PlagueHO/jenkins/issues/95).
 - Added basic docker support for creation of integration tests.
 - Renamed `Jenkins.depends.psd1` to `requirements.psd1` to make more generic.
 - Updated PowerShell module dependencies to latest versions and removed
   PSDeploy dependency because it is not used.
-- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/IAG-NZ/jenkins/issues/100).
+- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/PlagueHO/jenkins/issues/100).
 - Added basic integration tests that will run on Linux agents in Travis CI
   or on Windows 10 machines with Docker for Windows installed.
 

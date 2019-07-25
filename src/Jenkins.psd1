@@ -10,16 +10,16 @@
     GUID              = 'd4de78f0-e143-4e58-8fb2-a543eacc1682'
 
     # Author of this module
-    Author            = 'Daniel Scott-Raynsford, Liam Binns-Conroy'
+    Author            = 'Daniel Scott-Raynsford, Ashley Tok, Liam Binns-Conroy'
 
     # Company or vendor of this module
-    CompanyName       = 'IAG NZ Ltd.'
+    CompanyName       = 'None'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018 IAG NZ Ltd. All rights reserved.'
+    Copyright         = '(c) Daniel Scott-Raynsford, Ashley Tok, Liam Binns-Conroy. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'PowerShell module for interacting with a CloudBees Jenkins server using the Jenkins Rest API created by IAG NZ Ltd.'
+    Description       = 'PowerShell module for interacting with a CloudBees Jenkins server using the Jenkins Rest API.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '4.0'
@@ -107,10 +107,10 @@
             Tags         = @('Jenkins', 'CI', 'ContinuousIntegration', 'DevOps', 'PSEdition_Core', 'PSEdition_Desktop')
 
             # A URL to the license for this module.
-            LicenseUri   = 'https://github.com/IAG-NZ/jenkins/blob/dev/LICENSE'
+            LicenseUri   = 'https://github.com/PlagueHO/jenkins/blob/dev/LICENSE'
 
             # A URL to the main website for this project.
-            ProjectUri   = 'https://github.com/IAG-NZ/jenkins'
+            ProjectUri   = 'https://github.com/PlagueHO/jenkins'
 
             # A URL to an icon representing this module.
             # IconUri = ''
@@ -121,12 +121,12 @@
 
 May 26, 2019
 
-- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/IAG-NZ/jenkins/issues/95).
+- Corrected documentation badge label in READE.MD - fixes [issue #95](https://github.com/PlagueHO/jenkins/issues/95).
 - Added basic docker support for creation of integration tests.
 - Renamed `Jenkins.depends.psd1` to `requirements.psd1` to make more generic.
 - Updated PowerShell module dependencies to latest versions and removed
     PSDeploy dependency because it is not used.
-- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/IAG-NZ/jenkins/issues/100).
+- Fixed error calling `Invoke-JenkinsJob` with a parameterized job - fixes [issue #100](https://github.com/PlagueHO/jenkins/issues/100).
 - Added basic integration tests that will run on Linux agents in Travis CI
     or on Windows 10 machines with Docker for Windows installed.
 
