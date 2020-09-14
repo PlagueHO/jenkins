@@ -26,8 +26,7 @@ function Get-JenkinsCrumb
         $Username = $Credential.Username
 
         # Decrypt the secure string password
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+        $Password = $Credential.GetNetworkCredential().Password
 
         $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Username + ':' + $Password)
         $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
