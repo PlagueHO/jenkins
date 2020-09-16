@@ -4,11 +4,10 @@ matrix:
   include:
     - os: osx
       osx_image: xcode11.6
-      addons:
-        homebrew:
-          packages:
-          - powershell
-          update: true
+      before_install:
+        - brew update
+        - brew tap homebrew/cask
+        - brew cask install powershell
     - os: linux
       dist: trusty
       services:
