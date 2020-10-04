@@ -21,13 +21,11 @@ Import-Module -Name $testHelperPath -Force
 Describe 'Jenkins Module Integration tests' {
     BeforeAll {
         # Ensure Linux Docker engine is running on Windows
-        <#
         if ($null -eq $IsWindows -or $IsWindows)
         {
             Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
             & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
         }
-        #>
 
         # Set up a Linux Docker container running Jenkins
         $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
@@ -82,8 +80,6 @@ Describe 'Jenkins Module Integration tests' {
     }
 
     AfterAll {
-        Read-Host
-
         Write-Verbose -Message "Stopping Docker jenkins container '$script:jenkinsContainerName'" -Verbose
         & docker ('stop', $script:jenkinsContainerName)
 
@@ -168,10 +164,14 @@ Describe 'Jenkins Module Integration tests' {
             Verbose    = $true
         }
 
-        It 'Should not throw an exception' {
+        <#
+            This returns a 302 even thought it is successful.
+            https://issues.jenkins-ci.org/browse/JENKINS-61308
+        #>
+        It 'Should throw a 302 exception' {
             {
                 Remove-JenkinsJob @removeJenkinsJob_Parameters
-            } | Should -Not -Throw
+            } | Should -Throw
         }
     }
 
@@ -238,10 +238,14 @@ Describe 'Jenkins Module Integration tests' {
             Verbose    = $true
         }
 
-        It 'Should not throw an exception' {
+        <#
+            This returns a 302 even thought it is successful.
+            https://issues.jenkins-ci.org/browse/JENKINS-61308
+        #>
+        It 'Should throw a 302 exception' {
             {
                 Remove-JenkinsJob @removeJenkinsJob_Parameters
-            } | Should -Not -Throw
+            } | Should -Throw
         }
     }
 }
