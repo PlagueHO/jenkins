@@ -21,11 +21,13 @@ Import-Module -Name $testHelperPath -Force
 Describe 'Jenkins Module Integration tests' {
     BeforeAll {
         # Ensure Linux Docker engine is running on Windows
+        <#
         if ($null -eq $IsWindows -or $IsWindows)
         {
             Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
             & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
         }
+        #>
 
         # Set up a Linux Docker container running Jenkins
         $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
@@ -58,8 +60,6 @@ Describe 'Jenkins Module Integration tests' {
         & docker ('run', '-d', '-p', "$($script:jenkinsPort):8080", '--name', $script:jenkinsContainerName, $script:jenkinsImageTag)
 
         $webClient = New-Object -TypeName System.Net.WebClient
-        $jenkinsHealthCheckUri = [System.UriBuilder]::new($script:jenkinsUri.Uri)
-        $jenkinsHealthCheckUri.Path = 'robots.txt'
 
         # Wait for the Jenkins Container to become ready
         $jenkinsReady = $false
@@ -82,6 +82,8 @@ Describe 'Jenkins Module Integration tests' {
     }
 
     AfterAll {
+        Read-Host
+
         Write-Verbose -Message "Stopping Docker jenkins container '$script:jenkinsContainerName'" -Verbose
         & docker ('stop', $script:jenkinsContainerName)
 
