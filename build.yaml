@@ -26,7 +26,7 @@ BuildWorkflow:
         $ModuleVersion = '0.0.1'
       }
 
-      $outputPath = "$BuildModuleOutput\CosmosDB\$(($ModuleVersion -Split '-')[0])"
+      $outputPath = "$BuildModuleOutput\Jenkins\$(($ModuleVersion -Split '-')[0])"
       $execute = "New-ExternalHelp -Path '$BuildRoot\docs' -OutputPath '$OutputPath' -Force"
 
       if ($IsCoreCLR)
