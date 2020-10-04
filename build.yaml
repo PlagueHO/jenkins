@@ -77,7 +77,7 @@ Pester:
     - tests/Integration
   ExcludeTag:
   Tag:
-  CodeCoverageThreshold: 70
+  CodeCoverageThreshold: 30
 
 Resolve-Dependency:
   Gallery: 'PSGallery'

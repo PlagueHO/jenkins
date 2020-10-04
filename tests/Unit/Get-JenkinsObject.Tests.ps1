@@ -19,16 +19,16 @@ InModuleScope $ProjectName {
     $testHelperPath = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'TestHelper'
     Import-Module -Name $testHelperPath -Force
 
-    $testURI        = 'https://jenkins.contoso.com'
-    $testUsername   = 'DummyUser'
-    $testPassword   = 'DummyPassword'
+    $testURI = 'https://jenkins.contoso.com'
+    $testUsername = 'DummyUser'
+    $testPassword = 'DummyPassword'
     $testCredential = New-Object -TypeName System.Management.Automation.PSCredential `
         -ArgumentList $testUsername, ( ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
-    $testCommand    = 'CommandTest'
-    $bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
-    $base64Bytes    = [System.Convert]::ToBase64String($bytes)
+    $testCommand = 'CommandTest'
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+    $base64Bytes = [System.Convert]::ToBase64String($bytes)
     $testAuthHeader = "Basic $base64Bytes"
-    $testJobName    = 'TestJob'
+    $testJobName = 'TestJob'
 
     Describe 'Get-JenkinsObject' {
         Context 'When jobs type, attribute name, no folder, credentials passed' {
@@ -36,22 +36,22 @@ InModuleScope $ProjectName {
                 Uri        = $testURI
                 Credential = $testCredential
                 Type       = 'jobs'
-                Attribute = @('name')
+                Attribute  = @('name')
             }
 
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Command -eq '?tree=jobs[name]'
-                } `
+                $Command -eq '?tree=jobs[name]'
+            } `
                 -MockWith { @{
-                            jobs = @(
-                                @{ name = 'test1' },
-                                @{ name = 'test2' }
-                            )
-                        }
-                    }
+                    jobs = @(
+                        @{ name = 'test1' },
+                        @{ name = 'test2' }
+                    )
+                }
+            }
             $splat = $getJenkinsObjectSplat.Clone()
             $result = Get-JenkinsObject @splat
 
@@ -64,14 +64,14 @@ InModuleScope $ProjectName {
             It 'Should return call expected mocks' {
                 Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Command -eq '?tree=jobs[name]'
-                    } `
+                    $Command -eq '?tree=jobs[name]'
+                } `
                     -Exactly 1
             }
         }
 
         Context 'When jobs type, attribute name, folder, credentials passed' {
-            foreach( $slash in @( '/', '\') )
+            foreach ( $slash in @( '/', '\') )
             {
                 Context "When slash in folder path is '$slash'" {
                     $getJenkinsObjectSplat = @{
@@ -79,22 +79,22 @@ InModuleScope $ProjectName {
                         Credential = $testCredential
                         Folder     = ('test{0}folder' -f $slash)
                         Type       = 'jobs'
-                        Attribute = @('name')
+                        Attribute  = @('name')
                     }
 
                     Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                         -MockWith { Throw "Invoke-RestMethod called with incorrect parameters" }
                     Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                         -ParameterFilter {
-                            $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
-                        } `
+                        $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
+                    } `
                         -MockWith { @{
-                                    jobs = @(
-                                        @{ name = 'test1' },
-                                        @{ name = 'test2' }
-                                    )
-                                }
-                            }
+                            jobs = @(
+                                @{ name = 'test1' },
+                                @{ name = 'test2' }
+                            )
+                        }
+                    }
                     $splat = $getJenkinsObjectSplat.Clone()
                     $result = Get-JenkinsObject @splat
 
@@ -107,8 +107,8 @@ InModuleScope $ProjectName {
                     It 'Should return call expected mocks' {
                         Assert-MockCalled -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
                             -ParameterFilter {
-                                $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
-                            } `
+                            $Command -eq '?tree=jobs[name,jobs[name,jobs[name]]]'
+                        } `
                             -Exactly 1
                     }
                 }

@@ -19,16 +19,16 @@ InModuleScope $ProjectName {
     $testHelperPath = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'TestHelper'
     Import-Module -Name $testHelperPath -Force
 
-    $testURI        = 'https://jenkins.contoso.com'
-    $testUsername   = 'DummyUser'
-    $testPassword   = 'DummyPassword'
+    $testURI = 'https://jenkins.contoso.com'
+    $testUsername = 'DummyUser'
+    $testPassword = 'DummyPassword'
     $testCredential = New-Object `
         -TypeName System.Management.Automation.PSCredential `
         -ArgumentList $testUsername, (ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
-    $Bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
-    $Base64Bytes    = [System.Convert]::ToBase64String($Bytes)
+    $Bytes = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+    $Base64Bytes = [System.Convert]::ToBase64String($Bytes)
     $testAuthHeader = "Basic $Base64Bytes"
-    $testJobName    = 'TestJob'
+    $testJobName = 'TestJob'
 
     Describe 'Invoke-JenkinsJob' {
         $inokeJenkinsJob_Parameters = @{
@@ -56,10 +56,10 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $bodyObject = ConvertTo-Json -InputObject $Body
-                        $Command -eq "job/$testJobName/build" -and `
+                    $bodyObject = ConvertTo-Json -InputObject $Body
+                    $Command -eq "job/$testJobName/build" -and `
                         $bodyObject.json -eq $null
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }
@@ -83,10 +83,10 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $bodyObject = ConvertTo-Json -InputObject $Body
-                        $Command -eq "job/test/job/$testJobName/build" -and `
+                    $bodyObject = ConvertTo-Json -InputObject $Body
+                    $Command -eq "job/test/job/$testJobName/build" -and `
                         $bodyObject.json -eq $null
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }
@@ -110,10 +110,10 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $bodyObject = ConvertTo-Json -InputObject $Body
-                        $Command -eq "job/test1/job/test2/job/$testJobName/build" -and `
+                    $bodyObject = ConvertTo-Json -InputObject $Body
+                    $Command -eq "job/test1/job/test2/job/$testJobName/build" -and `
                         $bodyObject.json -eq $null
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }
@@ -137,10 +137,10 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $bodyObject = ConvertTo-Json -InputObject $Body
-                        $Command -eq "job/test1/job/test2/job/$testJobName/build" -and `
+                    $bodyObject = ConvertTo-Json -InputObject $Body
+                    $Command -eq "job/test1/job/test2/job/$testJobName/build" -and `
                         $bodyObject.json -eq $null
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }
@@ -164,10 +164,10 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $bodyObject = ConvertTo-Json -InputObject $Body
-                        $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/build" -and `
+                    $bodyObject = ConvertTo-Json -InputObject $Body
+                    $Command -eq "job/test1/job/test2/job/test3/job/$testJobName/build" -and `
                         $bodyObject.json -eq $null
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }
@@ -194,13 +194,13 @@ InModuleScope $ProjectName {
                     -CommandName Invoke-JenkinsCommand `
                     -ModuleName Jenkins `
                     -ParameterFilter {
-                        $parameters = ConvertFrom-Json -InputObject $body.json;
-                        $Command -eq "job/$testJobName/build" -and `
+                    $parameters = ConvertFrom-Json -InputObject $body.json;
+                    $Command -eq "job/$testJobName/build" -and `
                         $parameters.parameter.value -contains 'value1' -and `
                         $parameters.parameter.name -contains 'parameter1' -and `
                         $parameters.parameter.value -contains 'value2' -and `
                         $parameters.parameter.name -contains 'parameter2'
-                    } `
+                } `
                     -Exactly -Times 1
             }
         }

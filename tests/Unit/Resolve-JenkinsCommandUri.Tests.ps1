@@ -28,14 +28,14 @@ InModuleScope $ProjectName {
     Describe 'Resolve-JenkinsCommandUri.when folders seperated by forward slash' {
         It 'should resolve' {
             Resolve-JenkinsCommandUri -Command 'create' -Folder 'Fizz Buzz/Buzz Fizz' |
-                Should -Be 'job/Fizz Buzz/job/Buzz Fizz/create'
+            Should -Be 'job/Fizz Buzz/job/Buzz Fizz/create'
         }
     }
 
     Describe 'Resolve-JenkinsCommandUri.when folders seperated by backward slash' {
         It 'should resolve' {
             Resolve-JenkinsCommandUri -Command 'create' -Folder 'Fizz Buzz\Buzz Fizz' |
-                Should -Be 'job/Fizz Buzz/job/Buzz Fizz/create'
+            Should -Be 'job/Fizz Buzz/job/Buzz Fizz/create'
         }
     }
 

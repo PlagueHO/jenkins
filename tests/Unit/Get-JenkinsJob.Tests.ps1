@@ -153,7 +153,7 @@ InModuleScope $ProjectName {
 
         Context 'When Jenkins returns Xml 1.1' {
             Mock -CommandName Invoke-JenkinsCommand -ModuleName Jenkins `
-                -MockWith { [pscustomobject]@{
+                -MockWith { [pscustomobject] @{
                     Content = @'
 <?xml version='1.1' encoding='UTF-8'?>
 <project />

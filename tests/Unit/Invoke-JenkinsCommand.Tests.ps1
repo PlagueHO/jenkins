@@ -19,16 +19,16 @@ InModuleScope $ProjectName {
     $testHelperPath = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'TestHelper'
     Import-Module -Name $testHelperPath -Force
 
-    $testURI        = 'https://jenkins.contoso.com'
-    $testUsername   = 'DummyUser'
-    $testPassword   = 'DummyPassword'
+    $testURI = 'https://jenkins.contoso.com'
+    $testUsername = 'DummyUser'
+    $testPassword = 'DummyPassword'
     $testCredential = New-Object -TypeName System.Management.Automation.PSCredential `
         -ArgumentList $testUsername, ( ConvertTo-SecureString -String $testPassword -AsPlainText -Force)
-    $testCommand    = 'CommandTest'
-    $bytes          = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
-    $base64Bytes    = [System.Convert]::ToBase64String($bytes)
+    $testCommand = 'CommandTest'
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($testUsername + ':' + $testPassword)
+    $base64Bytes = [System.Convert]::ToBase64String($bytes)
     $testAuthHeader = "Basic $base64Bytes"
-    $testJobName    = 'TestJob'
+    $testJobName = 'TestJob'
 
     Describe 'Invoke-JenkinsCommand' {
         $InvokeJenkinsCommandSplat = @{
@@ -45,10 +45,10 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/json/$testCommand" -and `
+                $Uri -eq "$testURI/api/json/$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Result = Invoke-JenkinsCommand @Splat
@@ -60,13 +60,13 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/api/json/$testCommand" -and `
+                    $Uri -eq "$testURI/api/json/$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When default type, default api, no credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -76,9 +76,9 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/json/$testCommand" -and `
+                $Uri -eq "$testURI/api/json/$testCommand" -and `
                     $Headers.Count -eq 0
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
 
             $Splat = $InvokeJenkinsCommandSplat.Clone()
@@ -93,11 +93,11 @@ InModuleScope $ProjectName {
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
                     $Uri -eq "$testURI/api/json/$testCommand" -and `
-                    $Headers.Count -eq 0
-                    } `
+                        $Headers.Count -eq 0
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When default type, xml api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -107,10 +107,10 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                $Uri -eq "$testURI/api/xml/$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.api = 'xml'
@@ -123,13 +123,13 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When default type, xml api, credentials passed, header passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -139,11 +139,11 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                $Uri -eq "$testURI/api/xml/$testCommand" -and `
                     $Headers.Count -eq 2 -and `
                     $Headers['Authorization'] -eq $testAuthHeader -and `
                     $Headers['Test'] -eq 'test'
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.api = 'xml'
@@ -157,14 +157,14 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
                         $Headers.Count -eq 2 -and `
                         $Headers['Authorization'] -eq $testAuthHeader -and `
                         $Headers['Test'] -eq 'test'
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When default type, xml api, credentials passed, header passed, get method' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -174,12 +174,12 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                $Uri -eq "$testURI/api/xml/$testCommand" -and `
                     $Headers.Count -eq 2 -and `
                     $Headers['Authorization'] -eq $testAuthHeader -and `
                     $Headers['Test'] -eq 'test' -and `
                     $Method -eq 'get'
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.api = 'xml'
@@ -194,15 +194,15 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
                         $Headers.Count -eq 2 -and `
                         $Headers['Authorization'] -eq $testAuthHeader -and `
                         $Headers['Test'] -eq 'test' -and
-                        $Method -eq 'get'
-                    } `
+                    $Method -eq 'get'
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When default type, xml api, credentials passed, body passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -212,11 +212,11 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-RestMethod -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                $Uri -eq "$testURI/api/xml/$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader -and `
                     $Body -eq 'body'
-                } `
+            } `
                 -MockWith { 'Invoke-RestMethod Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.api = 'xml'
@@ -230,14 +230,14 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/api/xml/$testCommand" -and `
+                    $Uri -eq "$testURI/api/xml/$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader -and `
                         $Body -eq 'body'
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When command type, default api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -247,10 +247,10 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/$testCommand" -and `
+                $Uri -eq "$testURI/$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-                } `
+            } `
                 -MockWith { 'Invoke-WebRequest Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.Type = 'command'
@@ -263,13 +263,13 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/$testCommand" -and `
+                    $Uri -eq "$testURI/$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When pluginmanager type, default api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -279,10 +279,10 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
+                $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-                } `
+            } `
                 -MockWith { 'Invoke-WebRequest Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.Type = 'pluginmanager'
@@ -296,13 +296,13 @@ InModuleScope $ProjectName {
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
+                    $Uri -eq "$testURI/pluginManager/api/json/?$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
 
         Context 'When pluginmanager type, xml api, credentials passed' {
             Mock -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins
@@ -312,30 +312,32 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -ParameterFilter {
-                    $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
+                $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-                } `
+            } `
                 -MockWith { 'Invoke-WebRequest Result' }
             $Splat = $InvokeJenkinsCommandSplat.Clone()
             $Splat.Type = 'pluginmanager'
             $Splat.api = 'xml'
 
             $Result = Invoke-JenkinsCommand @Splat
+
             It "Should return 'Invoke-WebRequest Result'" {
                 $Result | Should -Be 'Invoke-WebRequest Result'
             }
+
             It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
                 Assert-MockCalled -CommandName Invoke-WebRequest -ModuleName Jenkins `
                     -ParameterFilter {
-                        $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
+                    $Uri -eq "$testURI/pluginManager/api/xml/?$testCommand" -and `
                         $Headers.Count -eq 1 -and `
                         $Headers['Authorization'] -eq $testAuthHeader
-                    } `
+                } `
                     -Exactly 1
             }
-        } # Context
+        }
     }
 }

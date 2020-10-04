@@ -63,9 +63,12 @@ folder.
 This PowerShell module is automatically tested and validated to run
 on the following systems:
 
-- Windows Server (using Windows PowerShell 5.1)
-- Linux (using PowerShell Core 7.x)
-- macOS (using PowerShell Core 7.x)
+- Windows Server 2016 (using Windows PowerShell 5.1)
+- Windows Server 2019 (using Windows PowerShell 5.1)
+- Ubuntu 16.04 (using PowerShell Core 6)
+- Ubuntu 16.04 (using PowerShell Core 7.x)
+- Ubuntu 18.04 (using PowerShell Core 7.x)
+- macOS 10.14 (using PowerShell Core 6)
 
 This module should function correctly on other systems and configurations
 but is not automatically tested with them in every change.
