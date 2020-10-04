@@ -23,26 +23,26 @@ Describe 'Jenkins Module Integration tests' {
         }
 
         # Set up a Linux Docker container running Jenkins
-        $dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
-        $jenkinsPort = 49001
-        $jenkinsContainerName = 'jenkinstest'
-        $jenkinsImageTag = 'plagueho/jenkins'
+        $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
+        $script:jenkinsPort = 49001
+        $script:jenkinsContainerName = 'jenkinstest'
+        $script:jenkinsImageTag = 'plagueho/jenkins'
 
-        Write-Verbose -Message "Creating Docker jenkins image '$jenkinsImageTag'" -Verbose
-        & docker ('image','build','-t',$jenkinsImageTag,$dockerFolder)
+        Write-Verbose -Message "Creating Docker jenkins image '$script:jenkinsImageTag'" -Verbose
+        & docker ('image','build','-t',$script:jenkinsImageTag,$script:dockerFolder)
 
-        Write-Verbose -Message "Starting Docker jenkins container '$jenkinsContainerName' from image '$jenkinsImageTag'" -Verbose
-        & docker ('run','-d','-p',"${jenkinsPort}:8080",'--name',$jenkinsContainerName,$jenkinsImageTag)
+        Write-Verbose -Message "Starting Docker jenkins container '$script:jenkinsContainerName' from image '$script:jenkinsImageTag'" -Verbose
+        & docker ('run','-d','-p',"$script:jenkinsPort:8080",'--name',$script:jenkinsContainerName,$script:jenkinsImageTag)
 
-        $jenkinsUri        = [System.UriBuilder]::new('http','localhost',$jenkinsPort)
-        $jenkinsUsername   = 'admin'
-        $jenkinsPassword   = 'admin'
-        $jenkinsCredential = New-Object `
+        $script:jenkinsUri        = [System.UriBuilder]::new('http','localhost',$script:jenkinsPort)
+        $script:jenkinsUsername   = 'admin'
+        $script:jenkinsPassword   = 'admin'
+        $script:jenkinsCredential = New-Object `
             -TypeName System.Management.Automation.PSCredential `
-            -ArgumentList $jenkinsUsername, (ConvertTo-SecureString -String $jenkinsPassword -AsPlainText -Force)
+            -ArgumentList $script:jenkinsUsername, (ConvertTo-SecureString -String $script:jenkinsPassword -AsPlainText -Force)
 
         $webClient = New-Object -TypeName System.Net.WebClient
-        $jenkinsHealthCheckUri = [System.UriBuilder]::new($jenkinsUri.Uri)
+        $jenkinsHealthCheckUri = [System.UriBuilder]::new($script:jenkinsUri.Uri)
         $jenkinsHealthCheckUri.Path = 'robots.txt'
 
         # Wait for the Jenkins Container to become ready
@@ -52,7 +52,7 @@ Describe 'Jenkins Module Integration tests' {
         {
             try
             {
-                $null = $webClient.DownloadString($jenkinsUri.Uri)
+                $null = $webClient.DownloadString($script:jenkinsUri.Uri)
                 $jenkinsReady = $true
             }
             catch
@@ -60,7 +60,7 @@ Describe 'Jenkins Module Integration tests' {
                 Write-Verbose -Message "Jenkins is not ready yet: $_"
             }
 
-            Write-Verbose -Message "Waiting for Docker jenkins container '$jenkinsContainerName' to be ready. Trying again in 5 seconds." -Verbose
+            Write-Verbose -Message "Waiting for Docker jenkins container '$script:jenkinsContainerName' to be ready. Trying again in 5 seconds." -Verbose
             Start-Sleep -Seconds 5
         }
 
@@ -76,20 +76,20 @@ Describe 'Jenkins Module Integration tests' {
     }
 
     AfterAll {
-        Write-Verbose -Message "Stopping Docker jenkins container '$jenkinsContainerName'" -Verbose
-        & docker ('stop',$jenkinsContainerName)
+        Write-Verbose -Message "Stopping Docker jenkins container '$script:jenkinsContainerName'" -Verbose
+        & docker ('stop',$script:jenkinsContainerName)
 
-        Write-Verbose -Message "Removing Docker jenkins container '$jenkinsContainerName'" -Verbose
-        & docker ('rm',$jenkinsContainerName)
+        Write-Verbose -Message "Removing Docker jenkins container '$script:jenkinsContainerName'" -Verbose
+        & docker ('rm',$script:jenkinsContainerName)
 
-        Write-Verbose -Message "Removing Docker jenkins image '$jenkinsImageTag'" -Verbose
-        & docker ('rmi',$jenkinsImageTag)
+        Write-Verbose -Message "Removing Docker jenkins image '$script:jenkinsImageTag'" -Verbose
+        & docker ('rmi',$script:jenkinsImageTag)
     }
 
     Context 'When getting Jenkins Crumb' {
         $getJenkinsCrumb_Parameters = @{
-            Uri        = $jenkinsUri
-            Credential = $jenkinsCredential
+            Uri        = $script:jenkinsUri
+            Credential = $script:jenkinsCredential
             Verbose    = $true
         }
 
@@ -102,10 +102,10 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When creating a new Jenkins Job in the root folder' {
         $newJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
             XML        = $jenkinsJobXML['testjob']
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
@@ -119,9 +119,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When getting a Jenkins Job from the root folder' {
         $getJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
@@ -136,9 +136,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When invoking a Jenkins Job from the root folder' {
         $invokeJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
@@ -152,9 +152,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When removing a Jenkins Job from the root folder' {
         $removeJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Force      = $true
             Verbose    = $true
@@ -169,10 +169,10 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When creating a new Jenkins Job with Parameters in the root folder' {
         $newJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
             XML        = $jenkinsJobXML['testjobwithparameter']
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
@@ -186,9 +186,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When getting a Jenkins Job with Parameters from the root folder' {
         $getJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
         }
@@ -203,9 +203,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When invoking a Jenkins Job with Parameters from the root folder' {
         $invokeJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Parameters = @{
                 testparameter = 'testvalue'
@@ -222,9 +222,9 @@ Describe 'Jenkins Module Integration tests' {
 
     Context 'When removing a Jenkins Job with Parameters from the root folder' {
         $removeJenkinsJob_Parameters = @{
-            Uri        = $jenkinsUri
+            Uri        = $script:jenkinsUri
             Name       = 'Test'
-            Credential = $jenkinsCredential
+            Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Force      = $true
             Verbose    = $true
