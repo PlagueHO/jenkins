@@ -1,12 +1,24 @@
+[System.Diagnostics.CodeAnalysis.SuppressMessage('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+[CmdletBinding()]
+param ()
 
-$moduleManifestName = 'Jenkins.psd1'
-$moduleRootPath = "$PSScriptRoot\..\..\src\"
-$moduleManifestPath = Join-Path -Path $moduleRootPath -ChildPath $moduleManifestName
+$ProjectPath = "$PSScriptRoot\..\.." | Convert-Path
+$ProjectName = ((Get-ChildItem -Path $ProjectPath\*\*.psd1).Where{
+        ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
+        $(try
+            { Test-ModuleManifest $_.FullName -ErrorAction Stop
+            }
+            catch
+            { $false
+            } )
+    }).BaseName
 
-Import-Module -Name $ModuleManifestPath -Force
-Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '\..\TestHelper') -Force
+Import-Module -Name $ProjectName -Force
 
-InModuleScope Jenkins {
+InModuleScope $ProjectName {
+    $testHelperPath = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'TestHelper'
+    Import-Module -Name $testHelperPath -Force
+
     Describe 'Resolve-JenkinsCommandUri.when ony an endpoint' {
         It 'should resolve' {
             Resolve-JenkinsCommandUri -Command 'Fubar Snafu' | Should -Be 'Fubar Snafu'

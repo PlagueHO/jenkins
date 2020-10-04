@@ -1,11 +1,24 @@
-$moduleManifestName = 'Jenkins.psd1'
-$moduleRootPath = "$PSScriptRoot\..\..\src\"
-$moduleManifestPath = Join-Path -Path $moduleRootPath -ChildPath $moduleManifestName
+[System.Diagnostics.CodeAnalysis.SuppressMessage('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+[CmdletBinding()]
+param ()
 
-Import-Module -Name $ModuleManifestPath -Force
-Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelper') -Force
+$ProjectPath = "$PSScriptRoot\..\.." | Convert-Path
+$ProjectName = ((Get-ChildItem -Path $ProjectPath\*\*.psd1).Where{
+        ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
+        $(try
+            { Test-ModuleManifest $_.FullName -ErrorAction Stop
+            }
+            catch
+            { $false
+            } )
+    }).BaseName
 
-InModuleScope Jenkins {
+Import-Module -Name $ProjectName -Force
+
+InModuleScope $ProjectName {
+    $testHelperPath = $PSScriptRoot | Split-Path -Parent | Join-Path -ChildPath 'TestHelper'
+    Import-Module -Name $testHelperPath -Force
+
     Describe 'Get-JenkinsTreeRequest' {
         Context 'When default depth, default type, default attribute' {
             It "Should return '?tree=jobs[name,buildable,url,color]'" {
