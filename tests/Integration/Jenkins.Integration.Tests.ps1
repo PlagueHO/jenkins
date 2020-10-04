@@ -5,7 +5,12 @@ param ()
 $ProjectPath = "$PSScriptRoot\..\.." | Convert-Path
 $ProjectName = ((Get-ChildItem -Path $ProjectPath\*\*.psd1).Where{
         ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
-        $(try { Test-ModuleManifest $_.FullName -ErrorAction Stop } catch { $false } )
+        $(try
+            { Test-ModuleManifest $_.FullName -ErrorAction Stop
+            }
+            catch
+            { $false
+            } )
     }).BaseName
 
 Import-Module -Name $ProjectName -Force
@@ -14,32 +19,43 @@ $testHelperPath = "$PSScriptRoot\..\TestHelper"
 Import-Module -Name $testHelperPath -Force
 
 Describe 'Jenkins Module Integration tests' {
-    BeforeAll {
-        # Ensure Linux Docker engine is running on Windows
-        if ($null -eq $IsWindows -or $IsWindows)
-        {
-            Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
-            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+    # Ensure Linux Docker engine is running on Windows
+    if ($null -eq $IsWindows -or $IsWindows)
+    {
+        Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
+        & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+    }
+
+    # Set up a Linux Docker container running Jenkins
+    $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
+    $script:jenkinsPort = 49001
+    $script:jenkinsContainerName = 'jenkinstest'
+    $script:jenkinsImageTag = 'plagueho/jenkins'
+    $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
+    $script:jenkinsUsername = 'admin'
+    $script:jenkinsPassword = 'admin'
+    $script:jenkinsCredential = New-Object `
+        -TypeName System.Management.Automation.PSCredential `
+        -ArgumentList $script:jenkinsUsername, (ConvertTo-SecureString -String $script:jenkinsPassword -AsPlainText -Force)
+
+    # Read all the Jenkins Job XML into a hash table
+    $script:jenkinsJobXML = @{ }
+    $script:jenkinsJobXMLPath = Join-Path -Path $PSScriptRoot -ChildPath 'jobxml'
+    $script:jenkinsJobXMLFiles = Get-ChildItem -Path $script:jenkinsJobXMLPath -Filter '*.xml'
+
+    foreach ($script:jenkinsJobXMLFile in $script:jenkinsJobXMLFiles)
+    {
+        $script:jenkinsJobXML += @{
+            $script:jenkinsJobXMLFile.BaseName = (Get-Content -Path $script:jenkinsJobXMLFile.FullName -Raw)
         }
+    }
 
-        # Set up a Linux Docker container running Jenkins
-        $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
-        $script:jenkinsPort = 49001
-        $script:jenkinsContainerName = 'jenkinstest'
-        $script:jenkinsImageTag = 'plagueho/jenkins'
-
+    BeforeAll {
         Write-Verbose -Message "Creating Docker jenkins image '$script:jenkinsImageTag'" -Verbose
-        & docker ('image','build','-t',$script:jenkinsImageTag,$script:dockerFolder)
+        & docker ('image', 'build', '-t', $script:jenkinsImageTag, $script:dockerFolder)
 
         Write-Verbose -Message "Starting Docker jenkins container '$script:jenkinsContainerName' from image '$script:jenkinsImageTag'" -Verbose
-        & docker ('run','-d','-p',"$script:jenkinsPort:8080",'--name',$script:jenkinsContainerName,$script:jenkinsImageTag)
-
-        $script:jenkinsUri        = [System.UriBuilder]::new('http','localhost',$script:jenkinsPort)
-        $script:jenkinsUsername   = 'admin'
-        $script:jenkinsPassword   = 'admin'
-        $script:jenkinsCredential = New-Object `
-            -TypeName System.Management.Automation.PSCredential `
-            -ArgumentList $script:jenkinsUsername, (ConvertTo-SecureString -String $script:jenkinsPassword -AsPlainText -Force)
+        & docker ('run', '-d', '-p', "$($script:jenkinsPort):8080", '--name', $script:jenkinsContainerName, $script:jenkinsImageTag)
 
         $webClient = New-Object -TypeName System.Net.WebClient
         $jenkinsHealthCheckUri = [System.UriBuilder]::new($script:jenkinsUri.Uri)
@@ -63,27 +79,17 @@ Describe 'Jenkins Module Integration tests' {
             Write-Verbose -Message "Waiting for Docker jenkins container '$script:jenkinsContainerName' to be ready. Trying again in 5 seconds." -Verbose
             Start-Sleep -Seconds 5
         }
-
-        # Read all the Jenkins Job XML into a hash table
-        $jenkinsJobXML = @{}
-        $jenkinsJobXmlPath = Join-Path -Path $PSScriptRoot -ChildPath 'jobxml'
-        $jenkinsJobXmlFiles = Get-ChildItem -Path $jenkinsJobXmlPath -Filter '*.xml'
-
-        foreach ($jenkinsJobXmlFile in $jenkinsJobXmlFiles)
-        {
-            $jenkinsJobXML += @{ $jenkinsJobXmlFile.BaseName = (Get-Content -Path $jenkinsJobXmlFile.FullName -Raw) }
-        }
     }
 
     AfterAll {
         Write-Verbose -Message "Stopping Docker jenkins container '$script:jenkinsContainerName'" -Verbose
-        & docker ('stop',$script:jenkinsContainerName)
+        & docker ('stop', $script:jenkinsContainerName)
 
         Write-Verbose -Message "Removing Docker jenkins container '$script:jenkinsContainerName'" -Verbose
-        & docker ('rm',$script:jenkinsContainerName)
+        & docker ('rm', $script:jenkinsContainerName)
 
         Write-Verbose -Message "Removing Docker jenkins image '$script:jenkinsImageTag'" -Verbose
-        & docker ('rmi',$script:jenkinsImageTag)
+        & docker ('rmi', $script:jenkinsImageTag)
     }
 
     Context 'When getting Jenkins Crumb' {
@@ -104,7 +110,7 @@ Describe 'Jenkins Module Integration tests' {
         $newJenkinsJob_Parameters = @{
             Uri        = $script:jenkinsUri
             Name       = 'Test'
-            XML        = $jenkinsJobXML['testjob']
+            XML        = $script:jenkinsJobXML['testjob']
             Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
@@ -171,7 +177,7 @@ Describe 'Jenkins Module Integration tests' {
         $newJenkinsJob_Parameters = @{
             Uri        = $script:jenkinsUri
             Name       = 'Test'
-            XML        = $jenkinsJobXML['testjobwithparameter']
+            XML        = $script:jenkinsJobXML['testjobwithparameter']
             Credential = $script:jenkinsCredential
             Crumb      = $script:jenkinsCrumb
             Verbose    = $true
