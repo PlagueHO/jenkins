@@ -1,9 +1,10 @@
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/PlagueHO/Jenkins/blob/dev/LICENSE)
-[![Documentation - Jenkins](https://img.shields.io/badge/Documentation-Jenkins-blue.svg)](https://github.com/PlagueHO/Jenkins/wiki)
-[![PowerShell Gallery - Jenkins](https://img.shields.io/badge/PowerShell%20Gallery-Jenkins-blue.svg)](https://www.powershellgallery.com/packages/Jenkins)
-[![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-4.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
-[![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PowerShell_Core-6.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
-[![Wiki](https://img.shields.io/badge/Wiki-yellow.svg)](https://github.com/PlagueHO/Jenkins/Wiki)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/PlagueHO/Jenkins/blob/dev/LICENSE)
+[![Documentation](https://img.shields.io/badge/Docs-Jenkins-blue.svg)](https://github.com/PlagueHO/Jenkins/wiki)
+[![PowerShell Gallery](https://img.shields.io/badge/PowerShell%20Gallery-Jenkins-blue.svg)](https://www.powershellgallery.com/packages/Jenkins)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/Jenkins.svg)](https://www.powershellgallery.com/packages/Jenkins)
+[![Minimum Supported Windows PowerShell Version](https://img.shields.io/badge/WindowsPowerShell-5.1-blue.svg)](https://github.com/PlagueHO/Jenkins)
+[![Minimum Supported PowerShell Core Version](https://img.shields.io/badge/PSCore-6.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
+[![Minimum Supported PowerShell Version](https://img.shields.io/badge/PS-7.0-blue.svg)](https://github.com/PlagueHO/Jenkins)
 
 # Jenkins
 
@@ -12,10 +13,9 @@ PowerShell module for interacting with a CloudBees Jenkins server using the
 
 ## Module Build Status
 
-| Branch | AzurePipelines CI | AppVeyor CI | Travis CI | Code Coverage |
-| --- | --- | --- | --- | --- |
-| dev | Comming Soon | [![av-image-dev][]][av-site-dev] | [![tv-image-dev][]][tv-site-dev] | [![cc-image-dev][]][cc-site-dev] |
-| master | Comming Soon | [![av-image-master][]][av-site-master] | [![tv-image-master][]][tv-site-master] | [![cc-image-master][]][cc-site-master] |
+| Branch | Azure Pipelines                    | Automated Tests                    | Code Quality                       |
+| ------ | ---------------------------------- | -----------------------------------| ---------------------------------- |
+| main   | [![ap-image-main][]][ap-site-main] | [![ts-image-main][]][ts-site-main] | [![cq-image-main][]][cq-site-main] |
 
 ## Table of Contents
 
@@ -63,13 +63,9 @@ folder.
 This PowerShell module is automatically tested and validated to run
 on the following systems:
 
-- Windows Server (using Windows PowerShell 5.1):
-  - Windows Server 2012 R2: Using [AppVeyor CI](https://ci.appveyor.com/project/PlagueHO/cosmosdb).
-  - Windows Server 2016: Using [AppVeyor CI](https://ci.appveyor.com/project/PlagueHO/cosmosdb).
-- Linux (using PowerShell Core 6.x):
-  - Ubuntu Trusty 14.04: Using [Tavis CI](https://travis-ci.org/PlagueHO/CosmosDB).
-- macOS (using PowerShell Core 6.x):
-  - macOS 10.13: Using [Tavis CI](https://travis-ci.org/PlagueHO/CosmosDB).
+- Windows Server (using Windows PowerShell 5.1)
+- Linux (using PowerShell Core 7.x)
+- macOS (using PowerShell Core 7.x)
 
 This module should function correctly on other systems and configurations
 but is not automatically tested with them in every change.
@@ -109,7 +105,7 @@ New-JenkinsFolder `
 ## Cmdlets
 
 The full details of the cmdlets contained in this module can also be
-found in the [wiki](https://github.com/PlagueHO/CosmosDB/wiki).
+found in the [wiki](https://github.com/PlagueHO/Jenkins/wiki).
 
 - `Disable-JenkinsJob`: Disables a Jenkins job.
 - `Enable-JenkinsJob`: Enables a Jenkins job.
@@ -308,17 +304,11 @@ For further examples, please see module help for individual cmdlets.
 ## Links
 
 - [Project site on GitHub](https://github.com/PlagueHO/Jenkins)
+- [Blog](https://dscottraynsford.wordpress.com/)
 
-[av-image-dev]: https://ci.appveyor.com/api/projects/status/rsga0lt7ksojyl9q/branch/dev?svg=true
-[av-site-dev]: https://ci.appveyor.com/project/PlagueHO/jenkins/branch/dev
-[tv-image-dev]: https://travis-ci.org/PlagueHO/jenkins.svg?branch=dev
-[tv-site-dev]: https://travis-ci.org/PlagueHO/jenkins/branches
-[cc-image-dev]: https://codecov.io/gh/PlagueHO/jenkins/branch/dev/graph/badge.svg
-[cc-site-dev]: https://codecov.io/gh/PlagueHO/jenkins/branch/dev
-
-[av-image-master]: https://ci.appveyor.com/api/projects/status/rsga0lt7ksojyl9q/branch/master?svg=true
-[av-site-master]: https://ci.appveyor.com/project/PlagueHO/jenkins/branch/master
-[tv-image-master]: https://travis-ci.org/PlagueHO/jenkins.svg?branch=master
-[tv-site-master]: https://travis-ci.org/PlagueHO/jenkins/branches
-[cc-image-master]: https://codecov.io/gh/PlagueHO/jenkins/branch/master/graph/badge.svg
-[cc-site-master]: https://codecov.io/gh/PlagueHO/jenkins/branch/master
+[ap-image-main]: https://dev.azure.com/dscottraynsford/GitHub/_apis/build/status/PlagueHO.Jenkins.main?branchName=main
+[ap-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build?definitionId=4&_a=summary
+[ts-image-main]: https://img.shields.io/azure-devops/tests/dscottraynsford/GitHub/4/main
+[ts-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build/latest?definitionId=4&branchName=main
+[cq-image-main]: https://api.codacy.com/project/badge/Grade/1ee50b5eb15b47c188b3bdf7a5f8ee1d
+[cq-site-main]: https://www.codacy.com/app/PlagueHO/Jenkins?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PlagueHO/Jenkins&amp;utm_campaign=Badge_Grade
