@@ -3,10 +3,7 @@
 #          ModuleBuilder Configuration             #
 ####################################################
 CopyPaths:
-  - classes
-  - formats
   - en-US
-  - types
 prefix: prefix.ps1
 suffix: suffix.ps1
 Encoding: UTF8
@@ -17,22 +14,6 @@ VersionedOutputDirectory: true
 #       Sampler Pipeline Configuration             #
 ####################################################
 BuildWorkflow:
-  Compile_Classes: |
-    {
-      $classesPath = Join-Path -Path $BuildRoot -ChildPath 'source/classes/CosmosDB'
-      $classesProjectPath = Join-Path -Path $classesPath -ChildPath 'CosmosDB.csproj'
-      & dotnet @('build',$classesProjectPath,'/p:Configuration=Release')
-      $compiledDllPath = Join-Path -Path $classesPath -ChildPath 'bin/Release/netstandard2.0/CosmosDB.dll'
-
-      if ([System.String]::IsNullOrEmpty($ModuleVersion))
-      {
-        $ModuleVersion = '0.0.1'
-      }
-
-      $destinationPath = $BuildModuleOutput | Join-Path -ChildPath 'CosmosDB' | Join-Path -ChildPath ($ModuleVersion -Split '-')[0]
-      $null = Copy-Item -Path $compiledDllPath -Destination $destinationPath
-    }
-
   Compile_Help: |
     {
       <#
@@ -68,7 +49,6 @@ BuildWorkflow:
     - Clean
     - Build_Module_ModuleBuilder
     - Build_NestedModules_ModuleBuilder
-    - Compile_Classes
     - Create_changelog_release_output
     - Compile_Help
 
