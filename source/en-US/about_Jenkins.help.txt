@@ -1,0 +1,23 @@
+TOPIC
+    about_Jenkins
+
+SHORT DESCRIPTION
+    PowerShell module for interacting with a Jenkins server using the Jenkins Rest API.
+
+LONG DESCRIPTION
+    This module provides cmdlets for working with Jenkins server using the Jenkins
+    Rest API.
+
+EXAMPLES
+    PS C:\> Get-Command -Module Jenkins
+
+TROUBLESHOOTING NOTE:
+    Go to the Github repository for read about issues, submit a new issue, and read
+    about new releases. https://github.com/PlagueHO/Jenkins
+
+SEE ALSO
+  - https://github.com/PlagueHO/Jenkins
+
+KEYWORDS
+      Jenkins, Cloudbees
+
