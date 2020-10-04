@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Updated build badges.
+
 ## [1.2.0] - 2020-10-04
 
 ### Added
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Converted to Continuous Delivery using Azure DevOps pipeline
   and Sampler - fixes [issue #7](https://github.com/PlagueHO/jenkins/issues/7).
+- Updated build badges.
 
 ### Fixes
 

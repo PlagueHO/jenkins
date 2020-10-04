@@ -310,8 +310,8 @@ For further examples, please see module help for individual cmdlets.
 - [Blog](https://dscottraynsford.wordpress.com/)
 
 [ap-image-main]: https://dev.azure.com/dscottraynsford/GitHub/_apis/build/status/PlagueHO.Jenkins.main?branchName=main
-[ap-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build?definitionId=4&_a=summary
+[ap-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build?definitionId=46&_a=summary
 [ts-image-main]: https://img.shields.io/azure-devops/tests/dscottraynsford/GitHub/4/main
-[ts-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build/latest?definitionId=4&branchName=main
-[cq-image-main]: https://api.codacy.com/project/badge/Grade/1ee50b5eb15b47c188b3bdf7a5f8ee1d
-[cq-site-main]: https://www.codacy.com/app/PlagueHO/Jenkins?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PlagueHO/Jenkins&amp;utm_campaign=Badge_Grade
+[ts-site-main]: https://dev.azure.com/dscottraynsford/GitHub/_build/latest?definitionId=46&branchName=main
+[cq-image-main]: https://api.codacy.com/project/badge/Grade/8c0e8f7306a54afabb2b71e0b6d16e9b
+[cq-site-main]: https://www.codacy.com/manual/PlagueHO/jenkins/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PlagueHO/jenkins&amp;utm_campaign=Badge_Grade
