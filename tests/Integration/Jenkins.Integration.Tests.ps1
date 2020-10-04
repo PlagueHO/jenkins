@@ -1,29 +1,17 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessage('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 [CmdletBinding()]
-param (
-)
+param ()
 
-if ($ENV:BHBuildSystem -in 'Unknown','')
-{
-    Write-Verbose -Message "Running Integration tests in '$ENV:BHBuildSystem' build system."
-}
-elseif ($ENV:BHBuildSystem -eq 'Travis CI' -and $IsMacOS)
-{
-    Write-Warning -Message "Skipping Integration tests in '$ENV:BHBuildSystem' build system on MacOS."
-    return
-}
-else
-{
-    Write-Warning -Message "Skipping Integration tests in '$ENV:BHBuildSystem' build system."
-    return
-}
+$ProjectPath = "$PSScriptRoot\..\.." | Convert-Path
+$ProjectName = ((Get-ChildItem -Path $ProjectPath\*\*.psd1).Where{
+        ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
+        $(try { Test-ModuleManifest $_.FullName -ErrorAction Stop } catch { $false } )
+    }).BaseName
 
-$moduleManifestName = 'Jenkins.psd1'
-$moduleRootPath = "$PSScriptRoot\..\..\src\"
-$moduleManifestPath = Join-Path -Path $moduleRootPath -ChildPath $moduleManifestName
+Import-Module -Name $ProjectName -Force
 
-Import-Module -Name $ModuleManifestPath -Force
-Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelper') -Force
+$testHelperPath = "$PSScriptRoot\..\TestHelper"
+Import-Module -Name $testHelperPath -Force
 
 Describe 'Jenkins Module Integration tests' {
     BeforeAll {

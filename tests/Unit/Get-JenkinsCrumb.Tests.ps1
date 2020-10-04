@@ -44,16 +44,18 @@ InModuleScope $ProjectName {
 
             Mock -CommandName Invoke-WebRequest -ModuleName Jenkins `
                 -ParameterFilter {
-                $Uri -eq ('{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $testURI) -and `
+                    $Uri -eq ('{0}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)' -f $testURI) -and `
                     $Headers.Count -eq 1 -and `
                     $Headers['Authorization'] -eq $testAuthHeader
-            } `
+                } `
                 -MockWith { [pscustomobject] @{ Content = 'Jenkins-Crumb:1234567890' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
             $Result = Get-JenkinsCrumb @Splat
+
             It "Should return '1234567890'" {
                 $Result | Should -Be '1234567890'
             }
+
             It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
@@ -82,9 +84,11 @@ InModuleScope $ProjectName {
                 -MockWith { [pscustomobject] @{ Content = '.crumb:1234567890' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
             $Result = Get-JenkinsCrumb @Splat
+
             It "Should return '1234567890'" {
                 $Result | Should -Be '1234567890'
             }
+
             It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 
@@ -112,9 +116,11 @@ InModuleScope $ProjectName {
             } `
                 -MockWith { [pscustomobject] @{ Content = 'Invalid Crumb' } }
             $Splat = $GetJenkinsCrumbSplat.Clone()
+
             It "Should throw exception" {
                 { $Result = Get-JenkinsCrumb @Splat } | Should -Throw 'Invalid Crumb'
             }
+
             It "Should return call expected mocks" {
                 Assert-MockCalled -CommandName Set-JenkinsTLSSupport -ModuleName Jenkins -Exactly 1
 

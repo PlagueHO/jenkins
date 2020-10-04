@@ -15,7 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Converted to Continuous Delivery using Azure DevOps pipeline
-  and Sampler - fixes [issue #102](https://github.com/PlagueHO/jenkins/issues/7).
+  and Sampler - fixes [issue #7](https://github.com/PlagueHO/jenkins/issues/7).
+
+### Fixes
+
+- Fixed bug in `Invoke-JenkinsCommand` and `Get-JenkinsCrumb` when used in
+  PowerShell 7 on Linux - fixes [issue #5](https://github.com/PlagueHO/jenkins/issues/7).
 
 ## [1.0.3.257] - 2019-05-25
 

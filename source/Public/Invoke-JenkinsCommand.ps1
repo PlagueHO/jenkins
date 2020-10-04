@@ -79,8 +79,7 @@ function Invoke-JenkinsCommand
         $username = $Credential.Username
 
         # Decrypt the secure string password
-        $passwordBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password)
-        $password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($passwordBstr)
+        $password = $Credential.GetNetworkCredential().Password
 
         $authorizationBytes = [System.Text.Encoding]::UTF8.GetBytes($username + ':' + $password)
         $authorizationBytesBase64 = [System.Convert]::ToBase64String($authorizationBytes)
