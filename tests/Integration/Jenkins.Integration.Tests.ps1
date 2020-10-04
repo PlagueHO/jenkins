@@ -19,38 +19,38 @@ $testHelperPath = "$PSScriptRoot\..\TestHelper"
 Import-Module -Name $testHelperPath -Force
 
 Describe 'Jenkins Module Integration tests' {
-    # Ensure Linux Docker engine is running on Windows
-    if ($null -eq $IsWindows -or $IsWindows)
-    {
-        Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
-        & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
-    }
-
-    # Set up a Linux Docker container running Jenkins
-    $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
-    $script:jenkinsPort = 49001
-    $script:jenkinsContainerName = 'jenkinstest'
-    $script:jenkinsImageTag = 'plagueho/jenkins'
-    $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
-    $script:jenkinsUsername = 'admin'
-    $script:jenkinsPassword = 'admin'
-    $script:jenkinsCredential = New-Object `
-        -TypeName System.Management.Automation.PSCredential `
-        -ArgumentList $script:jenkinsUsername, (ConvertTo-SecureString -String $script:jenkinsPassword -AsPlainText -Force)
-
-    # Read all the Jenkins Job XML into a hash table
-    $script:jenkinsJobXML = @{ }
-    $script:jenkinsJobXMLPath = Join-Path -Path $PSScriptRoot -ChildPath 'jobxml'
-    $script:jenkinsJobXMLFiles = Get-ChildItem -Path $script:jenkinsJobXMLPath -Filter '*.xml'
-
-    foreach ($script:jenkinsJobXMLFile in $script:jenkinsJobXMLFiles)
-    {
-        $script:jenkinsJobXML += @{
-            $script:jenkinsJobXMLFile.BaseName = (Get-Content -Path $script:jenkinsJobXMLFile.FullName -Raw)
-        }
-    }
-
     BeforeAll {
+        # Ensure Linux Docker engine is running on Windows
+        if ($null -eq $IsWindows -or $IsWindows)
+        {
+            Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
+            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+        }
+
+        # Set up a Linux Docker container running Jenkins
+        $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
+        $script:jenkinsPort = 49001
+        $script:jenkinsContainerName = 'jenkinstest'
+        $script:jenkinsImageTag = 'plagueho/jenkins'
+        $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
+        $script:jenkinsUsername = 'admin'
+        $script:jenkinsPassword = 'admin'
+        $script:jenkinsCredential = New-Object `
+            -TypeName System.Management.Automation.PSCredential `
+            -ArgumentList $script:jenkinsUsername, (ConvertTo-SecureString -String $script:jenkinsPassword -AsPlainText -Force)
+
+        # Read all the Jenkins Job XML into a hash table
+        $script:jenkinsJobXML = @{ }
+        $script:jenkinsJobXMLPath = Join-Path -Path $PSScriptRoot -ChildPath 'jobxml'
+        $script:jenkinsJobXMLFiles = Get-ChildItem -Path $script:jenkinsJobXMLPath -Filter '*.xml'
+
+        foreach ($script:jenkinsJobXMLFile in $script:jenkinsJobXMLFiles)
+        {
+            $script:jenkinsJobXML += @{
+                $script:jenkinsJobXMLFile.BaseName = (Get-Content -Path $script:jenkinsJobXMLFile.FullName -Raw)
+            }
+        }
+
         Write-Verbose -Message "Creating Docker jenkins image '$script:jenkinsImageTag'" -Verbose
         & docker ('image', 'build', '-t', $script:jenkinsImageTag, $script:dockerFolder)
 
