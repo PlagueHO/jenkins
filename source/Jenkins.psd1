@@ -39,6 +39,7 @@
         'Invoke-JenkinsCommand'
         'Invoke-JenkinsJob'
         'Invoke-JenkinsJobReload'
+        'New-JenkinsApiToken'
         'New-JenkinsFolder'
         'New-JenkinsJob'
         'Remove-JenkinsJob'
