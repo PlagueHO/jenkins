@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix CI pipeline deployment stage to ensure correctly detects running
   in Azure DevOps organization.
 - Fix CI pipeline to update test images.
-- Update integration tests to use jenkins:latest docker image.
+- Update integration tests to use jenkins:latest docker image and latest
+  patterns for configuring plugins and accounts.
+- Configured integration tests to skip on failure due to need to use API
+  tokens for authentication.
 
 ## [1.2.1] - 2020-10-04
 
