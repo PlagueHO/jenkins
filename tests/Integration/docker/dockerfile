@@ -4,7 +4,6 @@ ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 
 COPY scripts/security.groovy /usr/share/jenkins/ref/init.groovy.d/security.groovy
 
-COPY scripts/plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli \
     --plugins \
     build-with-parameters \
