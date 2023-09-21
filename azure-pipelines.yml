@@ -187,37 +187,6 @@ stages:
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
 
-      - job: Integration_Test_PS7_Ubuntu2004
-        dependsOn: Unit_Test_PS7_Ubuntu2004
-        displayName: 'Integration Test (Powershell 7 on Ubuntu 20.04)'
-        pool:
-          vmImage: ubuntu-20.04
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (Powershell 7 on Ubuntu 20.04)'
-
       - job: Unit_Test_PS7_Ubuntu2204
         displayName: 'Unit Test (Powershell 7 on Ubuntu 22.04)'
         pool:
@@ -260,37 +229,6 @@ stages:
               codeCoverageTool: 'JaCoCo'
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
-
-      - job: Integration_Test_PS7_Ubuntu2204
-        dependsOn: Unit_Test_PS7_Ubuntu2204
-        displayName: 'Integration Test (Powershell 7 on Ubuntu 22.04)'
-        pool:
-          vmImage: ubuntu-22.04
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (Powershell 7 on Ubuntu 22.04)'
 
       - job: Unit_Test_PSCore6_MacOS11
         displayName: 'Unit Test (Powershell Core 6 on MacOS 11)'
@@ -385,6 +323,68 @@ stages:
               codeCoverageTool: 'JaCoCo'
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
+
+      - job: Integration_Test_PS7_Ubuntu2004
+        dependsOn: Unit_Test_PS7_Ubuntu2004
+        displayName: 'Integration Test (Powershell 7 on Ubuntu 20.04)'
+        pool:
+          vmImage: ubuntu-20.04
+        timeoutInMinutes: 0
+
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Pipeline Artifact'
+            inputs:
+              buildType: 'current'
+              artifactName: $(buildArtifactName)
+              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
+
+          - task: PowerShell@2
+            name: test
+            displayName: 'Run Integration Test'
+            inputs:
+              filePath: './build.ps1'
+              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
+              pwsh: false
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'NUnit'
+              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
+              testRunTitle: 'Integration (Powershell 7 on Ubuntu 20.04)'
+
+      - job: Integration_Test_PS7_Ubuntu2204
+        dependsOn: Unit_Test_PS7_Ubuntu2204
+        displayName: 'Integration Test (Powershell 7 on Ubuntu 22.04)'
+        pool:
+          vmImage: ubuntu-22.04
+        timeoutInMinutes: 0
+
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Pipeline Artifact'
+            inputs:
+              buildType: 'current'
+              artifactName: $(buildArtifactName)
+              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
+
+          - task: PowerShell@2
+            name: test
+            displayName: 'Run Integration Test'
+            inputs:
+              filePath: './build.ps1'
+              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
+              pwsh: false
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'NUnit'
+              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
+              testRunTitle: 'Integration (Powershell 7 on Ubuntu 22.04)'
 
   - stage: Deploy
     dependsOn: Test
