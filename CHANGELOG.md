@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to the module.
 - Fix CI pipeline deployment stage to ensure correctly detects running
   in Azure DevOps organization.
+- Fix CI pipeline to update test images.
 
 ## [1.2.1] - 2020-10-04
 
