@@ -24,7 +24,7 @@ Describe 'Jenkins Module Integration tests' {
         $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
         $script:jenkinsPort = 49001
         $script:jenkinsContainerName = 'jenkinstest'
-        $script:jenkinsImageTag = 'jenkins/jenkins'
+        $script:jenkinsImageTag = 'plagueho/jenkins'
         $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
         $script:jenkinsUsername = 'admin'
         $script:jenkinsPassword = 'admin'
