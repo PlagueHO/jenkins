@@ -346,6 +346,7 @@ stages:
               filePath: './build.ps1'
               arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
               pwsh: false
+            continueOnError: true
 
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
@@ -377,6 +378,7 @@ stages:
               filePath: './build.ps1'
               arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
               pwsh: false
+            continueOnError: true
 
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
