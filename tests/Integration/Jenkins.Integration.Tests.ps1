@@ -26,7 +26,6 @@ Describe 'Jenkins Module Integration tests' {
         $script:jenkinsContainerName = 'jenkinstest'
         $script:jenkinsImageTag = 'plagueho/jenkins'
         $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
-        $script:jenkinsUri = $script:jenkinsUri.ToString().TrimEnd('/')
         $script:jenkinsUsername = 'admin'
         $script:jenkinsPassword = 'admin'
         $script:jenkinsCredential = New-Object `
