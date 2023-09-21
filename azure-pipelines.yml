@@ -101,42 +101,6 @@ stages:
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
 
-      - job: Integration_Test_PS_Win2019
-        dependsOn: Unit_Test_PS_Win2019
-        displayName: 'Integration Test (Powershell 5.1 on Windows Server 2019)'
-        pool:
-          vmImage: windows-2019
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (PowerShell 5.1 on Windows Server 2019)'
-
       - job: Unit_Test_PS_Win2022
         displayName: 'Unit Test (Powershell 5.1 on Windows Server 2022)'
         pool:
@@ -179,42 +143,6 @@ stages:
               codeCoverageTool: 'JaCoCo'
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
-
-      - job: Integration_Test_PS_Win2022
-        dependsOn: Unit_Test_PS_Win2022
-        displayName: 'Integration Test (Powershell 5.1 on Windows Server 2022)'
-        pool:
-          vmImage: windows-2022
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (PowerShell 5.1 on Windows Server 2022)'
 
       - job: Unit_Test_PS7_Ubuntu2004
         displayName: 'Unit Test (Powershell 7 on Ubuntu 20.04)'
@@ -277,11 +205,6 @@ stages:
           - task: PowerShell@2
             name: test
             displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
             inputs:
               filePath: './build.ps1'
               arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
@@ -356,11 +279,6 @@ stages:
           - task: PowerShell@2
             name: test
             displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
             inputs:
               filePath: './build.ps1'
               arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
@@ -421,47 +339,6 @@ stages:
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
 
-      - job: Integration_Test_PSCore6_MacOS11
-        dependsOn: Unit_Test_PSCore6_MacOS11
-        displayName: 'Integration Test (Powershell Core 6 on MacOS 11)'
-        pool:
-          vmImage: macos-11
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - powershell: |
-              Uninstall-Module -Name Az -Force
-              $null = Remove-Item -Path '~/.Azure' -Recurse -Force
-            displayName: 'Uninstall Az Module'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (Powershell Core 6 on MacOS 11)'
-
       - job: Unit_Test_PSCore6_MacOS12
         displayName: 'Unit Test (Powershell Core 6 on MacOS 12)'
         pool:
@@ -508,47 +385,6 @@ stages:
               codeCoverageTool: 'JaCoCo'
               summaryFileLocation: '$(Build.SourcesDirectory)/$(buildFolderName)/$(testResultFolderName)/CodeCov*.xml'
               pathToSources: '$(Build.SourcesDirectory)/$(sourceFolderName)/'
-
-      - job: Integration_Test_PSCore6_MacOS12
-        dependsOn: Unit_Test_PSCore6_MacOS12
-        displayName: 'Integration Test (Powershell Core 6 on MacOS 12)'
-        pool:
-          vmImage: macos-12
-        timeoutInMinutes: 0
-
-        steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
-              artifactName: $(buildArtifactName)
-              targetPath: '$(Build.SourcesDirectory)/$(buildArtifactName)'
-
-          - powershell: |
-              Uninstall-Module -Name Az -Force
-              $null = Remove-Item -Path '~/.Azure' -Recurse -Force
-            displayName: 'Uninstall Az Module'
-
-          - task: PowerShell@2
-            name: test
-            displayName: 'Run Integration Test'
-            env:
-              azureApplicationId: $(azureApplicationId)
-              azureApplicationPassword: $(azureApplicationPassword)
-              azureSubscriptionId: $(azureSubscriptionId)
-              azureTenantId: $(azureTenantId)
-            inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0"
-              pwsh: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: succeededOrFailed()
-            inputs:
-              testResultsFormat: 'NUnit'
-              testResultsFiles: '$(buildFolderName)/$(testResultFolderName)/NUnit*.xml'
-              testRunTitle: 'Integration (Powershell Core 6 on MacOS 12)'
 
   - stage: Deploy
     dependsOn: Test

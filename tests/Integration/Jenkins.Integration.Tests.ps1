@@ -20,18 +20,11 @@ Import-Module -Name $testHelperPath -Force
 
 Describe 'Jenkins Module Integration tests' {
     BeforeAll {
-        # Ensure Linux Docker engine is running on Windows
-        if ($null -eq $IsWindows -or $IsWindows)
-        {
-            Write-Verbose -Message 'Switching Docker Engine to Linux' -Verbose
-            & $ENV:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
-        }
-
         # Set up a Linux Docker container running Jenkins
         $script:dockerFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docker'
         $script:jenkinsPort = 49001
         $script:jenkinsContainerName = 'jenkinstest'
-        $script:jenkinsImageTag = 'plagueho/jenkins'
+        $script:jenkinsImageTag = 'jenkins/jenkins'
         $script:jenkinsUri = [System.UriBuilder]::new('http', 'localhost', $script:jenkinsPort)
         $script:jenkinsUsername = 'admin'
         $script:jenkinsPassword = 'admin'
