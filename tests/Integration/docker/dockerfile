@@ -1,8 +1,6 @@
 FROM jenkins/jenkins:latest
 
-ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
-
-COPY scripts/security.groovy /usr/share/jenkins/ref/init.groovy.d/security.groovy
+ENV JAVA_OPTS="-Dhudson.udp=-1 -Djenkins.install.runSetupWizard=false --argumentsRealm.passwd.admin=admin --argumentsRealm.roles.user=admin --argumentsRealm.roles.admin=admin"
 
 RUN jenkins-plugin-cli \
     --plugins \
