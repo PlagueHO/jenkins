@@ -12,6 +12,13 @@ trigger:
     exclude:
     - "*-*"
 
+variables:
+  buildFolderName: output
+  buildArtifactName: output
+  testResultFolderName: testResults
+  testArtifactName: testResults
+  sourceFolderName: source
+
 stages:
   - stage: Build
     jobs:
