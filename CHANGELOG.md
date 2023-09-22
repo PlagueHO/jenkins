@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   patterns for configuring plugins and accounts.
 - Configured integration tests to skip on failure due to need to use API
   tokens for authentication.
+- Update deployment stage to latest Ubuntu image.
 
 ## [1.2.1] - 2020-10-04
 
