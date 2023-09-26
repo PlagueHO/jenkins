@@ -14,7 +14,7 @@ Generate a new Jenkins API token.
 ## SYNTAX
 
 ```powershell
-New-JenkinsFolder [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>]
+New-JenkinsApiToken [-Uri] <String> [[-Credential] <PSCredential>] [[-Crumb] <String>]
  [-TokenName] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
