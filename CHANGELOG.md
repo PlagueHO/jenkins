@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added New-JenkinsApiToken to create a new API token - fixes [issue #8](https://github.com/PlagueHO/jenkins/issues/8)
+
 ### Fixes
 
 - Fixed GitVersion to prevent build failures.

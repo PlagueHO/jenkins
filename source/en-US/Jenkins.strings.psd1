@@ -30,4 +30,9 @@ ConvertFrom-StringData -StringData @'
     ExistingJenkinsCoreFoundMessage = Existing Jenkins Core version '{0}' found in the cache - won't download.
     RemovingJenkinsCoreFileMessage = Removing Jenkins core file '{0}'.
     DownloadingJenkinsCoreMessage = Downloading Jenkins Core from '{0}' to '{1}'.
+
+    NewApiTokenMessage = Creating a new API Token with name '{0}'
+    ApiTokenResponseFormatError = API Token creation response has unexpected members: {0}.
+    ApiTokenResponseNameError = API Token creation response has returned a token with an unexpected name '{0}'.
+    ApiTokenResponseDataMissing = API Token creation response is missing property 'data'.
 '@
