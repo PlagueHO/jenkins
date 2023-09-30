@@ -68,8 +68,8 @@ BuildWorkflow:
     - Pester_if_Code_Coverage_Under_Threshold
 
   publish:
-    - Publish_release_to_GitHub
-    - publish_module_to_gallery
+    - Publish_Release_To_GitHub
+    - Publish_Module_To_gallery
 
 
 ####################################################
