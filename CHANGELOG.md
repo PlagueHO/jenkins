@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update deployment stage to latest Ubuntu image.
 - Fix CI pipeline deployment state.
 - Update CI pipeline sampler files and dependencies.
+- Correct Publish stage in CI pipeline.
 
 ## [1.2.1] - 2020-10-04
 
