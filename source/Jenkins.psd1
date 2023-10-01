@@ -32,6 +32,7 @@
         'Get-JenkinsFolderList'
         'Get-JenkinsJob'
         'Get-JenkinsJobList'
+        'Get-JenkinsBuildInfo'
         'Get-JenkinsObject'
         'Get-JenkinsPluginsList'
         'Get-JenkinsViewList'

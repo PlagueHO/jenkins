@@ -9,7 +9,7 @@
 # Jenkins
 
 PowerShell module for interacting with a CloudBees Jenkins server using the
-[Jenkins Rest API](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API).
+[Jenkins Rest API](https://www.jenkins.io/doc/book/using/remote-access-api).
 
 ## Module Build Status
 
