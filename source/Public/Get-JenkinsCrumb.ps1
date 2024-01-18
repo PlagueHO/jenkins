@@ -48,6 +48,7 @@ function Get-JenkinsCrumb
         $Result = Invoke-WebRequest `
             -Uri $FullUri `
             -Headers $Headers `
+            -UseBasicParsing `
             -ErrorAction Stop
     }
     catch
